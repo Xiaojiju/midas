@@ -1,13 +1,13 @@
 package com.mtfm.backend_support.service.user;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mtfm.backend_support.entity.SolarSecret;
 import com.mtfm.backend_support.entity.SolarUser;
 import com.mtfm.backend_support.entity.SolarUserReference;
+import com.mtfm.backend_support.service.UserReferenceManager;
 import com.mtfm.backend_support.service.UserRoleManager;
-import com.mtfm.backend_support.service.mapper.SecretMapper;
+import com.mtfm.backend_support.service.UserSecretManager;
 import com.mtfm.backend_support.service.mapper.UserMapper;
-import com.mtfm.backend_support.service.mapper.UserReferenceMapper;
 import com.mtfm.backend_support.service.provisioning.UserDetailSample;
 import com.mtfm.backend_support.service.provisioning.UserSample;
 import com.mtfm.core.context.exceptions.ServiceException;
@@ -36,26 +36,22 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Transactional(rollbackFor = Exception.class)
-public class UserManageService implements UserDetailsManager, InitializingBean, MessageSourceAware {
+public class UserManageService extends ServiceImpl<UserMapper, SolarUser> 
+        implements UserDetailsManager, InitializingBean, MessageSourceAware {
 
     private static final String DEFAULT_PASSWORD = "midas888888";
     private static final Logger logger = LoggerFactory.getLogger(UserManageService.class);
     private UserDetailsService userDetailsService;
-    private UserReferenceMapper userReferenceMapper;
-    private SecretMapper secretMapper;
-    private UserMapper userMapper;
+    private UserReferenceManager userReferenceManager;
+    private UserSecretManager userSecretManager;
     private UserRoleManager userRoleManager;
     private MessageSourceAccessor messageSource;
 
-    public UserManageService(UserDetailsService userDetailsService,
-                             UserReferenceMapper userReferenceMapper,
-                             SecretMapper secretMapper,
-                             UserMapper userMapper,
-                             UserRoleManager userRoleManager) {
+    public UserManageService(UserDetailsService userDetailsService, UserReferenceManager userReferenceManager, 
+                             UserSecretManager userSecretManager, UserRoleManager userRoleManager) {
         this.userDetailsService = userDetailsService;
-        this.userReferenceMapper = userReferenceMapper;
-        this.secretMapper = secretMapper;
-        this.userMapper = userMapper;
+        this.userReferenceManager = userReferenceManager;
+        this.userSecretManager = userSecretManager;
         this.userRoleManager = userRoleManager;
     }
 
@@ -71,12 +67,12 @@ public class UserManageService implements UserDetailsManager, InitializingBean, 
                 .allowable(Judge.YES)
                 .identifyBy("DEFAULT")
                 .build();
-        this.userReferenceMapper.insert(userReference);
+        this.userReferenceManager.save(userReference);
         SolarSecret secret = SolarSecret.builder(solarUser.getId())
                 .makeItSecret(StringUtils.hasText(userSample.getPassword()) ? userSample.getPassword() : DEFAULT_PASSWORD,
                         null, PasswordEncoderFactories.createDelegatingPasswordEncoder())
                 .build();
-        this.secretMapper.insert(secret);
+        this.userSecretManager.save(secret);
         this.userRoleManager.modifyRoles(solarUser.getId(), userSample.getAuthorities());
     }
 
@@ -95,27 +91,27 @@ public class UserManageService implements UserDetailsManager, InitializingBean, 
         if (!StringUtils.hasText(identifier)) {
             identifier = "DEFAULT";
         }
-        SolarUser solarUser = this.userMapper.selectById(sample.getId());
+        SolarUser solarUser = this.getById(sample.getId());
         if (solarUser == null) {
             throw new ServiceException(this.messageSource.getMessage("UserDetailsManager.nonExist"),
                     SecurityCode.USER_NOT_FOUND.getCode());
         }
         solarUser.setLocked(sample.getLocked());
-        this.userMapper.updateById(solarUser);
-        SolarUserReference userReference = loadUser(user.getUsername(), identifier);
+        this.updateById(solarUser);
+        SolarUserReference userReference = this.userReferenceManager.getByReferenceKey(user.getUsername(), identifier);
         if (userReference != null && !userReference.getuId().equals(sample.getId())) {
             throw new ServiceException(this.messageSource.getMessage("UserDetailsManager.hadExist"),
                     SecurityCode.USERNAME_EXIST.getCode());
         }
         SolarUserReference solarUserReference = SolarUserReference.withUId(sample.getId())
                 .withReferenceKey(sample.getUsername()).build();
-        this.userReferenceMapper.updateById(solarUserReference);
+        this.userReferenceManager.updateById(solarUserReference);
 
         if (StringUtils.hasText(sample.getPassword())) {
             SolarSecret secret = SolarSecret.builder(sample.getId())
                     .makeItSecret(sample.getPassword(), null, PasswordEncoderFactories.createDelegatingPasswordEncoder())
                     .build();
-            this.secretMapper.updateById(secret);
+            this.userSecretManager.updateById(secret);
         }
         Collection<? extends GrantedAuthority> authorities = sample.getAuthorities();
         if (authorities != null) {
@@ -125,18 +121,15 @@ public class UserManageService implements UserDetailsManager, InitializingBean, 
 
     @Override
     public void deleteUser(String username) {
-        SolarUser solarUser = this.userMapper.selectById(username);
+        SolarUser solarUser = this.getById(username);
         if (solarUser == null || solarUser.getDeleted() == Judge.YES.getCode()) {
             throw new ServiceException(this.messageSource.getMessage("UserDetailsManager.nonExist"),
                     SecurityCode.USER_NOT_FOUND.getCode());
         }
-        this.userMapper.deleteById(username);
+        this.removeById(username);
         this.userRoleManager.modifyRoles(username, null);
-        QueryWrapper<SolarUserReference> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(SolarUserReference::getuId, username);
-        this.userReferenceMapper.delete(queryWrapper);
-        this.secretMapper.delete(new QueryWrapper<SolarSecret>().lambda()
-                .eq(SolarSecret::getuId, username));
+        this.userReferenceManager.removeUser(username);
+        this.userSecretManager.removeUser(username);
     }
 
     @Override
@@ -144,8 +137,7 @@ public class UserManageService implements UserDetailsManager, InitializingBean, 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String self = (String) authentication.getPrincipal();
         // 优先校验旧密码是否正确
-        SolarSecret solarSecret = this.secretMapper.selectOne(
-                new QueryWrapper<SolarSecret>().lambda().eq(SolarSecret::getuId, self));
+        SolarSecret solarSecret = this.userSecretManager.getOne(self);
         if (solarSecret == null) {
             throw new ServiceException(this.messageSource.getMessage("UserDetailsManager.nonExist"),
                     SecurityCode.USER_NOT_FOUND.getCode());
@@ -153,7 +145,7 @@ public class UserManageService implements UserDetailsManager, InitializingBean, 
         PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         if (passwordEncoder.matches(oldPassword, solarSecret.getSecret())) {
             solarSecret.setSecret(passwordEncoder.encode(newPassword));
-            this.secretMapper.updateById(solarSecret);
+            this.userSecretManager.updateById(solarSecret);
             return ;
         }
         throw new ServiceException(this.messageSource.getMessage("ReturnResponseAuthenticationFailHandler.bad_credential"),
@@ -162,10 +154,7 @@ public class UserManageService implements UserDetailsManager, InitializingBean, 
 
     @Override
     public boolean userExists(String username) {
-        QueryWrapper<SolarUserReference> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(SolarUserReference::getReferenceKey, username)
-                .eq(SolarUserReference::getDeleted, Judge.NO);
-        SolarUserReference userReference = this.userReferenceMapper.selectOne(queryWrapper);
+        SolarUserReference userReference = this.userReferenceManager.getByReferenceKey(username, null);
         return userReference != null;
     }
 
@@ -185,7 +174,7 @@ public class UserManageService implements UserDetailsManager, InitializingBean, 
     }
 
     protected SolarUser createUser(String username, LocalDateTime expiredTime) {
-        SolarUserReference userReference = loadUser(username, "DEFAULT");
+        SolarUserReference userReference = this.userReferenceManager.getByReferenceKey(username, "DEFAULT");
         if (userReference != null) {
             if (logger.isDebugEnabled()) {
                 logger.debug("user reference key {} had exist", username);
@@ -194,16 +183,8 @@ public class UserManageService implements UserDetailsManager, InitializingBean, 
                     SecurityCode.USERNAME_EXIST.getCode());
         }
         SolarUser solarUser = SolarUser.expiredUser(expiredTime);
-        this.userMapper.insert(solarUser);
+        this.save(solarUser);
         return solarUser;
-    }
-
-    private SolarUserReference loadUser(String username, String identifier) {
-        QueryWrapper<SolarUserReference> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(SolarUserReference::getReferenceKey, username)
-                .eq(StringUtils.hasText(identifier), SolarUserReference::getIdentifier, identifier)
-                .eq(SolarUserReference::getDeleted, Judge.NO);
-        return this.userReferenceMapper.selectOne(queryWrapper);
     }
 
     public UserDetailsService getUserDetailsService() {
@@ -214,28 +195,20 @@ public class UserManageService implements UserDetailsManager, InitializingBean, 
         this.userDetailsService = userDetailsService;
     }
 
-    public UserReferenceMapper getUserReferenceMapper() {
-        return userReferenceMapper;
+    public UserReferenceManager getUserReferenceManager() {
+        return userReferenceManager;
     }
 
-    public void setUserReferenceMapper(UserReferenceMapper userReferenceMapper) {
-        this.userReferenceMapper = userReferenceMapper;
+    public void setUserReferenceManager(UserReferenceManager userReferenceManager) {
+        this.userReferenceManager = userReferenceManager;
     }
 
-    public SecretMapper getSecretMapper() {
-        return secretMapper;
+    public UserSecretManager getUserSecretManager() {
+        return userSecretManager;
     }
 
-    public void setSecretMapper(SecretMapper secretMapper) {
-        this.secretMapper = secretMapper;
-    }
-
-    public UserMapper getUserMapper() {
-        return userMapper;
-    }
-
-    public void setUserMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
+    public void setUserSecretManager(UserSecretManager userSecretManager) {
+        this.userSecretManager = userSecretManager;
     }
 
     public UserRoleManager getUserRoleManager() {
@@ -244,5 +217,13 @@ public class UserManageService implements UserDetailsManager, InitializingBean, 
 
     public void setUserRoleManager(UserRoleManager userRoleManager) {
         this.userRoleManager = userRoleManager;
+    }
+
+    public MessageSourceAccessor getMessageSource() {
+        return messageSource;
+    }
+
+    public void setMessageSource(MessageSourceAccessor messageSource) {
+        this.messageSource = messageSource;
     }
 }

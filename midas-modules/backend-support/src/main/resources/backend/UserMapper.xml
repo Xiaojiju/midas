@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+  Copyright 2022 一块小饼干(莫杨)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<mapper namespace="com.mtfm.backend_support.service.mapper.UserMapper">
+    <!-- 查询用户分页 -->
+    <select id="selectPage" resultType="com.mtfm.backend_support.service.provisioning.UserInformation">
+
+    </select>
+    <!-- 查询用户 -->
+    <select id="selectInformation" resultType="com.mtfm.backend_support.service.provisioning.UserInformation">
+        SELECT
+            `su`.`u_id` `id`,
+            `sur`.`reference_key` `username`,
+            `su`.`expired_time` `expiredTime`
+        FROM
+            `solar_user` `su`
+            LEFT JOIN `solar_user_reference` `sur` ON `su`.`u_id` = `sur`.`u_id`
+            LEFT JOIN `solar_base_info` `sbi` ON `su`.`u_id` = `sbi`.`u_id`
+        WHERE
+            `su`.`u_id` = #{ userId }
+            AND `sur`.`identifier` = 'DEFAULT'
+    </select>
+</mapper>

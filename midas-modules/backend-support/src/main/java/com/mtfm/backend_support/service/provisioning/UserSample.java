@@ -15,7 +15,9 @@
  */
 package com.mtfm.backend_support.service.provisioning;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mtfm.backend_support.entity.SolarRole;
+import com.mtfm.core.util.TimeConstants;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,6 +38,7 @@ public class UserSample implements UserDetails, CredentialsContainer {
 
     private String password;
 
+    @JsonFormat(pattern = TimeConstants.Y_M_D_H_M_S)
     private LocalDateTime expiredTime;
 
     private List<String> roles;

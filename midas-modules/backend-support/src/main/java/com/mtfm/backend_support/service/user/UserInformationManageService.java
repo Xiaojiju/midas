@@ -1,70 +1,84 @@
 package com.mtfm.backend_support.service.user;
 
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mtfm.backend_support.entity.SolarBaseInfo;
+import com.mtfm.backend_support.entity.SolarUser;
+import com.mtfm.backend_support.entity.SolarUserReference;
 import com.mtfm.backend_support.listener.ClearSessionEvent;
-import com.mtfm.backend_support.service.mapper.UserBaseInfoMapper;
+import com.mtfm.backend_support.service.UserBaseInfoManager;
+import com.mtfm.backend_support.service.UserManager;
+import com.mtfm.backend_support.service.UserReferenceManager;
+import com.mtfm.backend_support.service.mapper.UserMapper;
 import com.mtfm.backend_support.service.provisioning.UserInformation;
 import com.mtfm.backend_support.service.query.ValuePageQuery;
 import com.mtfm.core.util.page.PageTemplate;
-import com.mtfm.security.UserTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.util.Assert;
 
-public class UserInformationManageService implements UserDetailsManager, ApplicationContextAware {
+public class UserInformationManageService extends ServiceImpl<UserMapper, SolarUser>
+        implements UserDetailsManager, UserManager, InitializingBean, ApplicationContextAware {
 
     private static final Logger logger = LoggerFactory.getLogger(UserInformationManageService.class);
 
-    private UserManageService userManageService;
-    private UserBaseInfoMapper userBaseInfoMapper;
     private ApplicationContext applicationContext;
-
-    public UserInformationManageService(UserManageService userManageService, UserBaseInfoMapper userBaseInfoMapper) {
-        this(userManageService, userBaseInfoMapper, null);
-    }
+    private UserManageService userManageService;
+    private UserBaseInfoManager userBaseInfoManager;
+    private UserReferenceManager userReferenceManager;
 
     public UserInformationManageService(UserManageService userManageService,
-                                        UserBaseInfoMapper userBaseInfoMapper,
-                                        ApplicationContext applicationContext) {
+                                        UserBaseInfoManager userBaseInfoManager) {
         this.userManageService = userManageService;
-        this.userBaseInfoMapper = userBaseInfoMapper;
-        this.applicationContext = applicationContext;
+        this.userBaseInfoManager = userBaseInfoManager;
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+    public UserInformation getInformation(String userId) {
+        return null;
+    }
+
+    @Override
+    public PageTemplate<UserInformation> pageList(ValuePageQuery query) {
+        return null;
     }
 
     @Override
     public void createUser(UserDetails user) {
-        this.userManageService.createUser(user);
+        Assert.isInstanceOf(UserInformation.class, user, "parameter class must extends UserInformation.class");
+        UserInformation userInformation = (UserInformation) user;
+        this.userManageService.createUser(userInformation);
+        String username = userInformation.getUsername();
+        SolarUserReference userReference = this.userReferenceManager.getByReferenceKey(username, null);
+        SolarBaseInfo baseInfo = userInformation.unCreatedBaseInfo(userReference.getuId());
+        this.userBaseInfoManager.save(baseInfo);
     }
 
     @Override
     public void updateUser(UserDetails user) {
-        this.userManageService.updateUser(user);
-        if (this.applicationContext != null) {
-            UserTemplate userDetails = (UserTemplate) this.loadUserByUsername(user.getUsername());
-            this.applicationContext.publishEvent(new ClearSessionEvent(this, userDetails.getUsername()));
-            return ;
-        }
-        after();
+        Assert.isInstanceOf(UserInformation.class, user, "parameter class must extends UserInformation.class");
+        UserInformation userInformation = (UserInformation) user;
+        this.userManageService.updateUser(userInformation);
+        SolarBaseInfo baseInfo = this.userBaseInfoManager.getByUserId(userInformation.getId());
+        baseInfo = userInformation.createdBaseInfo(baseInfo.getId());
+        this.userBaseInfoManager.updateById(baseInfo);
+        SolarUserReference userDetails = this.userManageService.getUserReferenceManager().getByReferenceKey(user.getUsername(), null);
+        clearSession(userDetails.getuId());
     }
 
     @Override
     public void deleteUser(String username) {
         this.userManageService.deleteUser(username);
-        if (this.applicationContext != null) {
-            this.applicationContext.publishEvent(new ClearSessionEvent(this, username));
-            return ;
-        }
-        after();
+        // 不删除用户基本信息
+//        this.userBaseInfoManager.removeById(username);
+        clearSession(username);
     }
 
     @Override
@@ -82,15 +96,23 @@ public class UserInformationManageService implements UserDetailsManager, Applica
         return this.userManageService.loadUserByUsername(username);
     }
 
-    public UserInformation loadUser(String userId) {
-        return null;
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        UserReferenceManager userReferenceManager = this.userManageService.getUserReferenceManager();
+        Assert.notNull(userReferenceManager, "UserManageService.class missing argument userReferenceManager.class");
+        this.userReferenceManager = userReferenceManager;
     }
 
-    public PageTemplate<UserInformation> loadUsers(ValuePageQuery pageQuery) {
-        return null;
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 
-    private void after() {
+    private void clearSession(String userId) {
+        if (this.applicationContext != null) {
+            this.applicationContext.publishEvent(new ClearSessionEvent(this, userId));
+            return ;
+        }
         if (logger.isDebugEnabled()) {
             logger.debug("application context is null, could publish event from {}", UserInformationManageService.class);
         }
@@ -104,12 +126,19 @@ public class UserInformationManageService implements UserDetailsManager, Applica
         this.userManageService = userManageService;
     }
 
-    public UserBaseInfoMapper getUserBaseInfoMapper() {
-        return userBaseInfoMapper;
+    public UserBaseInfoManager getUserBaseInfoManager() {
+        return userBaseInfoManager;
     }
 
-    public void setUserBaseInfoMapper(UserBaseInfoMapper userBaseInfoMapper) {
-        this.userBaseInfoMapper = userBaseInfoMapper;
+    public void setUserBaseInfoManager(UserBaseInfoManager userBaseInfoManager) {
+        this.userBaseInfoManager = userBaseInfoManager;
     }
 
+    public UserReferenceManager getUserReferenceManager() {
+        return userReferenceManager;
+    }
+
+    public void setUserReferenceManager(UserReferenceManager userReferenceManager) {
+        this.userReferenceManager = userReferenceManager;
+    }
 }

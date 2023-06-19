@@ -3,6 +3,7 @@ package com.mtfm.backend_support.web;
 import com.mtfm.backend_support.service.provisioning.UserInformation;
 import com.mtfm.backend_support.service.query.ValuePageQuery;
 import com.mtfm.backend_support.service.user.UserInformationManageService;
+import com.mtfm.backend_support.service.user.UserManageService;
 import com.mtfm.core.context.response.RestResult;
 import com.mtfm.core.util.Target;
 import com.mtfm.core.util.page.PageTemplate;
@@ -42,7 +43,7 @@ public class UserServiceApi implements MessageSourceAware {
 
     @GetMapping("/user")
     public RestResult<UserInformation> getUser(Target<String> target) {
-        UserInformation userInformation = this.userManage.loadUser(target.getTarget());
+        UserInformation userInformation = this.userManage.getInformation(target.getTarget());
         if (userInformation == null) {
             return RestResult.fail(this.messageSource.getMessage("UserDetailsManager.nonExist"));
         }
@@ -51,7 +52,7 @@ public class UserServiceApi implements MessageSourceAware {
 
     @GetMapping("/users")
     public RestResult<PageTemplate<UserInformation>> getUsers(ValuePageQuery valuePageQuery) {
-        return RestResult.success(this.userManage.loadUsers(valuePageQuery));
+        return RestResult.success(this.userManage.pageList(valuePageQuery));
     }
 
     @Override

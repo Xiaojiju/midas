@@ -1,7 +1,7 @@
 package com.mtfm.backend_support.config;
 
-import com.mtfm.backend_support.service.RoleManager;
-import com.mtfm.backend_support.service.UserRoleManager;
+import com.mtfm.backend_support.service.*;
+import com.mtfm.backend_support.service.secret.UserSecretManagerService;
 import com.mtfm.backend_support.service.user.*;
 import com.mtfm.backend_support.service.mapper.*;
 import com.mtfm.security.config.WebSecurityProperties;
@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.UserDetailsManager;
 
 @Configuration
 @EnableAsync
@@ -45,19 +44,33 @@ public class ServiceComponents {
     }
 
     @Bean
+    public UserReferenceManager userReferenceManager() {
+        return new UserReferenceManagerService();
+    }
+
+    @Bean
+    public UserSecretManager userSecretManager() {
+        return new UserSecretManagerService();
+    }
+
+    @Bean
+    public UserBaseInfoManager userBaseInfoManager() {
+        return new UserBaseInfoManagerService();
+    }
+
+    @Bean
     public UserManageService userManageService(UserDetailsService userDetailsService,
-                                                 UserReferenceMapper userReferenceMapper,
-                                                 SecretMapper secretMapper,
-                                                 UserMapper userMapper,
+                                                 UserReferenceManager userReferenceManager,
+                                                 UserSecretManager userSecretManager,
                                                  UserRoleManager userRoleManager) {
         return new UserManageService(userDetailsService,
-                userReferenceMapper, secretMapper, userMapper, userRoleManager);
+                userReferenceManager, userSecretManager, userRoleManager);
     }
 
     @Bean
     public UserInformationManageService userInformationManageService(UserManageService userManageService,
-                                                                     UserBaseInfoMapper userBaseInfoMapper) {
-        return new UserInformationManageService(userManageService, userBaseInfoMapper);
+                                                                     UserBaseInfoManager userBaseInfoManager) {
+        return new UserInformationManageService(userManageService, userBaseInfoManager);
     }
 
     public WebSecurityProperties getWebSecurityProperties() {

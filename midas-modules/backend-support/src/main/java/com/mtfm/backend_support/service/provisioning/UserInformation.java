@@ -1,5 +1,7 @@
 package com.mtfm.backend_support.service.provisioning;
 
+import com.mtfm.backend_support.entity.SolarBaseInfo;
+
 import java.time.LocalDate;
 
 public class UserInformation extends UserDetailSample {
@@ -21,6 +23,22 @@ public class UserInformation extends UserDetailSample {
      * 民族
      */
     private String nation;
+
+    public SolarBaseInfo unCreatedBaseInfo() {
+        return new SolarBaseInfo(null, this.nickname, this.avatar, this.gender, this.birth, this.nation, this.getId());
+    }
+
+    public SolarBaseInfo unCreatedBaseInfo(String uId) {
+        return new SolarBaseInfo(null, this.nickname, this.avatar, this.gender, this.birth, this.nation, uId);
+    }
+
+    public SolarBaseInfo createdBaseInfo(String id) {
+        return new SolarBaseInfo(id, this.nickname, this.avatar, this.gender, this.birth, this.nation, this.getId());
+    }
+
+    public SolarBaseInfo createdBaseInfo(String id, String uId) {
+        return new SolarBaseInfo(id, this.nickname, this.avatar, this.gender, this.birth, this.nation, uId);
+    }
 
     public String getNickname() {
         return nickname;
