@@ -1,0 +1,10 @@
+# Project exclude paths
+/midas-common/datasource/target/
+/midas-components/midas-actuator/target/
+/midas-components/security-plus/target/
+/midas-core/target/
+/midas-modules/backend-support/target/
+/midas-security/target/
+/midas-services/midas-backend/target/
+/midas-services/midas-example/target/
+/midas-tools/target/

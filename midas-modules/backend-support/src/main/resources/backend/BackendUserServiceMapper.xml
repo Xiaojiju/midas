@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+  Copyright 2022 一块小饼干(莫杨)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<mapper namespace="com.mtfm.backend_support.service.mapper.BackendUserServiceMapper">
+    <!-- 用户详情Map -->
+    <resultMap id="user_reference_key_map" type="com.mtfm.backend_support.service.provisioning.UserDto">
+        <id column="uniqueId" property="uniqueId" javaType="string" jdbcType="CHAR"/>
+        <result column="currentReferenceKey" property="currentReferenceKey" javaType="string" jdbcType="VARCHAR"/>
+        <result column="secretKey" property="secretKey" javaType="string" jdbcType="VARCHAR"/>
+        <result column="accountExpiredTime" property="accountExpiredTime" javaType="java.time.LocalDateTime"
+                jdbcType="TIMESTAMP" />
+        <result column="accountLocked" property="accountLocked" javaType="com.mtfm.tools.enums.Judge" jdbcType="INTEGER"
+                typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+        <result column="currentMethod" property="currentMethod" javaType="string" jdbcType="VARCHAR"/>
+        <result column="currentMethodExpiredTime" property="currentMethodExpiredTime" javaType="java.time.LocalDateTime"
+                jdbcType="TIMESTAMP"/>
+        <result column="currentMethodLocked" property="currentMethodLocked" javaType="com.mtfm.tools.enums.Judge"
+                jdbcType="INTEGER" typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+        <result column="credentialsExpiredTime" property="credentialsExpiredTime" javaType="java.time.LocalDateTime"
+                jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 查询用户详情 -->
+    <select id="selectUserByReferenceKey" resultMap="user_reference_key_map">
+        SELECT
+            `u`.`u_id` `uniqueId`,
+            `ur`.`reference_key` `currentReferenceKey`,
+            `s`.`secret_key` `secretKey`,
+            `u`.`expired_time` `accountExpiredTime`,
+            `u`.`locked` `accountLocked`,
+            `ur`.`identifier` `currentMethod`,
+            `ur`.`expired_time` `currentMethodExpiredTime`,
+            IF(`ur`.`login_access` = 1, 0, 1) `currentMethodLocked`,
+            `s`.`secret_expired_time` `credentialsExpired`
+        FROM
+            `solar_user_reference` `ur`
+            LEFT JOIN `solar_secret` `s` ON `ur`.`u_id` = `s`.`u_id`
+            LEFT JOIN `solar_user` `u` ON `s`.`u_id` = `u`.`u_id`
+        WHERE
+            `ur`.`reference_key` = #{ referenceKey }
+            AND `ur`.`deleted` = 0
+            AND `u`.`deleted` = 0
+    </select>
+
+<!--    <select id="selectReferenceByKey" resultType="com.mtfm.backend_support.entity.SolarUserReference">-->
+<!--        SELECT-->
+<!--            `sur`.`r_id` `id`,-->
+<!--            `sur`.`identifier` `identifier`,-->
+<!--            `sur`.`reference_key` `referenceKey`,-->
+<!--            `sur`.`validated` `validated`,-->
+<!--            `sur`.`after_reference_key` `afterReferenceKey`,-->
+<!--            `sur`.`expired_time` `expiredTime`,-->
+<!--            `sur`.`validated_time` `validatedTime`,-->
+<!--            `sur`.`login_access` `loginAccess`,-->
+<!--            `sur`.`third_part` `thirdPart`,-->
+<!--            `sur`.`u_id` `uId`,-->
+<!--            `sur`.`create_time` `createTime`,-->
+<!--            `sur`.`create_by` `createBy`,-->
+<!--            `sur`.`update_time` `updateTime`,-->
+<!--            `sur`.`update_by` `updateBy`-->
+<!--        FROM-->
+<!--            `solar_user_reference` `sur`-->
+<!--        <where>-->
+<!--            `sur`.`reference_key` = #{ referenceKey }-->
+<!--            AND `sur`.`deleted` = 0-->
+<!--            <if test="identifier != null and identifier != ''">-->
+<!--                AND `sur`.`identifier` = #{ identifier }-->
+<!--            </if>-->
+<!--        </where>-->
+<!--    </select>-->
+
+<!--    <select id="selectReferenceByUserId" resultType="com.mtfm.backend_support.entity.SolarUserReference">-->
+<!--        SELECT-->
+<!--            `sur`.`r_id` `id`,-->
+<!--            `sur`.`identifier` `identifier`,-->
+<!--            `sur`.`reference_key` `referenceKey`,-->
+<!--            `sur`.`validated` `validated`,-->
+<!--            `sur`.`after_reference_key` `afterReferenceKey`,-->
+<!--            `sur`.`expired_time` `expiredTime`,-->
+<!--            `sur`.`validated_time` `validatedTime`,-->
+<!--            `sur`.`login_access` `loginAccess`,-->
+<!--            `sur`.`third_part` `thirdPart`,-->
+<!--            `sur`.`u_id` `uId`,-->
+<!--            `sur`.`create_time` `createTime`,-->
+<!--            `sur`.`create_by` `createBy`,-->
+<!--            `sur`.`update_time` `updateTime`,-->
+<!--            `sur`.`update_by` `updateBy`-->
+<!--        FROM-->
+<!--            `solar_user_reference` `sur`-->
+<!--        <where>-->
+<!--            `sur`.`u_id` = #{ userId }-->
+<!--            AND `sur`.`deleted` = 0-->
+<!--            <if test="identifier != null and identifier != ''">-->
+<!--                AND `sur`.`identifier` = #{ identifier }-->
+<!--            </if>-->
+<!--        </where>-->
+<!--    </select>-->
+</mapper>
