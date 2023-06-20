@@ -8,4 +8,6 @@ public interface UserReferenceManager extends IService<SolarUserReference> {
     void removeUser(String userId);
 
     SolarUserReference getByReferenceKey(String referenceKey, String identifier);
+
+    SolarUserReference getByUserId(String userId, String identifier);
 }

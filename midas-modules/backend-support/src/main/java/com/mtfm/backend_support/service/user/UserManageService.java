@@ -1,3 +1,18 @@
+/*
+ * Copyright 2022 一块小饼干(莫杨)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.mtfm.backend_support.service.user;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -35,6 +50,11 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
+/**
+ * @author 一块小饼干
+ * @since 1.0.0
+ * 用户关联信息管理业务
+ */
 @Transactional(rollbackFor = Exception.class)
 public class UserManageService extends ServiceImpl<UserMapper, SolarUser> 
         implements UserDetailsManager, InitializingBean, MessageSourceAware {
@@ -97,18 +117,21 @@ public class UserManageService extends ServiceImpl<UserMapper, SolarUser>
                     SecurityCode.USER_NOT_FOUND.getCode());
         }
         solarUser.setLocked(sample.getLocked());
+        solarUser.setExpiredTime(sample.getExpiredTime());
         this.updateById(solarUser);
         SolarUserReference userReference = this.userReferenceManager.getByReferenceKey(user.getUsername(), identifier);
         if (userReference != null && !userReference.getuId().equals(sample.getId())) {
             throw new ServiceException(this.messageSource.getMessage("UserDetailsManager.hadExist"),
                     SecurityCode.USERNAME_EXIST.getCode());
         }
-        SolarUserReference solarUserReference = SolarUserReference.withUId(sample.getId())
-                .withReferenceKey(sample.getUsername()).build();
-        this.userReferenceManager.updateById(solarUserReference);
-
+        userReference = this.userReferenceManager.getByUserId(sample.getId(), identifier);
+        userReference = SolarUserReference.builder(userReference)
+                .withReferenceKey(sample.getUsername())
+                .build();
+        this.userReferenceManager.updateById(userReference);
         if (StringUtils.hasText(sample.getPassword())) {
-            SolarSecret secret = SolarSecret.builder(sample.getId())
+            SolarSecret secret = this.userSecretManager.getOne(sample.getId());
+            secret = SolarSecret.builder(secret)
                     .makeItSecret(sample.getPassword(), null, PasswordEncoderFactories.createDelegatingPasswordEncoder())
                     .build();
             this.userSecretManager.updateById(secret);

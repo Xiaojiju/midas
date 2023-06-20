@@ -16,22 +16,73 @@
   limitations under the License.
 -->
 <mapper namespace="com.mtfm.backend_support.service.mapper.UserMapper">
+    <!-- 用户信息 -->
+    <resultMap id="user_information_map" type="com.mtfm.backend_support.service.provisioning.UserInformation">
+        <id column="id" property="id" jdbcType="VARCHAR" javaType="string"/>
+        <result column="username" property="username" jdbcType="VARCHAR" javaType="string"/>
+        <result column="expiredTime" property="expiredTime" jdbcType="DATE" javaType="java.time.LocalDateTime"/>
+        <result column="identifier" property="identifier" jdbcType="VARCHAR" javaType="string"/>
+        <result column="locked" property="locked" javaType="com.mtfm.tools.enums.Judge"
+                jdbcType="INTEGER" typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+        <result column="nickname" property="nickname" jdbcType="VARCHAR" javaType="string"/>
+        <result column="avatar" property="avatar" jdbcType="VARCHAR" javaType="string"/>
+        <result column="nation" property="nation" jdbcType="VARCHAR" javaType="string"/>
+        <collection property="roles" ofType="com.mtfm.backend_support.service.provisioning.RoleGrantedAuthority">
+            <id column="r_id" property="id" jdbcType="VARCHAR" javaType="string"/>
+            <result column="roleName" property="roleName" javaType="string" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
     <!-- 查询用户分页 -->
-    <select id="selectPage" resultType="com.mtfm.backend_support.service.provisioning.UserInformation">
-
-    </select>
-    <!-- 查询用户 -->
-    <select id="selectInformation" resultType="com.mtfm.backend_support.service.provisioning.UserInformation">
+    <select id="selectUsers" resultMap="user_information_map">
         SELECT
             `su`.`u_id` `id`,
             `sur`.`reference_key` `username`,
-            `su`.`expired_time` `expiredTime`
+            `su`.`expired_time` `expiredTime`,
+            `sur`.`identifier` `identifier`,
+            `su`.`locked` `locked`,
+            `sbi`.`nickname` `nickname`,
+            `sbi`.`avatar` `avatar`,
+            `sbi`.`gender` `gender`,
+            `sbi`.`birth` `birth`,
+            `sr`.`r_id` `r_id`,
+            `sr`.`role_name` `roleName`
         FROM
             `solar_user` `su`
             LEFT JOIN `solar_user_reference` `sur` ON `su`.`u_id` = `sur`.`u_id`
             LEFT JOIN `solar_base_info` `sbi` ON `su`.`u_id` = `sbi`.`u_id`
+            LEFT JOIN `solar_user_role` `ur` ON `su`.`u_id` = `ur`.`u_id`
+            LEFT JOIN `solar_role` `sr` ON `ur`.`r_id` = `sr`.`r_id`
+        <where>
+            `sur`.`identifier` = 'DEFAULT'
+            AND `su`.`deleted` = 0
+            <if test="username != null and username != ''">
+                AND `sur`.`reference_key` LIKE #{ username }
+            </if>
+        </where>
+    </select>
+    <!-- 查询用户 -->
+    <select id="selectInformation" resultMap="user_information_map">
+        SELECT
+            `su`.`u_id` `id`,
+            `sur`.`reference_key` `username`,
+            `su`.`expired_time` `expiredTime`,
+            `sur`.`identifier` `identifier`,
+            `su`.`locked` `locked`,
+            `sbi`.`nickname` `nickname`,
+            `sbi`.`avatar` `avatar`,
+            `sbi`.`gender` `gender`,
+            `sbi`.`birth` `birth`,
+            `sr`.`r_id` `r_id`,
+            `sr`.`role_name` `roleName`
+        FROM
+            `solar_user` `su`
+            LEFT JOIN `solar_user_reference` `sur` ON `su`.`u_id` = `sur`.`u_id`
+            LEFT JOIN `solar_base_info` `sbi` ON `su`.`u_id` = `sbi`.`u_id`
+            LEFT JOIN `solar_user_role` `ur` ON `su`.`u_id` = `ur`.`u_id`
+            LEFT JOIN `solar_role` `sr` ON `ur`.`r_id` = `sr`.`r_id`
         WHERE
             `su`.`u_id` = #{ userId }
+            AND `su`.`deleted` = 0
             AND `sur`.`identifier` = 'DEFAULT'
     </select>
 </mapper>

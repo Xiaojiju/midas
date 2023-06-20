@@ -1,6 +1,23 @@
+/*
+ * Copyright 2022 一块小饼干(莫杨)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.mtfm.backend_support.service.user;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mtfm.backend_support.entity.SolarBaseInfo;
 import com.mtfm.backend_support.entity.SolarUser;
@@ -22,8 +39,17 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+/**
+ * @author 一块小饼干
+ * @since 1.0.0
+ * 用户详细信息管理业务
+ * 其中包含了管理用户基本信息{@link SolarBaseInfo}以及发布事件等升级能力
+ * todo 缺少超级管理员的控制
+ */
+@Transactional(rollbackFor = Exception.class)
 public class UserInformationManageService extends ServiceImpl<UserMapper, SolarUser>
         implements UserDetailsManager, UserManager, InitializingBean, ApplicationContextAware {
 
@@ -42,12 +68,19 @@ public class UserInformationManageService extends ServiceImpl<UserMapper, SolarU
 
     @Override
     public UserInformation getInformation(String userId) {
-        return null;
+        return this.baseMapper.selectInformation(userId);
     }
 
     @Override
     public PageTemplate<UserInformation> pageList(ValuePageQuery query) {
-        return null;
+        IPage<UserInformation> page = new Page<UserInformation>().setCurrent(query.getCurrent())
+                .setSize(query.getSize());
+        page = this.baseMapper.selectUsers(page, query.getValue());
+        return new PageTemplate.PageTemplateBuilder<UserInformation>().setCurrent(page.getCurrent())
+                .setSize(page.getSize())
+                .setItems(page.getRecords())
+                .setTotal(page.getTotal())
+                .build();
     }
 
     @Override
@@ -67,10 +100,13 @@ public class UserInformationManageService extends ServiceImpl<UserMapper, SolarU
         UserInformation userInformation = (UserInformation) user;
         this.userManageService.updateUser(userInformation);
         SolarBaseInfo baseInfo = this.userBaseInfoManager.getByUserId(userInformation.getId());
-        baseInfo = userInformation.createdBaseInfo(baseInfo.getId());
-        this.userBaseInfoManager.updateById(baseInfo);
-        SolarUserReference userDetails = this.userManageService.getUserReferenceManager().getByReferenceKey(user.getUsername(), null);
-        clearSession(userDetails.getuId());
+        if (baseInfo != null) {
+            baseInfo = userInformation.createdBaseInfo(baseInfo.getId(), userInformation.getId());
+        } else {
+            baseInfo = userInformation.unCreatedBaseInfo(userInformation.getId());
+        }
+        this.userBaseInfoManager.saveOrUpdate(baseInfo);
+        clearSession(userInformation.getId());
     }
 
     @Override

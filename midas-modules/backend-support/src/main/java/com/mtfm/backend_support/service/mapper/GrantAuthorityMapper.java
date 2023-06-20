@@ -15,8 +15,12 @@
  */
 package com.mtfm.backend_support.service.mapper;
 
+import com.mtfm.backend_support.entity.SolarMenu;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 @Mapper
 public interface GrantAuthorityMapper {
+
 }

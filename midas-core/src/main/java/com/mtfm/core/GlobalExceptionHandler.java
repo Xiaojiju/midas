@@ -17,9 +17,13 @@ package com.mtfm.core;
 
 import com.mtfm.core.context.exceptions.ServiceException;
 import com.mtfm.core.context.response.RestResult;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -34,7 +38,10 @@ import java.util.List;
  * @author 一块小饼干
  */
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler implements MessageSourceAware {
+
+    private static final String PREFIX_LOCALE = "#";
+    private MessageSourceAccessor messageSource;
 
     @ExceptionHandler({Exception.class})
     public RestResult<Void> exception(Exception e) {
@@ -75,8 +82,28 @@ public class GlobalExceptionHandler {
     private RestResult<Void> parseError(List<FieldError> fieldErrors) {
         StringBuilder msg = new StringBuilder();
         for (FieldError error : fieldErrors) {
-            msg.append(error.getDefaultMessage()).append(";");
+            String defaultMessage = error.getDefaultMessage();
+            if (!StringUtils.hasText(defaultMessage)) {
+                continue;
+            }
+            String localeMessage = localeMessage(defaultMessage);
+            if (StringUtils.hasText(localeMessage)) {
+                defaultMessage = localeMessage;
+            }
+            msg.append(defaultMessage).append(";");
         }
         return RestResult.error(msg.toString());
+    }
+
+    private String localeMessage(String error) {
+        if (error.contains(PREFIX_LOCALE)) {
+            return messageSource.getMessage(error.substring(1));
+        }
+        return null;
+    }
+
+    @Override
+    public void setMessageSource(MessageSource messageSource) {
+        this.messageSource = new MessageSourceAccessor(messageSource);
     }
 }

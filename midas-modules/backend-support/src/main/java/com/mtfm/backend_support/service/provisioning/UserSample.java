@@ -16,12 +16,17 @@
 package com.mtfm.backend_support.service.provisioning;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mtfm.backend_support.entity.SolarRole;
 import com.mtfm.core.util.TimeConstants;
+import com.mtfm.core.util.validator.ValidateGroup;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,8 +37,9 @@ import java.util.stream.Collectors;
  * @author 一块小饼干
  * @since 1.0.0
  */
-public class UserSample implements UserDetails, CredentialsContainer {
+public class UserSample implements UserDetails, CredentialsContainer, Serializable {
 
+    @NotNull(groups = {ValidateGroup.Create.class}, message = "#UserInformation.username")
     private String username;
 
     private String password;
@@ -41,19 +47,18 @@ public class UserSample implements UserDetails, CredentialsContainer {
     @JsonFormat(pattern = TimeConstants.Y_M_D_H_M_S)
     private LocalDateTime expiredTime;
 
-    private List<String> roles;
+    @Size(groups = {ValidateGroup.Create.class}, min = 1, max = 10, message = "#UserInformation.role")
+    private List<RoleGrantedAuthority> roles;
 
     @Override
     public void eraseCredentials() {
         this.password = null;
     }
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (this.roles == null || this.roles.isEmpty()) {
-            return new ArrayList<>();
-        }
-        return roles.stream().map(item -> new SolarRole(item, null)).collect(Collectors.toList());
+        return this.roles;
     }
 
     @Override
@@ -77,14 +82,16 @@ public class UserSample implements UserDetails, CredentialsContainer {
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return true;
@@ -106,12 +113,11 @@ public class UserSample implements UserDetails, CredentialsContainer {
         this.expiredTime = expiredTime;
     }
 
-    public List<String> getRoles() {
+    public List<RoleGrantedAuthority> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<String> roles) {
+    public void setRoles(List<RoleGrantedAuthority> roles) {
         this.roles = roles;
     }
-
 }

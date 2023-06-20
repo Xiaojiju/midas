@@ -53,10 +53,6 @@ public class SolarBaseInfo implements Serializable {
      */
     private LocalDate birth;
     /**
-     * 民族
-     */
-    private String nation;
-    /**
      * 关联用户id
      */
     @TableField("u_id")
@@ -65,13 +61,12 @@ public class SolarBaseInfo implements Serializable {
     public SolarBaseInfo() {
     }
 
-    public SolarBaseInfo(String id, String nickname, String avatar, Integer gender, LocalDate birth, String nation, String uId) {
+    public SolarBaseInfo(String id, String nickname, String avatar, Integer gender, LocalDate birth, String uId) {
         this.id = id;
         this.nickname = nickname;
         this.avatar = avatar;
         this.gender = gender;
         this.birth = birth;
-        this.nation = nation;
         this.uId = uId;
     }
 
@@ -119,14 +114,6 @@ public class SolarBaseInfo implements Serializable {
         this.birth = birth;
     }
 
-    public String getNation() {
-        return nation;
-    }
-
-    public void setNation(String nation) {
-        this.nation = nation;
-    }
-
     public String getuId() {
         return uId;
     }
@@ -145,13 +132,12 @@ public class SolarBaseInfo implements Serializable {
                 && Objects.equals(avatar, that.avatar)
                 && Objects.equals(gender, that.gender)
                 && Objects.equals(birth, that.birth)
-                && Objects.equals(nation, that.nation)
                 && Objects.equals(uId, that.uId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, nickname, avatar, gender, birth, nation, uId);
+        return Objects.hash(id, nickname, avatar, gender, birth, uId);
     }
 
     @Override
@@ -162,7 +148,6 @@ public class SolarBaseInfo implements Serializable {
                 ", avatar='" + avatar + '\'' +
                 ", gender=" + gender +
                 ", birth=" + birth +
-                ", nation='" + nation + '\'' +
                 ", uId='" + uId + '\'' +
                 '}';
     }
@@ -174,7 +159,6 @@ public class SolarBaseInfo implements Serializable {
         private String avatar;
         private Integer gender;
         private LocalDate birth;
-        private String nation;
         private String uId;
 
         private BaseInfoBuilder(String uId) {
@@ -185,7 +169,6 @@ public class SolarBaseInfo implements Serializable {
             this.id = solarBaseInfo.id;
             this.uId = solarBaseInfo.uId;
             this.birth = solarBaseInfo.birth;
-            this.nation = solarBaseInfo.nation;
             this.gender = solarBaseInfo.gender;
             this.avatar = solarBaseInfo.avatar;
             this.nickname = solarBaseInfo.nickname;
@@ -206,11 +189,6 @@ public class SolarBaseInfo implements Serializable {
             return this;
         }
 
-        public BaseInfoBuilder withNation(String nation) {
-            this.nation = nation;
-            return this;
-        }
-
         public BaseInfoBuilder withAvatar(String avatar) {
             this.avatar = avatar;
             return this;
@@ -218,7 +196,7 @@ public class SolarBaseInfo implements Serializable {
 
         public SolarBaseInfo build() {
             Assert.isTrue(StringUtils.hasText(this.uId), "uId could not be null");
-            return new SolarBaseInfo(this.id, this.nickname, this.avatar, this.gender, this.birth, this.nation, this.uId);
+            return new SolarBaseInfo(this.id, this.nickname, this.avatar, this.gender, this.birth, this.uId);
         }
     }
 }

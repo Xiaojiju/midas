@@ -259,7 +259,9 @@ public class SolarUserReference extends BaseModel<SolarUserReference> implements
         }
 
         public UserReferenceBuilder withReferenceKey(final String referenceKey) {
-            this.referenceKey = referenceKey;
+            if (StringUtils.hasText(referenceKey)) {
+                this.referenceKey = referenceKey;
+            }
             return this;
         }
 

@@ -25,4 +25,13 @@ public class UserReferenceManagerService extends ServiceImpl<UserReferenceMapper
                 .eq(StringUtils.hasText(identifier), SolarUserReference::getIdentifier, identifier);
         return this.getOne(queryWrapper);
     }
+
+    @Override
+    public SolarUserReference getByUserId(String userId, String identifier) {
+        QueryWrapper<SolarUserReference> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(SolarUserReference::getuId, userId)
+                .eq(SolarUserReference::getDeleted, Judge.NO)
+                .eq(StringUtils.hasText(identifier), SolarUserReference::getIdentifier, identifier);
+        return this.getOne(queryWrapper);
+    }
 }

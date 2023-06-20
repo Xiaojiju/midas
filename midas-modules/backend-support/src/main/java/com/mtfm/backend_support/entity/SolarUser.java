@@ -33,7 +33,7 @@ import java.time.LocalDateTime;
  * @author 一块小饼干
  * @since 1.0.0
  */
-@TableName("solar_user")
+@TableName(value = "solar_user", autoResultMap = true)
 public class SolarUser extends BaseModel<SolarUser> implements Serializable {
 
     @TableId(value = "u_id", type = IdType.ASSIGN_ID)

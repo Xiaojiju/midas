@@ -64,6 +64,10 @@ public class SolarSecret {
         return new SecretBuilder(uId);
     }
 
+    public static SecretBuilder builder(SolarSecret secret) {
+        return new SecretBuilder(secret);
+    }
+
     public String getId() {
         return id;
     }

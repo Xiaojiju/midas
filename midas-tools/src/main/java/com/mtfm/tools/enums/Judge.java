@@ -1,10 +1,14 @@
 package com.mtfm.tools.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum Judge implements BaseEnum {
 
     YES(1, "YES"), NO(0, "NO");
 
     private int code;
+
+    @JsonValue
     private String desc;
 
     Judge(int code, String desc) {
