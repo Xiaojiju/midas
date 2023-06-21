@@ -24,6 +24,7 @@ import com.mtfm.datasource.handler.CommonEnumTypeHandler;
 import com.mtfm.security.config.WebSecurityProperties;
 import com.mtfm.tools.enums.Judge;
 import org.apache.ibatis.type.JdbcType;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -35,6 +36,9 @@ import java.time.LocalDateTime;
  */
 @TableName(value = "solar_user", autoResultMap = true)
 public class SolarUser extends BaseModel<SolarUser> implements Serializable {
+
+    private static final String DEFAULT_ADMIN_UID = "1";
+    private static final String DEFAULT_ADMIN_USERNAME = "admin";
 
     @TableId(value = "u_id", type = IdType.ASSIGN_ID)
     private String id;
@@ -66,6 +70,17 @@ public class SolarUser extends BaseModel<SolarUser> implements Serializable {
 
     public static SolarUser expiredUser(LocalDateTime expiredTime) {
         return new SolarUser(null, Judge.NO, expiredTime);
+    }
+
+    public static boolean isAdmin(String uId) {
+        if (!StringUtils.hasText(uId)) {
+            return false;
+        }
+        return uId.equals(DEFAULT_ADMIN_UID);
+    }
+
+    public boolean isAdmin() {
+        return this.id.equals(DEFAULT_ADMIN_UID);
     }
 
     public String getId() {

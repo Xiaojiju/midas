@@ -20,6 +20,9 @@ import com.mtfm.backend_support.service.secret.UserSecretManagerService;
 import com.mtfm.backend_support.service.user.*;
 import com.mtfm.backend_support.service.mapper.*;
 import com.mtfm.security.config.WebSecurityProperties;
+import com.mtfm.security.service.GrantAuthorityService;
+import com.mtfm.security.service.NullGrantAuthorityServiceImpl;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -49,8 +52,12 @@ public class ServiceComponents {
      * @return 用户业务处理类 {@link UserDetailsService}
      */
     @Bean
-    public UserDetailsService userDetailsService(BackendUserServiceMapper backendUserServiceMapper) {
-        return new UserDetailsManageService(backendUserServiceMapper, webSecurityProperties.isEnablePermissions());
+    public UserDetailsService userDetailsService(BackendUserServiceMapper backendUserServiceMapper,
+                                                 GrantAuthorityService grantAuthorityService) {
+        UserDetailsManageService userDetailsManageService
+                = new UserDetailsManageService(backendUserServiceMapper, webSecurityProperties.isEnablePermissions());
+        userDetailsManageService.setGrantAuthorityService(grantAuthorityService);
+        return userDetailsManageService;
     }
 
     @Bean
@@ -61,6 +68,11 @@ public class ServiceComponents {
     @Bean
     public UserRoleManager userRoleManager(UserRoleMapper userRoleMapper) {
         return new UserRoleManageService(userRoleMapper);
+    }
+
+    @Bean
+    public RouterManager routerManager(UserRoleManager userRoleManager) {
+        return new GrantUserAuthorityService(userRoleManager);
     }
 
     @Bean
@@ -91,6 +103,11 @@ public class ServiceComponents {
     public UserInformationManageService userInformationManageService(UserManageService userManageService,
                                                                      UserBaseInfoManager userBaseInfoManager) {
         return new UserInformationManageService(userManageService, userBaseInfoManager);
+    }
+
+    @Bean
+    public GrantAuthorityService grantAuthorityService(UserRoleManager userRoleManager) {
+        return new GrantUserAuthorityService(userRoleManager);
     }
 
     public WebSecurityProperties getWebSecurityProperties() {

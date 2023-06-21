@@ -18,6 +18,7 @@ package com.mtfm.core.util;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,7 +35,7 @@ import java.util.function.Predicate;
  * @param <T> 指定需要构建树的类
  * @since 1.0.0
  */
-public class NodeTree<T extends Linkable<T>> implements Tree<T> {
+public class NodeTree<T extends Linkable<T>> implements Tree<T>, Serializable {
 
     private T element;
 

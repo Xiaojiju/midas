@@ -116,6 +116,10 @@ public class UserManageService extends ServiceImpl<UserMapper, SolarUser>
             throw new ServiceException(this.messageSource.getMessage("UserDetailsManager.nonExist"),
                     SecurityCode.USER_NOT_FOUND.getCode());
         }
+        if (solarUser.isAdmin()) {
+            throw new ServiceException(this.messageSource.getMessage("UserInformation.admin"),
+                    SecurityCode.NO_AUTHORITIES.getCode());
+        }
         solarUser.setLocked(sample.getLocked());
         solarUser.setExpiredTime(sample.getExpiredTime());
         this.updateById(solarUser);
@@ -148,6 +152,10 @@ public class UserManageService extends ServiceImpl<UserMapper, SolarUser>
         if (solarUser == null || solarUser.getDeleted() == Judge.YES.getCode()) {
             throw new ServiceException(this.messageSource.getMessage("UserDetailsManager.nonExist"),
                     SecurityCode.USER_NOT_FOUND.getCode());
+        }
+        if (solarUser.isAdmin()) {
+            throw new ServiceException(this.messageSource.getMessage("UserInformation.admin"),
+                    SecurityCode.NO_AUTHORITIES.getCode());
         }
         this.removeById(username);
         this.userRoleManager.modifyRoles(username, null);

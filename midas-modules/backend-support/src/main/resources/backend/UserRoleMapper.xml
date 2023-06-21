@@ -27,7 +27,7 @@
             `sr`.`update_by` `updateBy`
         FROM
             `solar_user_role` `sur`
-        LEFT JOIN `solar_role` `sr` ON `sur`.`u_id` = `sr`.`u_id`
+        LEFT JOIN `solar_role` `sr` ON `sur`.`r_id` = `sr`.`r_id`
         WHERE `sur`.`u_id` = #{ userId } AND `sur`.`r_id` IS NOT NULL
     </select>
 

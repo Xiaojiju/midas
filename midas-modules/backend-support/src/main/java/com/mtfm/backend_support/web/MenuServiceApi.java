@@ -15,8 +15,19 @@
  */
 package com.mtfm.backend_support.web;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.mtfm.backend_support.entity.SolarMenu;
+import com.mtfm.backend_support.service.RouterManager;
+import com.mtfm.backend_support.service.provisioning.GrantedMenu;
+import com.mtfm.backend_support.service.provisioning.GrantedMenuOnRole;
+import com.mtfm.core.context.response.RestResult;
+import com.mtfm.core.util.NodeTree;
+import com.mtfm.core.util.Target;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author 一块小饼干
@@ -26,4 +37,44 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/solar/api/v1")
 public class MenuServiceApi {
+
+    private RouterManager routerManager;
+
+    public MenuServiceApi(RouterManager routerManager) {
+        this.routerManager = routerManager;
+    }
+
+    /**
+     * 获取自己的菜单
+     * @return 菜单树
+     */
+    @GetMapping("/self/menus")
+    public RestResult<List<GrantedMenu>> getMenus() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return RestResult.success(routerManager.getRouterTree((String) authentication.getPrincipal()).getElement().getNodes());
+    }
+
+    /**
+     * 获取全部菜单或某个角色的菜单
+     * @param role 角色id (not required)
+     * @return 菜单树
+     */
+    @GetMapping("/menus")
+    public RestResult<List<GrantedMenu>> getAll(@RequestParam(required = false) Target<String> role) {
+        if (role == null || !StringUtils.hasText(role.getTarget())) {
+            return RestResult.success(routerManager.getRouterTree().getElement().getNodes());
+        } else {
+            return RestResult.success(routerManager.getRouterTreeByRoleId(role.getTarget()).getElement().getNodes());
+        }
+    }
+
+    /**
+     * 给我角色授予权限
+     */
+    @PostMapping("/menus/granted")
+    public RestResult<Object> grantRouter(@RequestBody GrantedMenuOnRole grantedMenuOnRole) {
+        routerManager.grantMenus(grantedMenuOnRole);
+        return RestResult.success();
+    }
+
 }

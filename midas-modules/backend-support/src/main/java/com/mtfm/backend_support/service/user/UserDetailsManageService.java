@@ -19,7 +19,6 @@ import com.mtfm.backend_support.service.mapper.BackendUserServiceMapper;
 import com.mtfm.backend_support.service.provisioning.UserDto;
 import com.mtfm.security.UserTemplate;
 import com.mtfm.security.exceptions.NoAuthoritiesException;
-import com.mtfm.security.service.EmptyPermissionHandler;
 import com.mtfm.security.service.GrantAuthorityHandler;
 import com.mtfm.security.service.GrantAuthorityService;
 import com.mtfm.security.service.NullGrantAuthorityServiceImpl;
@@ -64,15 +63,8 @@ public class UserDetailsManageService implements UserDetailsService, MessageSour
 
     public UserDetailsManageService(BackendUserServiceMapper backendUserServiceMapper,
                                     boolean enablePermissions) {
-        this(backendUserServiceMapper, new EmptyPermissionHandler(), enablePermissions);
-    }
-
-    public UserDetailsManageService(BackendUserServiceMapper backendUserServiceMapper,
-                                    GrantAuthorityHandler permissionHandler,
-                                    boolean enablePermissions) {
         this.enablePermissions = enablePermissions;
         this.backendUserServiceMapper = backendUserServiceMapper;
-        this.permissionHandler = permissionHandler;
     }
 
     @Override
@@ -87,7 +79,7 @@ public class UserDetailsManageService implements UserDetailsService, MessageSour
         List<GrantedAuthority> permissions = new ArrayList<>();
         if (userDto != null) {
             if (this.enablePermissions) {
-                permissions = permissionHandler.handle(loadAuthorities(userDto.getUniqueId()));
+                permissions = loadAuthorities(userDto.getUniqueId());
             }
         }
         return createUserTemplate(username, userDto, permissions);

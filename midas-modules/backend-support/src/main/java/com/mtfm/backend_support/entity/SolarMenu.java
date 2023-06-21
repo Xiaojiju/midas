@@ -20,7 +20,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.mtfm.backend_support.MenuLevel;
-import com.mtfm.core.util.Linkable;
 import com.mtfm.datasource.BaseModel;
 import com.mtfm.tools.enums.Judge;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,9 +33,10 @@ import java.util.List;
  * @author 一块小饼干
  * @since 1.0.0
  * 菜单
+ * 默认的parentId为0，由于在组装{@link com.mtfm.core.util.NodeTree}的时候，需要找到最顶级的id
  */
 @TableName("solar_menu")
-public class SolarMenu extends BaseModel<SolarMenu> implements Linkable<SolarMenu>, Serializable, GrantedAuthority {
+public class SolarMenu extends BaseModel<SolarMenu> implements Serializable {
 
     public static final String DEFAULT_PARENT_ID = "0";
 
@@ -104,41 +104,6 @@ public class SolarMenu extends BaseModel<SolarMenu> implements Linkable<SolarMen
 
     public SolarMenuBuilder withMenuName(String menuName) {
         return SolarMenuBuilder.builder().withMenuName(menuName);
-    }
-
-    @Override
-    public String getAuthority() {
-        return this.perm;
-    }
-
-    @Override
-    public String getKey() {
-        return this.id;
-    }
-
-    @Override
-    public String getParent() {
-        return this.parentId;
-    }
-
-    @Override
-    public List<SolarMenu> getNodes() {
-        return this.nodes;
-    }
-
-    @Override
-    public void setNodes(List<SolarMenu> nodes) {
-        this.nodes = nodes;
-    }
-
-    @Override
-    public int getHeight() {
-        return this.height;
-    }
-
-    @Override
-    public void setHeight(int height) {
-        this.height = height;
     }
 
     public String getId() {

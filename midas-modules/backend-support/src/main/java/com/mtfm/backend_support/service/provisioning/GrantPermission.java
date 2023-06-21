@@ -13,17 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.backend_support.web;
+package com.mtfm.backend_support.service.provisioning;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
  * @author 一块小饼干
  * @since 1.0.0
- * 用户权限
+ * 赋予权限
  */
-@RestController
-@RequestMapping("/solar/api/v1")
-public class UserAuthorityServiceApi {
+public class GrantPermission implements GrantedAuthority {
+
+    private String authority;
+
+    public GrantPermission(String authority) {
+        this.authority = authority;
+    }
+
+    @Override
+    public String getAuthority() {
+        return this.authority;
+    }
+
+    public void setPermission(String authority) {
+        this.authority = authority;
+    }
 }

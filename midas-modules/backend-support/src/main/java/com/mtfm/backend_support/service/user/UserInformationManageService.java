@@ -47,7 +47,6 @@ import org.springframework.util.Assert;
  * @since 1.0.0
  * 用户详细信息管理业务
  * 其中包含了管理用户基本信息{@link SolarBaseInfo}以及发布事件等升级能力
- * todo 缺少超级管理员的控制
  */
 @Transactional(rollbackFor = Exception.class)
 public class UserInformationManageService extends ServiceImpl<UserMapper, SolarUser>
