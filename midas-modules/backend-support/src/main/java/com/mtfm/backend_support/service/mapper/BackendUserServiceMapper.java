@@ -34,20 +34,4 @@ public interface BackendUserServiceMapper {
      */
     UserDto selectUserByReferenceKey(@Param("referenceKey") String referenceKey);
 
-//    /**
-//     * 查询用户关联信息
-//     * @param referenceKey 用户关系key
-//     * @param identifier 关联信息类型
-//     * @return {@link SolarUserReference} 用户关联信息
-//     */
-//    SolarUserReference selectReferenceByKey(@Param("referenceKey") String referenceKey, @Param("identifier") String identifier);
-//
-//    /**
-//     * 查询用户关联信息
-//     * @param userId 用户id
-//     * @param identifier 关联信息类型
-//     * @return {@link SolarUserReference} 用户关联信息
-//     */
-//    SolarUserReference selectReferenceByUserId(@Param("userId") String userId, @Param("identifier") String identifier);
-
 }

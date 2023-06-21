@@ -44,24 +44,44 @@ public class UserServiceApi implements MessageSourceAware {
         this.userManage = userManage;
     }
 
+    /**
+     * 创建用户
+     * @param userInformation 用户详细信息
+     * @return message中为OK则为成功，其他则失败
+     */
     @PostMapping("/user")
     public RestResult<Object> createUser(@RequestBody @Validated({ValidateGroup.Create.class}) UserInformation userInformation) {
         this.userManage.createUser(userInformation);
         return RestResult.success();
     }
 
+    /**
+     * 修改用户
+     * @param userInformation 用户详细信息
+     * @return message中为OK则为成功，其他则失败
+     */
     @PutMapping("/user")
     public RestResult<Object> updateUser(@RequestBody @Validated({ValidateGroup.Update.class})  UserInformation userInformation) {
         this.userManage.updateUser(userInformation);
         return RestResult.success();
     }
 
+    /**
+     * 删除用户
+     * @param target 指定用户id
+     * @return message中为OK则为成功，其他则失败
+     */
     @DeleteMapping("/user")
     public RestResult<Object> removeUser(@RequestBody Target<String> target) {
         this.userManage.deleteUser(target.getTarget());
         return RestResult.success();
     }
 
+    /**
+     * 获取用户信息
+     * @param target 指定用户id
+     * @return 用户详细信息
+     */
     @GetMapping("/user")
     public RestResult<UserInformation> getUser(Target<String> target) {
         UserInformation userInformation = this.userManage.getInformation(target.getTarget());
@@ -71,6 +91,11 @@ public class UserServiceApi implements MessageSourceAware {
         return RestResult.success(userInformation);
     }
 
+    /**
+     * 用户分页
+     * @param valuePageQuery 关键词分页
+     * @return 用户详细信息
+     */
     @GetMapping("/users")
     public RestResult<PageTemplate<UserInformation>> getUsers(ValuePageQuery valuePageQuery) {
         return RestResult.success(this.userManage.pageList(valuePageQuery));

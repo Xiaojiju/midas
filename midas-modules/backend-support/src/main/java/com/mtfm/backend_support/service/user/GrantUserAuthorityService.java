@@ -21,6 +21,11 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
 
+/**
+ * @author 一块小饼干
+ * @since 1.0.0
+ * 用户权限
+ */
 public class GrantUserAuthorityService implements GrantAuthorityService {
 
     private GrantAuthorityMapper grantAuthorityMapper;

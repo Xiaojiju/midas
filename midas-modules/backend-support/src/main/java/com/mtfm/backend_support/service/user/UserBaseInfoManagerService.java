@@ -1,3 +1,18 @@
+/*
+ * Copyright 2022 一块小饼干(莫杨)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.mtfm.backend_support.service.user;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -6,6 +21,10 @@ import com.mtfm.backend_support.entity.SolarBaseInfo;
 import com.mtfm.backend_support.service.UserBaseInfoManager;
 import com.mtfm.backend_support.service.mapper.UserBaseInfoMapper;
 
+/**
+ * @author 一块小饼干
+ * @since 用户基本信息管理
+ */
 public class UserBaseInfoManagerService extends ServiceImpl<UserBaseInfoMapper, SolarBaseInfo> implements UserBaseInfoManager {
 
     @Override

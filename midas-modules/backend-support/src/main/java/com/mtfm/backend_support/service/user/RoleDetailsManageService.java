@@ -39,6 +39,11 @@ import org.springframework.util.StringUtils;
 import java.util.Collection;
 import java.util.Objects;
 
+/**
+ * @author 一块小饼干
+ * @since 1.0.0
+ * 角色管理
+ */
 @Transactional(rollbackFor = Exception.class)
 public class RoleDetailsManageService extends ServiceImpl<RoleMapper, SolarRole> implements RoleManager, InitializingBean, MessageSourceAware {
 
