@@ -28,7 +28,6 @@ import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.Objects;
 
 /**

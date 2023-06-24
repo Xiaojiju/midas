@@ -15,9 +15,10 @@
  */
 package com.mtfm.security.config;
 
-import com.mtfm.security.service.*;
+import com.mtfm.security.service.GrantAuthorityService;
+import com.mtfm.security.service.NullGrantAuthorityServiceImpl;
+import com.mtfm.security.service.NullUserFromJdbcImpl;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetailsService;

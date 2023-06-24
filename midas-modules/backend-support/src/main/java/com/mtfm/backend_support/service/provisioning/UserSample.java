@@ -17,7 +17,6 @@ package com.mtfm.backend_support.service.provisioning;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mtfm.backend_support.entity.SolarRole;
 import com.mtfm.core.util.TimeConstants;
 import com.mtfm.core.util.validator.ValidateGroup;
 import org.springframework.security.core.CredentialsContainer;
@@ -28,10 +27,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author 一块小饼干

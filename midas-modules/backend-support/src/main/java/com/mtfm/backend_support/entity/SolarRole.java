@@ -19,7 +19,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.mtfm.datasource.BaseModel;
-import com.mtfm.tools.enums.Judge;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.io.Serializable;

@@ -27,9 +27,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
 
 /**
  * 自动注入Configuration

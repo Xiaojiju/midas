@@ -16,13 +16,12 @@
 package com.mtfm.backend_support.config;
 
 import com.mtfm.backend_support.service.*;
+import com.mtfm.backend_support.service.mapper.BackendUserServiceMapper;
+import com.mtfm.backend_support.service.mapper.UserRoleMapper;
 import com.mtfm.backend_support.service.secret.UserSecretManagerService;
 import com.mtfm.backend_support.service.user.*;
-import com.mtfm.backend_support.service.mapper.*;
 import com.mtfm.security.config.WebSecurityProperties;
 import com.mtfm.security.service.GrantAuthorityService;
-import com.mtfm.security.service.NullGrantAuthorityServiceImpl;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;

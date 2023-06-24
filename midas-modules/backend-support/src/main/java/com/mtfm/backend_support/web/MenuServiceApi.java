@@ -15,12 +15,10 @@
  */
 package com.mtfm.backend_support.web;
 
-import com.mtfm.backend_support.entity.SolarMenu;
 import com.mtfm.backend_support.service.RouterManager;
 import com.mtfm.backend_support.service.provisioning.GrantedMenu;
 import com.mtfm.backend_support.service.provisioning.GrantedMenuOnRole;
 import com.mtfm.core.context.response.RestResult;
-import com.mtfm.core.util.NodeTree;
 import com.mtfm.core.util.Target;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
