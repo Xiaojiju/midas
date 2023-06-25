@@ -15,10 +15,14 @@
  */
 package com.mtfm.wechat_mp.filter;
 
+import com.mtfm.core.util.tools.IOUtils;
+import com.mtfm.tools.JSONUtils;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -37,6 +41,7 @@ public class MiniProgramAuthenticationProcessingFilter extends AbstractAuthentic
      * 请求api
      */
     private static final String LOGIN_URL = "/solar/api/v1/mp/login";
+    private static final String JS_CODE = "jsCode";
     private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER =
             new AntPathRequestMatcher(LOGIN_URL, "POST");
 
@@ -47,7 +52,12 @@ public class MiniProgramAuthenticationProcessingFilter extends AbstractAuthentic
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException, IOException, ServletException {
-        return null;
+        String jsCode = getCode(request);
+        if (!StringUtils.hasText(jsCode)) {
+            return UsernamePasswordAuthenticationToken.unauthenticated(null, null);
+        }
+        UsernamePasswordAuthenticationToken authentication = UsernamePasswordAuthenticationToken.unauthenticated(jsCode, null);
+        return this.getAuthenticationManager().authenticate(authentication);
     }
 
     @Override
@@ -56,4 +66,8 @@ public class MiniProgramAuthenticationProcessingFilter extends AbstractAuthentic
         super.successfulAuthentication(request, response, chain, authResult);
     }
 
+    private String getCode(HttpServletRequest request) throws IOException {
+        String body = IOUtils.read(request.getInputStream());
+        return JSONUtils.getAsString(body, JS_CODE);
+    }
 }

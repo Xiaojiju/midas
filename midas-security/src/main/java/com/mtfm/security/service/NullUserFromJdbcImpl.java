@@ -1,5 +1,6 @@
 package com.mtfm.security.service;
 
+import com.mtfm.security.UserTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.User;
@@ -22,7 +23,6 @@ public class NullUserFromJdbcImpl implements UserDetailsService {
         if (logger.isDebugEnabled()) {
             logger.debug("you should implement service code by yourself");
         }
-        return User.withUsername("Debug").accountExpired(true).accountLocked(true).credentialsExpired(true)
-                .authorities(new ArrayList<>()).password("[protected]").build();
+        return new UserTemplate("sample", "[protected]", new ArrayList<>());
     }
 }
