@@ -12,7 +12,6 @@
     <artifactId>midas-services</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>midas-example</module>
         <module>midas-app</module>
         <module>midas-backend</module>
     </modules>

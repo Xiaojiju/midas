@@ -5,27 +5,22 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.mtfm</groupId>
-        <artifactId>midas-services</artifactId>
+        <artifactId>third-sdk</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>midas-example</artifactId>
+    <artifactId>weixin</artifactId>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>15</maven.compiler.source>
+        <maven.compiler.target>15</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.mtfm</groupId>
-            <artifactId>midas-security</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.mtfm</groupId>
-            <artifactId>midas-actuator</artifactId>
+            <artifactId>midas-core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
