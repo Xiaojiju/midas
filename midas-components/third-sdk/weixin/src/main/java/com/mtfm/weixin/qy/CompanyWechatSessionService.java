@@ -1,3 +1,18 @@
+/*
+ * Copyright 2022 一块小饼干(莫杨)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.mtfm.weixin.qy;
 
 import com.mtfm.core.ResultCode;
@@ -9,7 +24,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
+/**
+ * @author 一块小饼干
+ * @since 1.0.0
+ * 企业微信接口
+ */
 @Component
 public class CompanyWechatSessionService {
 
@@ -29,6 +48,10 @@ public class CompanyWechatSessionService {
         this.restTemplate = restTemplate;
     }
 
+    /**
+     * 获取接口调用凭证
+     * @return 凭证
+     */
     public String getAccessToken() {
         try {
             CompanyToken companyToken = new CompanyToken(companyWechatConfiguration.getCompanyId(), companyWechatConfiguration.getSecret());
@@ -44,6 +67,11 @@ public class CompanyWechatSessionService {
         }
     }
 
+    /**
+     * 企业微信登陆
+     * @param jsCode 企业微信小程序登陆码
+     * @return 当前登陆session
+     */
     public SessionResultData getSession(String jsCode) {
         try {
             String accessToken = getAccessToken();
