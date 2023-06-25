@@ -36,6 +36,7 @@
 		<commons.io.version>2.11.0</commons.io.version>
 		<commons.fileupload.version>1.4</commons.fileupload.version>
 		<commons.collections.version>3.2.2</commons.collections.version>
+		<jwt.version>4.2.1</jwt.version>
 	</properties>
 	<dependencies>
 		<dependency>

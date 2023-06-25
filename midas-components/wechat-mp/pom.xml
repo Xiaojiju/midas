@@ -5,22 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.mtfm</groupId>
-        <artifactId>midas</artifactId>
+        <artifactId>midas-components</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>midas-components</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>security-plus</module>
-        <module>midas-purchase</module>
-        <module>midas-actuator</module>
-        <module>midas-file-loader</module>
-        <module>third-sdk</module>
-        <module>midas-file-loader/file-core</module>
-        <module>midas-file-loader/qiniu-kodo</module>
-        <module>wechat-mp</module>
-    </modules>
+    <artifactId>wechat-mp</artifactId>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -28,4 +17,16 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.mtfm</groupId>
+            <artifactId>weixin</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mtfm</groupId>
+            <artifactId>midas-security</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>

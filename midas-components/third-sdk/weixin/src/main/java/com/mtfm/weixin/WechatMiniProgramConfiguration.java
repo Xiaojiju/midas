@@ -27,8 +27,8 @@ public class WechatMiniProgramConfiguration {
     private String appId;
 
     @Bean
-    public AccessTemplate accessTemplate() {
-        return new AccessTemplate();
+    public AccessTokenService accessTokenService(RestTemplate restTemplate) {
+        return new AccessTokenService(restTemplate, this);
     }
 
     @Bean
