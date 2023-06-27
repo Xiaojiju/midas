@@ -17,12 +17,15 @@ package com.mtfm.wechat_mp.filter;
 
 import com.mtfm.core.util.tools.IOUtils;
 import com.mtfm.tools.JSONUtils;
+import com.mtfm.wechat_mp.authentication.MiniProgramAuthenticationToken;
+import com.mtfm.wechat_mp.authentication.MpUser;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -44,30 +47,42 @@ public class MiniProgramAuthenticationProcessingFilter extends AbstractAuthentic
     private static final String JS_CODE = "jsCode";
     private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER =
             new AntPathRequestMatcher(LOGIN_URL, "POST");
+    private final AuthenticationSuccessHandler successHandler;
+    private final AuthenticationFailureHandler failureHandler;
 
-    public MiniProgramAuthenticationProcessingFilter() {
+    public MiniProgramAuthenticationProcessingFilter(AuthenticationSuccessHandler successHandler,
+                                                     AuthenticationFailureHandler failureHandler) {
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER);
+        this.successHandler = successHandler;
+        this.failureHandler = failureHandler;
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException, IOException, ServletException {
-        String jsCode = getCode(request);
-        if (!StringUtils.hasText(jsCode)) {
+        MpUser.UserInfo userInfo = getCode(request);
+        if (userInfo == null) {
             return UsernamePasswordAuthenticationToken.unauthenticated(null, null);
         }
-        UsernamePasswordAuthenticationToken authentication = UsernamePasswordAuthenticationToken.unauthenticated(jsCode, null);
-        return this.getAuthenticationManager().authenticate(authentication);
+        MiniProgramAuthenticationToken unauthenticated =
+                MiniProgramAuthenticationToken.unauthenticated(null, userInfo.getMpUser(), userInfo.getJsCode());
+        return this.getAuthenticationManager().authenticate(unauthenticated);
     }
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
-        super.successfulAuthentication(request, response, chain, authResult);
+        this.successHandler.onAuthenticationSuccess(request, response, chain, authResult);
     }
 
-    private String getCode(HttpServletRequest request) throws IOException {
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                              AuthenticationException failed) throws IOException, ServletException {
+        this.failureHandler.onAuthenticationFailure(request, response, failed);
+    }
+
+    private MpUser.UserInfo getCode(HttpServletRequest request) throws IOException {
         String body = IOUtils.read(request.getInputStream());
-        return JSONUtils.getAsString(body, JS_CODE);
+        return JSONUtils.parse(body, MpUser.UserInfo.class);
     }
 }
