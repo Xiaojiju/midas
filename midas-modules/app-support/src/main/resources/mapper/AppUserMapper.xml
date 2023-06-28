@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+  Copyright 2022 一块小饼干(莫杨)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<mapper namespace="com.mtfm.app_support.mapper.AppUserMapper">
+    <!-- 查询用户 -->
+    <select id="selectUserByReferenceKey" resultType="com.mtfm.app_support.service.provisioning.AppUser">
+        SELECT
+            `aa`.`id` `id`,
+            `aur`.`username` `username`,
+            `aur`.`identifier` `identifier`,
+            `as`.`secret` `password`,
+            `as`.`expired_time` `secretExpiredTime`,
+            `aa`.`expired_time` `accountExpiredTime`,
+            `aa`.`locked` `accountLocked`,
+            `aur`.`expired_time` `usernameExpiredTime`,
+            `aur`.`secret_access` `secretAccess`,
+            `aur`.`third_part` `thirdPart`,
+            `aur`.`validated` `validated`
+        FROM
+            `app_user_reference` AS `aur`
+            LEFT JOIN `app_account` AS `aa` ON `aur`.`user_id` = `aa`.`user_id`
+            LEFT JOIN `app_secret` AS `as` ON `aur`.`user_id` = `as`.`user_id`
+        WHERE
+            `aur`.`username` = #{ username }
+            AND `aur`.`login_access` = 1
+            AND `aur`.`deleted` = 0
+    </select>
+</mapper>

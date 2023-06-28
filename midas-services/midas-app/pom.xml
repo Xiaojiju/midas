@@ -35,11 +35,6 @@
         </dependency>
         <dependency>
             <groupId>com.mtfm</groupId>
-            <artifactId>wechat-mp</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.mtfm</groupId>
             <artifactId>app-support</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
