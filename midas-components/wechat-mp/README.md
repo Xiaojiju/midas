@@ -14,6 +14,13 @@
 后，再次获取用户，如果没有获取到，则抛出创建失败的异常；
 
 ## 引用依赖
+```
+        <dependency>
+            <groupId>com.mtfm</groupId>
+            <artifactId>wechat-mp</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+```
 
 在引入该组件后，由于没有构建 **SecurityFilterChain**,所以在引入后，需进行手动引入拦截器链，示例：
 ```
