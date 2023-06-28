@@ -20,9 +20,13 @@ import com.mtfm.security.core.LocalSessionProvider;
 import com.mtfm.security.core.SessionContext;
 import com.mtfm.security.filter.ReturnResponseAuthenticationFailHandler;
 import com.mtfm.security.filter.ReturnResponseAuthenticationSuccessHandler;
+import com.mtfm.wechat_mp.authentication.MiniProgramUserDetailsAuthenticationProvider;
 import com.mtfm.wechat_mp.filter.MiniProgramAuthenticationProcessingFilter;
+import com.mtfm.weixin.mp.service.OauthCodeService;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 /**
@@ -39,6 +43,12 @@ public class MiniProgramSecurityConfiguration {
         MiniProgramAuthenticationProcessingFilter filter = new MiniProgramAuthenticationProcessingFilter(successHandler, new ReturnResponseAuthenticationFailHandler());
         filter.setAuthenticationManager(authenticationManager);
         return filter;
+    }
+
+    @Bean
+    public MiniProgramUserDetailsAuthenticationProvider miniProgramUserDetailsAuthenticationProvider(
+            OauthCodeService oauthCodeService, UserDetailsManager userDetailsManager, RedisTemplate<String, String> redisTemplate) {
+        return new MiniProgramUserDetailsAuthenticationProvider(oauthCodeService, userDetailsManager, redisTemplate);
     }
 
 }

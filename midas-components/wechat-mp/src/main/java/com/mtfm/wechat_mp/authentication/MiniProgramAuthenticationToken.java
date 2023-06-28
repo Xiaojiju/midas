@@ -15,8 +15,6 @@
  */
 package com.mtfm.wechat_mp.authentication;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
@@ -30,10 +28,7 @@ import java.util.Collection;
  */
 public class MiniProgramAuthenticationToken extends AbstractAuthenticationToken {
 
-    private static final Logger logger = LoggerFactory.getLogger(MiniProgramAuthenticationToken.class);
-
     private final Object principal;
-
     private final Object details;
     private final Object credentials;
 
@@ -74,7 +69,7 @@ public class MiniProgramAuthenticationToken extends AbstractAuthenticationToken 
 
     @Override
     public Object getDetails() {
-        return this.c;
+        return this.details;
     }
 
     @Override

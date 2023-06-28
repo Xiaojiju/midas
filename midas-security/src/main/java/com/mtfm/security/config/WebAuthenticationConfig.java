@@ -18,18 +18,22 @@ package com.mtfm.security.config;
 import com.mtfm.security.authentication.UserTemplatePreAuthenticationChecks;
 import com.mtfm.security.cache.RedisUserCache;
 import com.mtfm.security.core.*;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.List;
 
 /**
  * @author 一块小饼干
@@ -90,8 +94,8 @@ public class WebAuthenticationConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(DaoAuthenticationProvider daoAuthenticationProvider) {
-        return new ProviderManager(daoAuthenticationProvider);
+    public AuthenticationManager authenticationManager(List<AuthenticationProvider> providers) {
+        return new ProviderManager(providers);
     }
 
     @Bean
