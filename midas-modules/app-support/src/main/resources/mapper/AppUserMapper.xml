@@ -32,11 +32,11 @@
             `aur`.`validated` `validated`
         FROM
             `app_user_reference` AS `aur`
-            LEFT JOIN `app_account` AS `aa` ON `aur`.`user_id` = `aa`.`user_id`
+            LEFT JOIN `app_account` AS `aa` ON `aur`.`user_id` = `aa`.`id`
             LEFT JOIN `app_secret` AS `as` ON `aur`.`user_id` = `as`.`user_id`
         WHERE
-            `aur`.`username` = #{ username }
+            `aur`.`username` = #{ referenceKey }
             AND `aur`.`login_access` = 1
-            AND `aur`.`deleted` = 0
+            AND `aa`.`deleted` = 0
     </select>
 </mapper>

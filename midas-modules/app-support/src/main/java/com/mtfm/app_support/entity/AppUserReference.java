@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.mtfm.app_support.AppSupportIdentifier;
 import com.mtfm.datasource.handler.CommonEnumTypeHandler;
 import com.mtfm.tools.enums.Judge;
 import org.apache.ibatis.type.JdbcType;
@@ -229,7 +230,7 @@ public class AppUserReference implements Serializable {
 
         public AppUserReferenceBuilder withUsername(String username) {
             this.username = username;
-            this.identifier = "DEFAULT";
+            this.identifier = AppSupportIdentifier.DEFAULT;
             return this;
         }
 

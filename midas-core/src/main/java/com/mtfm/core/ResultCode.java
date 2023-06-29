@@ -22,7 +22,6 @@ package com.mtfm.core;
 public enum ResultCode implements CodeExpression {
 
     OK(0, "OK"),
-
     FAIL(1, "service failed"),
     ERROR(500000, "Server Error"),
     PAYLOAD_TOO_LARGE(500001,  "Request payload is too large"),

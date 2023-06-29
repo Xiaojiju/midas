@@ -46,6 +46,35 @@ public class AppUser implements UserDetails, CredentialsContainer, Serializable 
     private Judge thirdPart;
     private List<GrantedAuthority> authorities;
 
+    public AppUser() {
+    }
+
+    public AppUser(String id, String username, String identifier, String password, LocalDateTime secretExpiredTime,
+                   LocalDateTime accountExpiredTime, Judge validated, Judge accountLocked, String additionalKey,
+                   LocalDateTime usernameExpiredTime, Judge secretAccess, Judge thirdPart, List<GrantedAuthority> authorities) {
+        this.id = id;
+        this.username = username;
+        this.identifier = identifier;
+        this.password = password;
+        this.secretExpiredTime = secretExpiredTime;
+        this.accountExpiredTime = accountExpiredTime;
+        this.validated = validated;
+        this.accountLocked = accountLocked;
+        this.additionalKey = additionalKey;
+        this.usernameExpiredTime = usernameExpiredTime;
+        this.secretAccess = secretAccess;
+        this.thirdPart = thirdPart;
+        this.authorities = authorities;
+    }
+
+    public static AppUserBuilder builder(String userId) {
+        return new AppUserBuilder(userId);
+    }
+
+    public static AppUserBuilder builder() {
+        return new AppUserBuilder(null);
+    }
+
     @Override
     public void eraseCredentials() {
         this.password = null;
@@ -189,5 +218,32 @@ public class AppUser implements UserDetails, CredentialsContainer, Serializable 
 
     public void setSecretAccess(Judge secretAccess) {
         this.secretAccess = secretAccess;
+    }
+
+    public static class AppUserBuilder {
+
+        private final String id;
+        private String username;
+        private String identifier;
+        private String password;
+        private LocalDateTime secretExpiredTime;
+        private LocalDateTime accountExpiredTime;
+        private Judge validated;
+        private Judge accountLocked;
+        private String additionalKey;
+        private LocalDateTime usernameExpiredTime;
+        private Judge secretAccess;
+        private Judge thirdPart;
+        private List<GrantedAuthority> authorities;
+
+        private AppUserBuilder(String id) {
+            this.id = id;
+        }
+
+        public AppUser build() {
+            return new AppUser(this.id, this.username, this.identifier, this.password, this.secretExpiredTime,
+                    this.accountExpiredTime, this.validated, this.accountLocked, this.additionalKey, this.usernameExpiredTime,
+                    this.secretAccess, this.thirdPart, this.authorities);
+        }
     }
 }

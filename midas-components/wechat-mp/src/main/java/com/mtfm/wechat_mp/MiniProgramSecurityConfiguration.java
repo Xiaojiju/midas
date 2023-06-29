@@ -23,6 +23,7 @@ import com.mtfm.security.filter.ReturnResponseAuthenticationSuccessHandler;
 import com.mtfm.wechat_mp.authentication.MiniProgramUserDetailsAuthenticationProvider;
 import com.mtfm.wechat_mp.filter.MiniProgramAuthenticationProcessingFilter;
 import com.mtfm.weixin.mp.service.OauthCodeService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,6 +38,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 public class MiniProgramSecurityConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean(MiniProgramAuthenticationProcessingFilter.class)
     public MiniProgramAuthenticationProcessingFilter miniProgramAuthenticationProcessingFilter(
             AuthenticationManager authenticationManager, LocalSessionProvider localSessionProvider, SessionContext<LocalSession> subjectSessionContext) {
         AuthenticationSuccessHandler successHandler = new ReturnResponseAuthenticationSuccessHandler(subjectSessionContext, localSessionProvider);
@@ -46,6 +48,7 @@ public class MiniProgramSecurityConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(MiniProgramUserDetailsAuthenticationProvider.class)
     public MiniProgramUserDetailsAuthenticationProvider miniProgramUserDetailsAuthenticationProvider(
             OauthCodeService oauthCodeService, UserDetailsManager userDetailsManager, RedisTemplate<String, String> redisTemplate) {
         return new MiniProgramUserDetailsAuthenticationProvider(oauthCodeService, userDetailsManager, redisTemplate);

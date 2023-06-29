@@ -79,7 +79,7 @@ public class WebAuthenticationConfig {
      * 如果需要更多的自定义验证密码的方式，则需要重写{@link DaoAuthenticationProvider}中的additionalAuthenticationChecks方法。
      */
     @Bean
-    @ConditionalOnMissingBean(DaoAuthenticationProvider.class)
+    @ConditionalOnMissingBean(AuthenticationProvider.class)
     public DaoAuthenticationProvider daoAuthenticationProvider(UserDetailsService userDetailsService,
                                                                MessageSource messageSource,
                                                                RedisUserCache redisUserCache,

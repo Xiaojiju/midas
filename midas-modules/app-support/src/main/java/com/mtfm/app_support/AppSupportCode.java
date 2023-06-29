@@ -4,7 +4,7 @@ import com.mtfm.core.CodeExpression;
 
 public enum AppSupportCode implements CodeExpression {
 
-    ;
+    NONE_PASSWORD(500200, "none password");
 
     private final int code;
 

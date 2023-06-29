@@ -16,6 +16,7 @@
 package com.mtfm.backend_support.service.user;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mtfm.backend_support.BackendSupportIdentifier;
 import com.mtfm.backend_support.entity.SolarSecret;
 import com.mtfm.backend_support.entity.SolarUser;
 import com.mtfm.backend_support.entity.SolarUserReference;
@@ -85,7 +86,7 @@ public class UserManageService extends ServiceImpl<UserMapper, SolarUser>
         SolarUserReference.UserReferenceBuilder userReferenceBuilder = SolarUserReference.withUId(solarUser.getId());
         SolarUserReference userReference = userReferenceBuilder.withReferenceKey(username)
                 .allowable(Judge.YES)
-                .identifyBy("DEFAULT")
+                .identifyBy(BackendSupportIdentifier.DEFAULT)
                 .build();
         this.userReferenceManager.save(userReference);
         SolarSecret secret = SolarSecret.builder(solarUser.getId())
@@ -109,7 +110,7 @@ public class UserManageService extends ServiceImpl<UserMapper, SolarUser>
         UserDetailSample sample = (UserDetailSample) user;
         String identifier = sample.getIdentifier();
         if (!StringUtils.hasText(identifier)) {
-            identifier = "DEFAULT";
+            identifier = BackendSupportIdentifier.DEFAULT;
         }
         SolarUser solarUser = this.getById(sample.getId());
         if (solarUser == null) {
@@ -205,7 +206,7 @@ public class UserManageService extends ServiceImpl<UserMapper, SolarUser>
     }
 
     protected SolarUser createUser(String username, LocalDateTime expiredTime) {
-        SolarUserReference userReference = this.userReferenceManager.getByReferenceKey(username, "DEFAULT");
+        SolarUserReference userReference = this.userReferenceManager.getByReferenceKey(username, BackendSupportIdentifier.DEFAULT);
         if (userReference != null) {
             if (logger.isDebugEnabled()) {
                 logger.debug("user reference key {} had exist", username);

@@ -1,1 +1,5 @@
 com.mtfm.app_support.service.user.AppUserManageService
+com.mtfm.app_support.service.user.AppUserAccountServiceImpl
+com.mtfm.app_support.service.user.AppUserBaseInfoServiceImpl
+com.mtfm.app_support.service.user.AppUserReferenceServiceImpl
+com.mtfm.app_support.service.user.AppUserSecretServiceImpl
