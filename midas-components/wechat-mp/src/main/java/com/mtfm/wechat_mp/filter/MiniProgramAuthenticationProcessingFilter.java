@@ -43,7 +43,7 @@ public class MiniProgramAuthenticationProcessingFilter extends AbstractAuthentic
     /**
      * 请求api
      */
-    private static final String LOGIN_URL = "/solar/api/v1/mp/login";
+    private static final String LOGIN_URL = "/solar/api/v1/login/mp";
     private static final String JS_CODE = "jsCode";
     private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER =
             new AntPathRequestMatcher(LOGIN_URL, "POST");

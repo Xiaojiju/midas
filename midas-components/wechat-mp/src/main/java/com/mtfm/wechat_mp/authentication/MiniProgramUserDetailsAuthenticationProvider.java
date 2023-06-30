@@ -31,6 +31,7 @@ import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -120,7 +121,7 @@ public class MiniProgramUserDetailsAuthenticationProvider implements Authenticat
         Assert.notNull(userDetails, "retrieveUser returned null - a violation of the interface contract");
         postCheck.check(userDetails);
         return MiniProgramAuthenticationToken.authenticated(
-                userDetails.getUsername(), userDetails, null, userDetails.getAuthorities());
+                userDetails, authentication, null, userDetails.getAuthorities());
     }
 
     private void storeSession(String openId, String sessionKey) {

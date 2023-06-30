@@ -19,6 +19,8 @@ import com.mtfm.tools.enums.Judge;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -43,15 +45,16 @@ public class AppUser implements UserDetails, CredentialsContainer, Serializable 
     private String additionalKey;
     private LocalDateTime usernameExpiredTime;
     private Judge secretAccess;
+    private Judge loginAccess;
     private Judge thirdPart;
-    private List<GrantedAuthority> authorities;
+    private Collection<? extends GrantedAuthority> authorities;
 
     public AppUser() {
     }
 
     public AppUser(String id, String username, String identifier, String password, LocalDateTime secretExpiredTime,
                    LocalDateTime accountExpiredTime, Judge validated, Judge accountLocked, String additionalKey,
-                   LocalDateTime usernameExpiredTime, Judge secretAccess, Judge thirdPart, List<GrantedAuthority> authorities) {
+                   LocalDateTime usernameExpiredTime, Judge secretAccess, Judge loginAccess, Judge thirdPart, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.identifier = identifier;
@@ -65,14 +68,15 @@ public class AppUser implements UserDetails, CredentialsContainer, Serializable 
         this.secretAccess = secretAccess;
         this.thirdPart = thirdPart;
         this.authorities = authorities;
+        this.loginAccess = loginAccess;
     }
 
-    public static AppUserBuilder builder(String userId) {
-        return new AppUserBuilder(userId);
+    public static AppUserBuilder builder(String username, String identifier) {
+        return new AppUserBuilder(username, identifier);
     }
 
-    public static AppUserBuilder builder() {
-        return new AppUserBuilder(null);
+    public static AppUserBuilder builder(String id, String username, String identifier) {
+        return new AppUserBuilder(id, username, identifier);
     }
 
     @Override
@@ -208,7 +212,7 @@ public class AppUser implements UserDetails, CredentialsContainer, Serializable 
         this.usernameExpiredTime = usernameExpiredTime;
     }
 
-    public void setAuthorities(List<GrantedAuthority> authorities) {
+    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
         this.authorities = authorities;
     }
 
@@ -220,11 +224,19 @@ public class AppUser implements UserDetails, CredentialsContainer, Serializable 
         this.secretAccess = secretAccess;
     }
 
+    public Judge getLoginAccess() {
+        return loginAccess;
+    }
+
+    public void setLoginAccess(Judge loginAccess) {
+        this.loginAccess = loginAccess;
+    }
+
     public static class AppUserBuilder {
 
         private final String id;
-        private String username;
-        private String identifier;
+        private final String username;
+        private final String identifier;
         private String password;
         private LocalDateTime secretExpiredTime;
         private LocalDateTime accountExpiredTime;
@@ -233,17 +245,116 @@ public class AppUser implements UserDetails, CredentialsContainer, Serializable 
         private String additionalKey;
         private LocalDateTime usernameExpiredTime;
         private Judge secretAccess;
+        private Judge loginAccess;
         private Judge thirdPart;
-        private List<GrantedAuthority> authorities;
+        private Collection<? extends GrantedAuthority> authorities;
 
-        private AppUserBuilder(String id) {
+        private AppUserBuilder(String username, String identifier) {
+            this(null, username, identifier);
+        }
+
+        private AppUserBuilder(String id, String username, String identifier) {
+            Assert.isTrue(StringUtils.hasText(username), "username could not be null");
+            Assert.isTrue(StringUtils.hasText(identifier), "identifier could not be null");
             this.id = id;
+            this.username = username;
+            this.identifier = identifier;
         }
 
         public AppUser build() {
+            if (this.validated == null) {
+                this.validated = Judge.NO;
+            }
+            if (this.accountLocked == null) {
+                this.accountLocked = Judge.NO;
+            }
+            if (this.secretAccess == null) {
+                this.secretAccess = Judge.YES;
+            }
+            if (this.thirdPart == null) {
+                this.thirdPart = Judge.NO;
+            }
+            if (this.loginAccess == null) {
+                this.loginAccess = Judge.YES;
+            }
             return new AppUser(this.id, this.username, this.identifier, this.password, this.secretExpiredTime,
                     this.accountExpiredTime, this.validated, this.accountLocked, this.additionalKey, this.usernameExpiredTime,
-                    this.secretAccess, this.thirdPart, this.authorities);
+                    this.secretAccess, this.thirdPart, this.loginAccess, this.authorities);
+        }
+
+        public AppUserBuilder withPassword(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public AppUserBuilder secretExpiredAt(LocalDateTime localDateTime) {
+            this.secretExpiredTime = localDateTime;
+            return this;
+        }
+
+        public AppUserBuilder accountExpiredAt(LocalDateTime accountExpiredTime) {
+            this.accountExpiredTime = accountExpiredTime;
+            return this;
+        }
+
+        public AppUserBuilder validate(boolean validated) {
+            if (validated) {
+                this.validated = Judge.YES;
+            } else {
+                this.validated = Judge.NO;
+            }
+            return this;
+        }
+
+        public AppUserBuilder accountLocked(boolean locked) {
+            if (locked) {
+                this.accountLocked = Judge.YES;
+            } else {
+                this.accountLocked = Judge.NO;
+            }
+            return this;
+        }
+
+        public AppUserBuilder withAdditional(String additionalKey) {
+            this.additionalKey = additionalKey;
+            return this;
+        }
+
+        public AppUserBuilder usernameExpiredAt(LocalDateTime usernameExpiredTime) {
+            this.usernameExpiredTime = usernameExpiredTime;
+            return this;
+        }
+
+        public AppUserBuilder usedSecret(boolean secretAccess) {
+            if (secretAccess) {
+                this.secretAccess = Judge.YES;
+            } else {
+                this.secretAccess = Judge.NO;
+            }
+            return this;
+        }
+
+        public AppUserBuilder thirdPart(boolean thirdPart) {
+            if (thirdPart) {
+                this.thirdPart = Judge.YES;
+            } else {
+                this.thirdPart = Judge.NO;
+            }
+            return this;
+        }
+
+        public AppUserBuilder putAuthorities(Collection<? extends GrantedAuthority> authorities) {
+            this.authorities = authorities;
+            return this;
+        }
+
+        public AppUserBuilder usedUsername(boolean loginAccess) {
+            if (loginAccess) {
+                this.loginAccess = Judge.YES;
+            } else {
+                this.loginAccess = Judge.NO;
+            }
+            return this;
         }
     }
 }

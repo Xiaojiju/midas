@@ -82,6 +82,10 @@ public class AppUserBaseInfo implements Serializable {
         return new AppUserBaseInfoBuilder(id, userId);
     }
 
+    public static AppUserBaseInfoBuilder uncreated() {
+        return new AppUserBaseInfoBuilder();
+    }
+
     public static AppUserBaseInfoBuilder uncreated(String userId) {
         return new AppUserBaseInfoBuilder(userId);
     }
@@ -176,7 +180,10 @@ public class AppUserBaseInfo implements Serializable {
 
         private String city;
 
-        private final String userId;
+        private String userId;
+
+        private AppUserBaseInfoBuilder() {
+        }
 
         private AppUserBaseInfoBuilder(String userId) {
             Assert.isTrue(StringUtils.hasText(userId), "userId could not be null or empty");
@@ -200,7 +207,7 @@ public class AppUserBaseInfo implements Serializable {
             return this;
         }
 
-        public AppUserBaseInfoBuilder withGender(int gender) {
+        public AppUserBaseInfoBuilder withGender(Integer gender) {
             this.gender = gender;
             return this;
         }

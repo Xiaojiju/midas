@@ -33,14 +33,15 @@ public class AppUserInfoDetailsService implements UserDetailsManager, MessageSou
     public void createUser(UserDetails user) {
         Assert.isInstanceOf(AppUserDetails.class, user, "only supports AppUserDetails.class");
         AppUserDetails appUserDetails = (AppUserDetails) user;
-        this.appUserManageService.createUser(user);
-        AppUserReference savedUser = this.appUserManageService.getAppUserReferenceService().getOneByUsername(user.getUsername());
+        AppUserBaseInfo appUserBaseInfo = appUserDetails.getAppUserBaseInfo();
+        this.appUserManageService.createUser(appUserDetails);
+        AppUserReference savedUser = this.appUserManageService.getAppUserReferenceService().getOneByUsername(appUserDetails.getUsername());
         AppUserBaseInfo build = AppUserBaseInfo.uncreated(savedUser.getUserId())
-                .whereFrom(appUserDetails.getCountry(), appUserDetails.getProvince(), appUserDetails.getCity())
-                .withAvatar(appUserDetails.getAvatar())
-                .withBirth(appUserDetails.getBirth())
-                .withGender(appUserDetails.getGender())
-                .withNickname(appUserDetails.getNickname())
+                .whereFrom(appUserBaseInfo.getCountry(), appUserBaseInfo.getProvince(), appUserBaseInfo.getCity())
+                .withAvatar(appUserBaseInfo.getAvatar())
+                .withBirth(appUserBaseInfo.getBirth())
+                .withGender(appUserBaseInfo.getGender())
+                .withNickname(appUserBaseInfo.getNickname())
                 .build();
         this.appUserBaseInfoService.save(build);
     }
@@ -49,15 +50,15 @@ public class AppUserInfoDetailsService implements UserDetailsManager, MessageSou
     public void updateUser(UserDetails user) {
         Assert.isInstanceOf(AppUserDetails.class, user, "only supports AppUserDetails.class");
         AppUserDetails appUserDetails = (AppUserDetails) user;
-        this.appUserManageService.updateUser(user);
-        AppUser appUser = appUserDetails.getAppUser();
-        AppUserBaseInfo userBaseInfo = this.appUserBaseInfoService.getByUserId(appUser.getId());
+        AppUserBaseInfo appUserBaseInfo = appUserDetails.getAppUserBaseInfo();
+        this.appUserManageService.updateUser(appUserDetails);
+        AppUserBaseInfo userBaseInfo = this.appUserBaseInfoService.getByUserId(appUserDetails.getId());
         AppUserBaseInfo build = AppUserBaseInfo.created(userBaseInfo.getId(), userBaseInfo.getUserId())
-                .whereFrom(appUserDetails.getCountry(), appUserDetails.getProvince(), appUserDetails.getCity())
-                .withAvatar(appUserDetails.getAvatar())
-                .withBirth(appUserDetails.getBirth())
-                .withGender(appUserDetails.getGender())
-                .withNickname(appUserDetails.getNickname())
+                .whereFrom(appUserBaseInfo.getCountry(), appUserBaseInfo.getProvince(), appUserBaseInfo.getCity())
+                .withAvatar(appUserBaseInfo.getAvatar())
+                .withBirth(appUserBaseInfo.getBirth())
+                .withGender(appUserBaseInfo.getGender())
+                .withNickname(appUserBaseInfo.getNickname())
                 .build();
         this.appUserBaseInfoService.updateById(build);
     }

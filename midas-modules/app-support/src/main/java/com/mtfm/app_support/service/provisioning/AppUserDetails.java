@@ -1,77 +1,48 @@
 package com.mtfm.app_support.service.provisioning;
 
+import com.mtfm.app_support.entity.AppUserBaseInfo;
+import com.mtfm.tools.enums.Judge;
+import org.springframework.security.core.GrantedAuthority;
+
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 public class AppUserDetails extends AppUser implements Serializable {
 
-    private String nickname;
+    private AppUserBaseInfo appUserBaseInfo;
 
-    private String avatar;
-
-    private Integer gender;
-
-    private LocalDate birth;
-
-    private String country;
-
-    private String province;
-
-    private String city;
-
-    public String getNickname() {
-        return nickname;
+    public AppUserDetails() {
+        this(null);
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public AppUserDetails(AppUserBaseInfo appUserBaseInfo) {
+        this(appUserBaseInfo, new AppUser());
     }
 
-    public String getAvatar() {
-        return avatar;
+    public AppUserDetails(AppUserBaseInfo appUserBaseInfo, AppUser appUser) {
+        this(appUser.getId(), appUser.getUsername(), appUser.getIdentifier(), appUser.getPassword(), appUser.getSecretExpiredTime(),
+                appUser.getAccountExpiredTime(), appUser.getValidated(), appUser.getAccountLocked(), appUser.getAdditionalKey(),
+                appUser.getUsernameExpiredTime(), appUser.getSecretAccess(), appUser.getThirdPart(), appUser.getLoginAccess(),
+                appUser.getAuthorities(), appUserBaseInfo);
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
+    public AppUserDetails(String id, String username, String identifier, String password, LocalDateTime secretExpiredTime,
+                          LocalDateTime accountExpiredTime, Judge validated, Judge accountLocked, String additionalKey,
+                          LocalDateTime usernameExpiredTime, Judge secretAccess, Judge thirdPart, Judge loginAccess,
+                          Collection<? extends GrantedAuthority> authorities, AppUserBaseInfo appUserBaseInfo) {
+        super(id, username, identifier, password, secretExpiredTime, accountExpiredTime, validated, accountLocked,
+                additionalKey, usernameExpiredTime, secretAccess, thirdPart, loginAccess, authorities);
+        this.appUserBaseInfo = appUserBaseInfo;
     }
 
-    public Integer getGender() {
-        return gender;
+    public AppUserBaseInfo getAppUserBaseInfo() {
+        return appUserBaseInfo;
     }
 
-    public void setGender(Integer gender) {
-        this.gender = gender;
-    }
-
-    public LocalDate getBirth() {
-        return birth;
-    }
-
-    public void setBirth(LocalDate birth) {
-        this.birth = birth;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public String getProvince() {
-        return province;
-    }
-
-    public void setProvince(String province) {
-        this.province = province;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
+    public void setAppUserBaseInfo(AppUserBaseInfo appUserBaseInfo) {
+        this.appUserBaseInfo = appUserBaseInfo;
     }
 }

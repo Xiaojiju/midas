@@ -61,9 +61,10 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    @ConditionalOnMissingBean(TokenResolutionProcessingFilter.class)
     public TokenResolutionProcessingFilter tokenResolutionProcessingFilter(SessionContext<LocalSession> sessionContext) {
         List<String> skipUrls = new ArrayList<>();
-        skipUrls.add("/solar/api/v1/login");
+        skipUrls.add("/solar/api/v1/login/**");
         return new TokenResolutionProcessingFilter(skipUrls.toArray(new String[0]), sessionContext);
     }
 
