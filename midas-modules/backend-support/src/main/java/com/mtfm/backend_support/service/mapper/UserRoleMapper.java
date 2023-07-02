@@ -15,6 +15,7 @@
  */
 package com.mtfm.backend_support.service.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mtfm.backend_support.entity.SolarRole;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -28,7 +29,7 @@ import java.util.List;
  * 用户角色Mapper
  */
 @Mapper
-public interface UserRoleMapper {
+public interface UserRoleMapper extends BaseMapper<SolarRole> {
     /**
      * 查询用户所有角色
      * @param userId 用户id

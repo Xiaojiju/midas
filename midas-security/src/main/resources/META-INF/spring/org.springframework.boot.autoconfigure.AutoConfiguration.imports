@@ -1,1 +1,2 @@
-com.mtfm.security.config.SecurityAutoConfiguration
+com.mtfm.security.config.WebAutoSecurityConfiguration
+com.mtfm.security.core.AnySessionContextHandler

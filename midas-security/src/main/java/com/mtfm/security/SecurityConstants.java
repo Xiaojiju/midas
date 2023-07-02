@@ -32,4 +32,6 @@ public final class SecurityConstants {
 
     public static final String SESSION_UID_CLAIM = "u_id";
 
+    public static final String SESSION_USERNAME = "username";
+
 }

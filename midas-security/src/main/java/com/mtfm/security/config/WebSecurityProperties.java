@@ -16,7 +16,6 @@
 package com.mtfm.security.config;
 
 import com.mtfm.security.SecurityConstants;
-import com.mtfm.security.context.AuthStyle;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -49,10 +48,6 @@ public class WebSecurityProperties {
      * 若关闭了认证方式过期，当认证方式过期后，依然会提示过期，但是不会强制要求用户更新
      */
     private boolean enableMethodExpired;
-    /**
-     * 多设备登陆认证{@link AuthStyle}，默认为{@link AuthStyle#SINGLE}
-     */
-    private String multiDevices;
 
     public boolean isEnablePermissions() {
         return enablePermissions;
@@ -86,11 +81,4 @@ public class WebSecurityProperties {
         this.enableMethodExpired = enableMethodExpired;
     }
 
-    public String getMultiDevices() {
-        return multiDevices;
-    }
-
-    public void setMultiDevices(String multiDevices) {
-        this.multiDevices = multiDevices;
-    }
 }

@@ -18,7 +18,7 @@ public abstract class HttpRequestHolder {
         if (requestAttributes != null) {
             return requestAttributes.getRequest();
         }
-        throw new NullPointerException("request is null");
+        return null;
     }
 
     public static String get(String header) {

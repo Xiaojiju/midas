@@ -22,10 +22,10 @@ import com.mtfm.backend_support.entity.SolarUser;
 import com.mtfm.backend_support.service.RouterManager;
 import com.mtfm.backend_support.service.UserRoleManager;
 import com.mtfm.backend_support.service.mapper.MenuMapper;
-import com.mtfm.backend_support.service.provisioning.GrantPermission;
 import com.mtfm.backend_support.service.provisioning.GrantedMenu;
 import com.mtfm.backend_support.service.provisioning.GrantedMenuOnRole;
 import com.mtfm.core.util.NodeTree;
+import com.mtfm.security.core.GrantPermission;
 import com.mtfm.security.service.GrantAuthorityService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.CollectionUtils;
@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
  * 用户权限
  */
 public class GrantUserAuthorityService extends ServiceImpl<MenuMapper, SolarMenu> implements GrantAuthorityService, RouterManager {
+
     private UserRoleManager userRoleManager;
 
     public GrantUserAuthorityService(UserRoleManager userRoleManager) {
@@ -102,7 +103,7 @@ public class GrantUserAuthorityService extends ServiceImpl<MenuMapper, SolarMenu
         return menus;
     }
 
-    public UserRoleManager getUserRoleManager() {
+    protected UserRoleManager getUserRoleManager() {
         return userRoleManager;
     }
 

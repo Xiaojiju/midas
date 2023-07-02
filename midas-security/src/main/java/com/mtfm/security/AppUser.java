@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.app_support.service.provisioning;
+package com.mtfm.security;
 
 import com.mtfm.tools.enums.Judge;
 import org.springframework.security.core.CredentialsContainer;
@@ -25,7 +25,6 @@ import org.springframework.util.StringUtils;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author 一块小饼干
@@ -54,7 +53,8 @@ public class AppUser implements UserDetails, CredentialsContainer, Serializable 
 
     public AppUser(String id, String username, String identifier, String password, LocalDateTime secretExpiredTime,
                    LocalDateTime accountExpiredTime, Judge validated, Judge accountLocked, String additionalKey,
-                   LocalDateTime usernameExpiredTime, Judge secretAccess, Judge loginAccess, Judge thirdPart, Collection<? extends GrantedAuthority> authorities) {
+                   LocalDateTime usernameExpiredTime, Judge secretAccess, Judge loginAccess, Judge thirdPart,
+                   Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.identifier = identifier;

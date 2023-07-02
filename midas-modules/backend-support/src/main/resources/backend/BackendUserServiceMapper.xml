@@ -16,26 +16,28 @@
   limitations under the License.
 -->
 <mapper namespace="com.mtfm.backend_support.service.mapper.BackendUserServiceMapper">
-    <!-- 用户详情Map -->
-    <resultMap id="user_reference_key_map" type="com.mtfm.backend_support.service.provisioning.UserDto">
-        <id column="uniqueId" property="uniqueId" javaType="string" jdbcType="CHAR"/>
-        <result column="currentReferenceKey" property="currentReferenceKey" javaType="string" jdbcType="VARCHAR"/>
-        <result column="secretKey" property="secretKey" javaType="string" jdbcType="VARCHAR"/>
-        <result column="accountExpiredTime" property="accountExpiredTime" javaType="java.time.LocalDateTime"
-                jdbcType="TIMESTAMP" />
+    <!-- AppUser Mapper Result-->
+    <resultMap id="app_user_result_map" type="com.mtfm.security.AppUser">
+        <id column="id" property="id" javaType="string" jdbcType="VARCHAR"/>
+        <result column="username" property="username" javaType="string" jdbcType="VARCHAR"/>
+        <result column="identifier" property="identifier" javaType="string" jdbcType="VARCHAR"/>
+        <result column="password" property="password" javaType="string" jdbcType="VARCHAR"/>
+        <result column="secretExpiredTime" property="secretExpiredTime" javaType="java.time.LocalDateTime" jdbcType="DATE"/>
+        <result column="accountExpiredTime" property="accountExpiredTime" javaType="java.time.LocalDateTime" jdbcType="DATE" />
         <result column="accountLocked" property="accountLocked" javaType="com.mtfm.tools.enums.Judge" jdbcType="INTEGER"
                 typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
-        <result column="currentMethod" property="currentMethod" javaType="string" jdbcType="VARCHAR"/>
-        <result column="currentMethodExpiredTime" property="currentMethodExpiredTime" javaType="java.time.LocalDateTime"
-                jdbcType="TIMESTAMP"/>
-        <result column="currentMethodLocked" property="currentMethodLocked" javaType="com.mtfm.tools.enums.Judge"
-                jdbcType="INTEGER" typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
-        <result column="credentialsExpiredTime" property="credentialsExpiredTime" javaType="java.time.LocalDateTime"
-                jdbcType="TIMESTAMP"/>
+        <result column="usernameExpiredTime" property="usernameExpiredTime" javaType="java.time.LocalDateTime" jdbcType="DATE" />
+        <result column="secretAccess" property="secretAccess" javaType="com.mtfm.tools.enums.Judge" jdbcType="INTEGER"
+                typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+        <result column="thirdPart" property="thirdPart" javaType="com.mtfm.tools.enums.Judge" jdbcType="INTEGER"
+                typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+        <result column="validated" property="validated" javaType="com.mtfm.tools.enums.Judge" jdbcType="INTEGER"
+                typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
     </resultMap>
 
+    <!-- todo 需要进行修改 -->
     <!-- 查询用户详情 -->
-    <select id="selectUserByReferenceKey" resultMap="user_reference_key_map">
+    <select id="selectUserByReferenceKey" resultMap="app_user_result_map">
         SELECT
             `u`.`u_id` `uniqueId`,
             `ur`.`reference_key` `currentReferenceKey`,

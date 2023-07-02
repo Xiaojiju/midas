@@ -1,6 +1,6 @@
 package com.mtfm.security.filter;
 
-import com.mtfm.security.core.LocalSession;
+import com.mtfm.security.core.SecuritySessionContextHolder;
 import com.mtfm.security.core.SessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +14,13 @@ import javax.servlet.http.HttpServletResponse;
 public class CacheClearLogoutHandler implements LogoutHandler {
 
     private final Logger logger = LoggerFactory.getLogger(CacheClearLogoutHandler.class);
-    private SessionContext<LocalSession> sessionContext;
+    private SessionContext<Authentication> sessionContext;
 
-    public CacheClearLogoutHandler(SessionContext<LocalSession> sessionContext) {
+    public CacheClearLogoutHandler() {
+        this(new SecuritySessionContextHolder());
+    }
+
+    public CacheClearLogoutHandler(SessionContext<Authentication> sessionContext) {
         this.sessionContext = sessionContext;
     }
 
@@ -31,11 +35,11 @@ public class CacheClearLogoutHandler implements LogoutHandler {
         }
     }
 
-    public SessionContext<LocalSession> getSessionContext() {
+    protected SessionContext<Authentication> getSessionContext() {
         return sessionContext;
     }
 
-    public void setSessionContext(SessionContext<LocalSession> sessionContext) {
+    public void setSessionContext(SessionContext<Authentication> sessionContext) {
         this.sessionContext = sessionContext;
     }
 }

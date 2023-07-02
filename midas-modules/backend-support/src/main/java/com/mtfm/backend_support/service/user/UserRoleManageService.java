@@ -15,7 +15,7 @@
  */
 package com.mtfm.backend_support.service.user;
 
-import com.mtfm.backend_support.config.BackendSupportMessageSource;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mtfm.backend_support.entity.SolarRole;
 import com.mtfm.backend_support.service.UserRoleManager;
 import com.mtfm.backend_support.service.mapper.UserRoleMapper;
@@ -41,14 +41,9 @@ import java.util.stream.Collectors;
 public class UserRoleManageService implements UserRoleManager, MessageSourceAware, InitializingBean {
 
     protected MessageSourceAccessor messageSource;
-    private UserRoleMapper userRoleMapper;
+    private final UserRoleMapper userRoleMapper;
 
     public UserRoleManageService(UserRoleMapper userRoleMapper) {
-        this(BackendSupportMessageSource.getAccessor(), userRoleMapper);
-    }
-
-    public UserRoleManageService(MessageSourceAccessor messageSource, UserRoleMapper userRoleMapper) {
-        this.messageSource = messageSource;
         this.userRoleMapper = userRoleMapper;
     }
 
@@ -77,11 +72,4 @@ public class UserRoleManageService implements UserRoleManager, MessageSourceAwar
         this.messageSource = new MessageSourceAccessor(messageSource);
     }
 
-    public UserRoleMapper getUserRoleMapper() {
-        return userRoleMapper;
-    }
-
-    public void setUserRoleMapper(UserRoleMapper userRoleMapper) {
-        this.userRoleMapper = userRoleMapper;
-    }
 }

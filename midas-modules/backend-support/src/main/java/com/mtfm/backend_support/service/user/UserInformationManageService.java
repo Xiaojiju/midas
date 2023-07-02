@@ -59,6 +59,10 @@ public class UserInformationManageService extends ServiceImpl<UserMapper, SolarU
     private UserBaseInfoManager userBaseInfoManager;
     private UserReferenceManager userReferenceManager;
 
+    public UserInformationManageService(UserManageService userManageService) {
+        this(userManageService, new UserBaseInfoManagerService());
+    }
+
     public UserInformationManageService(UserManageService userManageService,
                                         UserBaseInfoManager userBaseInfoManager) {
         this.userManageService = userManageService;

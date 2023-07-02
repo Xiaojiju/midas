@@ -15,7 +15,7 @@
  */
 package com.mtfm.backend_support.service.mapper;
 
-import com.mtfm.backend_support.service.provisioning.UserDto;
+import com.mtfm.security.AppUser;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -30,8 +30,8 @@ public interface BackendUserServiceMapper {
     /**
      * 查询用户详情
      * @param referenceKey 用户关系key
-     * @return {@link UserDto} 用户详细信息
+     * @return {@link AppUser} 用户详细信息
      */
-    UserDto selectUserByReferenceKey(@Param("referenceKey") String referenceKey);
+    AppUser selectUserByReferenceKey(@Param("referenceKey") String referenceKey);
 
 }

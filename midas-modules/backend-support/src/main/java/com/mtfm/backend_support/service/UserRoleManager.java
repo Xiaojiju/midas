@@ -15,6 +15,7 @@
  */
 package com.mtfm.backend_support.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.mtfm.backend_support.entity.SolarRole;
 import org.springframework.security.core.GrantedAuthority;
 

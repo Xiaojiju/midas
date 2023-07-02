@@ -17,8 +17,17 @@ package com.mtfm.security.core;
 
 import com.mtfm.security.authentication.SecurityRedisKey;
 import com.mtfm.tools.JSONUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
@@ -26,9 +35,14 @@ import org.springframework.util.StringUtils;
  * @author 一块小饼干
  * @since 1.0.0
  */
-public class AnySessionContextHandler implements AnySessionContext<UserSubject> {
+@Component
+public class AnySessionContextHandler implements AnySessionContext<UserSubject>, ApplicationContextAware, InitializingBean {
 
+    private static final Logger logger = LoggerFactory.getLogger(AnySessionContextHandler.class);
     private RedisTemplate<String, String> redisTemplate;
+
+    @Autowired
+    public AnySessionContextHandler() {}
 
     public AnySessionContextHandler(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -53,6 +67,30 @@ public class AnySessionContextHandler implements AnySessionContext<UserSubject> 
     @Override
     public void clear(String id) {
         this.redisTemplate.delete(getKey(id));
+    }
+
+    /**
+     * 通过applicationContext注入RedisTemplate
+     * @param applicationContext the ApplicationContext object to be used by this object
+     * @throws BeansException 抛出bean异常
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.redisTemplate = (RedisTemplate<String, String>) applicationContext.getBean("redisTemplate");
+    }
+
+    /**
+     * 在setApplication后，检查是否正确注入RedisTemplate
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if (logger.isDebugEnabled()) {
+            logger.debug("RedisTemplate should be with <String, String>, check your configuration or bean");
+        }
+        Assert.notNull(this.redisTemplate, "redisTemplate could not be null, if you're using non-parameter " +
+                "constructor,you could call constructor which is created by redisTemplate");
     }
 
     private BoundValueOperations<String, String> ops(String key) {

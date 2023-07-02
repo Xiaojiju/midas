@@ -15,7 +15,7 @@
  */
 package com.mtfm.security.cache;
 
-import com.mtfm.security.UserTemplate;
+import com.mtfm.security.AppUser;
 import com.mtfm.security.authentication.SecurityRedisKey;
 import com.mtfm.tools.JSONUtils;
 import org.slf4j.Logger;
@@ -50,7 +50,7 @@ public class RedisUserCache implements UserCache {
         String details = ops.get();
         if (StringUtils.hasText(details)) {
             try {
-                return JSONUtils.parse(details, UserTemplate.class);
+                return JSONUtils.parse(details, AppUser.class);
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -65,7 +65,7 @@ public class RedisUserCache implements UserCache {
             return ;
         }
         try {
-            UserTemplate authority = (UserTemplate) user;
+            AppUser authority = (AppUser) user;
             String authorityValue = JSONUtils.toJsonString(authority);
             BoundValueOperations<String, String> ops = getOperations(authority.getUsername());
             ops.set(authorityValue);

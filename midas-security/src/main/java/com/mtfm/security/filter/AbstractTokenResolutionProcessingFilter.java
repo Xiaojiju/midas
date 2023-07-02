@@ -1,5 +1,6 @@
 package com.mtfm.security.filter;
 
+import com.mtfm.security.context.SolarMessageSource;
 import com.mtfm.security.core.SecuritySessionContextHolder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,7 +27,7 @@ public abstract class AbstractTokenResolutionProcessingFilter extends GenericFil
 
     private final Log log = LogFactory.getLog(AbstractTokenResolutionProcessingFilter.class);
     private String[] skipUrls;
-    protected MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
+    protected MessageSourceAccessor messages = SolarMessageSource.getAccessor();;
     private List<RequestMatcher> requestMatchers;
 
     public AbstractTokenResolutionProcessingFilter() {

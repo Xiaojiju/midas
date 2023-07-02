@@ -21,7 +21,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.mtfm.datasource.BaseModel;
 import com.mtfm.datasource.handler.CommonEnumTypeHandler;
-import com.mtfm.security.config.WebSecurityProperties;
 import com.mtfm.tools.enums.Judge;
 import org.apache.ibatis.type.JdbcType;
 import org.springframework.util.StringUtils;
@@ -49,8 +48,9 @@ public class SolarUser extends BaseModel<SolarUser> implements Serializable {
     private Judge locked;
     /**
      * 过期时间
-     * 如果{@link WebSecurityProperties#isEnableAccountExpired()}设定为允许账号过期，则与当前时间进行比较，如果小于当前时间则过期，不
-     * 允许认证登陆，反之则不进行操作。默认为空，如果修改配置为true，则在登陆认证的时候，进行懒处理的方式进行设定默认过期时间。
+     * 如果{@link com.mtfm.security.config.WebAutoSecurityConfiguration#isEnableAccountExpired()}设定为允许账号过期，则与当前
+     * 时间进行比较，如果小于当前时间则过期，不允许认证登陆，反之则不进行操作。默认为空，如果修改配置为true，则在登陆认证的时候，进行懒处理的方式
+     * 进行设定默认过期时间。
      */
     @TableField("expired_time")
     private LocalDateTime expiredTime;

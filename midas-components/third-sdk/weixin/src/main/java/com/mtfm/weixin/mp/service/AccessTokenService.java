@@ -20,10 +20,10 @@ import com.mtfm.tools.JSONUtils;
 import com.mtfm.weixin.WechatMiniProgramConfiguration;
 import com.mtfm.weixin.mp.AccessResult;
 import com.mtfm.weixin.mp.AccessTemplate;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * @author 一块小饼干

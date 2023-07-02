@@ -1,14 +1,13 @@
 package com.mtfm.app_support.service.provisioning;
 
 import com.mtfm.app_support.entity.AppUserBaseInfo;
+import com.mtfm.security.AppUser;
 import com.mtfm.tools.enums.Judge;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
 
 public class AppUserDetails extends AppUser implements Serializable {
 

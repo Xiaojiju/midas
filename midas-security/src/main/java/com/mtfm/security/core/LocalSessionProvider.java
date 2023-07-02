@@ -15,73 +15,44 @@
  */
 package com.mtfm.security.core;
 
-import com.mtfm.core.context.HttpRequestHolder;
-import com.mtfm.security.Client;
+import com.mtfm.security.AppUser;
 import com.mtfm.security.SecurityConstants;
-import com.mtfm.security.config.WebAuthProperties;
 import com.mtfm.security.context.Auth0TokenProvider;
 import com.mtfm.security.context.TokenProvider;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
+import org.springframework.util.Assert;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 当前会话生成器 {@link LocalSession}
+ * 当前会话生成器 {@link LocalSessionToken}
  * @author 一块小饼干
  * @since 1.0.0
  */
 public class LocalSessionProvider {
-
-    private WebAuthProperties webAuthProperties;
     private TokenProvider tokenProvider;
 
-    public LocalSessionProvider(WebAuthProperties webAuthProperties) {
-        this(webAuthProperties, new Auth0TokenProvider());
+    public LocalSessionProvider() {
+        this(new Auth0TokenProvider());
     }
 
-    public LocalSessionProvider(WebAuthProperties webAuthProperties, TokenProvider tokenProvider) {
-        this.webAuthProperties = webAuthProperties;
+    public LocalSessionProvider(TokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
     }
 
-    public LocalSession provide(HttpServletRequest request, Client client, UserDetails userDetails) {
+    public LocalSessionToken provide(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+        Assert.isInstanceOf(AppUser.class, principal, "only support AppUser.class");
+        AppUser appUser = (AppUser) principal;
         Map<String, String> map = new HashMap<>();
-        map.put(SecurityConstants.SESSION_UID_CLAIM, userDetails.getUsername());
-        String ip = HttpRequestHolder.getIpAddress(request);
-        LocalSession.LocalSessionBuilder localSessionBuilder = LocalSession.LocalSessionBuilder
-                .withId(userDetails.getUsername())
-                .withSessionKey(tokenProvider.make(map),
-                        webAuthProperties.getExpiredTimestamp(),
-                        webAuthProperties.getRefreshTimestamp())
-                .withPlatform(ip, "", "", client.getName());
-        return localSessionBuilder.build();
+        map.put(SecurityConstants.SESSION_UID_CLAIM, appUser.getId());
+        map.put(SecurityConstants.SESSION_USERNAME, appUser.getUsername());
+        String sessionKey = tokenProvider.make(map);
+        return new LocalSessionToken(appUser.getAuthorities(), appUser.getId(), sessionKey);
     }
 
-    public LocalSession refresh(LocalSession localSession) {
-        return refresh(localSession.getId(), localSession.getPlatformSession());
-    }
-
-    public LocalSession refresh(String id, PlatformSession platformSession) {
-        LocalSession.LocalSessionBuilder localSessionBuilder = LocalSession.LocalSessionBuilder
-                .withId(id)
-                .withSessionKey(platformSession.getSessionKey(),
-                        webAuthProperties.getExpiredTimestamp(),
-                        webAuthProperties.getRefreshTimestamp())
-                .requestSession(platformSession.getSessionRequest());
-        return localSessionBuilder.build();
-    }
-
-    public WebAuthProperties getWebAuthProperties() {
-        return webAuthProperties;
-    }
-
-    public void setWebAuthProperties(WebAuthProperties webAuthProperties) {
-        this.webAuthProperties = webAuthProperties;
-    }
-
-    public TokenProvider getTokenProvider() {
+    protected TokenProvider getTokenProvider() {
         return tokenProvider;
     }
 

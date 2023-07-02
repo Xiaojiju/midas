@@ -1,4 +1,4 @@
-com.mtfm.backend_support.config.ServiceComponents
+com.mtfm.backend_support.config.BackendSupportServiceConfiguration
 com.mtfm.backend_support.web.RoleServiceApi
 com.mtfm.backend_support.web.UserServiceApi
 com.mtfm.backend_support.web.MenuServiceApi

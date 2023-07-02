@@ -16,7 +16,7 @@
 package com.mtfm.wechat_mp.authentication;
 
 
-import com.mtfm.security.authentication.UserTemplatePreAuthenticationChecks;
+import com.mtfm.security.authentication.AppUserPreAuthenticationChecks;
 import com.mtfm.wechat_mp.MiniProgramMessageSource;
 import com.mtfm.wechat_mp.MiniProgramRedisKey;
 import com.mtfm.weixin.mp.SessionResult;
@@ -30,8 +30,6 @@ import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,7 +48,7 @@ public class MiniProgramUserDetailsAuthenticationProvider implements Authenticat
     private static final Logger logger = LoggerFactory.getLogger(MiniProgramUserDetailsAuthenticationProvider.class);
     private MessageSourceAccessor messages = MiniProgramMessageSource.getAccessor();
     private OauthCodeService oauthCodeService;
-    private UserDetailsChecker postCheck = new UserTemplatePreAuthenticationChecks();
+    private UserDetailsChecker postCheck = new AppUserPreAuthenticationChecks();
     private UserDetailsManager userDetailsManager;
     private RedisTemplate<String, String> redisTemplate;
     private static final String NONE_CODE = "NODE_CODE";

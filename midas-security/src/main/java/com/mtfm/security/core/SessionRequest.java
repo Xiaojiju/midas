@@ -23,26 +23,14 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 public class SessionRequest implements Serializable {
-
     /**
      * 请求ip地址
      */
     private String ip;
-
     /**
      * 请求物理地址
      */
     private String address;
-
-    /**
-     * 认证平台
-     */
-    private String platform;
-
-    /**
-     * 所属客户端
-     */
-    private String client;
 
     public String getIp() {
         return ip;
@@ -58,31 +46,5 @@ public class SessionRequest implements Serializable {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getPlatform() {
-        return platform;
-    }
-
-    public void setPlatform(String platform) {
-        this.platform = platform;
-    }
-
-    public String getClient() {
-        return client;
-    }
-
-    public void setClient(String client) {
-        this.client = client;
-    }
-
-    @Override
-    public String toString() {
-        return "SessionRequest{" +
-                "ip='" + ip + '\'' +
-                ", address='" + address + '\'' +
-                ", platform='" + platform + '\'' +
-                ", client='" + client + '\'' +
-                '}';
     }
 }

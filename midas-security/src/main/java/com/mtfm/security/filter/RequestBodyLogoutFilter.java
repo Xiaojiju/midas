@@ -11,6 +11,10 @@ public class RequestBodyLogoutFilter extends LogoutFilter {
     private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER =
             new AntPathRequestMatcher(LOGOUT_URL, "POST");
 
+    public RequestBodyLogoutFilter() {
+        super(new JsonBasedLogoutSuccessHandler(), new CacheClearLogoutHandler());
+    }
+
     public RequestBodyLogoutFilter(LogoutSuccessHandler logoutSuccessHandler, LogoutHandler... handlers) {
         super(logoutSuccessHandler, handlers);
         super.setLogoutRequestMatcher(DEFAULT_ANT_PATH_REQUEST_MATCHER);

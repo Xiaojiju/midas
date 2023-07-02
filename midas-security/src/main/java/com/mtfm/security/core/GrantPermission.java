@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.backend_support.service.provisioning;
+package com.mtfm.security.core;
 
 import org.springframework.security.core.GrantedAuthority;
 

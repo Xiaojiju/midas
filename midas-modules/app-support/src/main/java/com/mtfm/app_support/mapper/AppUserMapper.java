@@ -2,7 +2,7 @@ package com.mtfm.app_support.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mtfm.app_support.entity.AppAccount;
-import com.mtfm.app_support.service.provisioning.AppUser;
+import com.mtfm.security.AppUser;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

@@ -25,7 +25,7 @@ import javax.security.auth.login.AccountNotFoundException;
  */
 public interface SessionContext<T> {
 
-    void putSession(T subject);
+    void putSession(T authentication);
 
     T getSession();
 

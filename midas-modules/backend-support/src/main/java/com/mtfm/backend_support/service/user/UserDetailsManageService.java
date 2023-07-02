@@ -16,28 +16,16 @@
 package com.mtfm.backend_support.service.user;
 
 import com.mtfm.backend_support.service.mapper.BackendUserServiceMapper;
-import com.mtfm.backend_support.service.provisioning.UserDto;
-import com.mtfm.security.UserTemplate;
-import com.mtfm.security.exceptions.NoAuthoritiesException;
-import com.mtfm.security.service.GrantAuthorityHandler;
+import com.mtfm.security.AppUser;
 import com.mtfm.security.service.GrantAuthorityService;
 import com.mtfm.security.service.NullGrantAuthorityServiceImpl;
-import com.mtfm.tools.enums.Judge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
-import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.SpringSecurityMessageSource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,12 +33,10 @@ import java.util.List;
  * @author 一块小饼干
  * @since 1.0.0
  */
-public class UserDetailsManageService implements UserDetailsService, MessageSourceAware {
+public class UserDetailsManageService implements UserDetailsService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserDetailsManageService.class);
-    private GrantAuthorityService grantAuthorityService = new NullGrantAuthorityServiceImpl();
-    private MessageSourceAccessor messageSource = SpringSecurityMessageSource.getAccessor();
-    private GrantAuthorityHandler permissionHandler;
+    private GrantAuthorityService grantAuthorityService;
     private BackendUserServiceMapper backendUserServiceMapper;
     private boolean enablePermissions;
 
@@ -68,65 +54,22 @@ public class UserDetailsManageService implements UserDetailsService, MessageSour
     }
 
     @Override
-    public void setMessageSource(MessageSource messageSource) {
-        Assert.notNull(messageSource, "messageSource cannot be null");
-        this.messageSource = new MessageSourceAccessor(messageSource);
-    }
-
-    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserDto userDto = this.backendUserServiceMapper.selectUserByReferenceKey(username);
-        List<GrantedAuthority> permissions = new ArrayList<>();
-        if (userDto != null) {
+        AppUser appUser = this.backendUserServiceMapper.selectUserByReferenceKey(username);
+        if (appUser != null) {
             if (this.enablePermissions) {
-                permissions = loadAuthorities(userDto.getUniqueId());
+                List<GrantedAuthority> permissions = loadAuthorities(appUser.getId());
+                appUser.setAuthorities(permissions);
             }
         }
-        return createUserTemplate(username, userDto, permissions);
+        return appUser;
     }
 
     protected List<GrantedAuthority> loadAuthorities(String username) {
         return grantAuthorityService.loadPermissions(username);
     }
 
-    public UserTemplate createUserTemplate(String username, UserDto userDto, List<GrantedAuthority> permissions) {
-        if (userDto == null) {
-            logger.debug("username {} not found", username);
-            throw new UsernameNotFoundException(this.messageSource.getMessage("JdbcDaoImpl.notFound",
-                    new Object[] { username }, "Username {0} wrong with username or password"));
-        }
-        if (this.enablePermissions) {
-            if (CollectionUtils.isEmpty(permissions)) {
-                logger.debug("Username {} authorities could not be null", username);
-                throw new NoAuthoritiesException(this.messageSource.getMessage("JdbcDaoImpl.nonPermissions",
-                        new Object[] { username }, "Username {0} has no permission"));
-            }
-        }
-        LocalDateTime now = LocalDateTime.now();
-        boolean credentialsExpired = false, methodExpired = false, accountExpired = false;
-        LocalDateTime credentialsExpiredTime = userDto.getCredentialsExpiredTime();
-        if (credentialsExpiredTime != null) {
-            credentialsExpired = credentialsExpiredTime.isBefore(now);
-        }
-        LocalDateTime methodExpiredTime = userDto.getCurrentMethodExpiredTime();
-        if (methodExpiredTime != null) {
-            methodExpired = methodExpiredTime.isBefore(now);
-        }
-        LocalDateTime accountExpiredTime = userDto.getAccountExpiredTime();
-        if (accountExpiredTime != null) {
-            accountExpired = accountExpiredTime.isBefore(now);
-        }
-        return new UserTemplate(userDto.getUniqueId(), userDto.getSecretKey(), userDto.getAccountLocked() != Judge.YES,
-                !accountExpired, !credentialsExpired, userDto.getAccountLocked() != Judge.YES,
-                permissions, userDto.getCurrentMethod(), !methodExpired,
-                userDto.getCurrentMethodLocked() !=Judge.YES);
-    }
-
-    public MessageSourceAccessor getMessageSource() {
-        return this.messageSource;
-    }
-
-    public GrantAuthorityService getGrantAuthorityService() {
+    protected GrantAuthorityService getGrantAuthorityService() {
         return this.grantAuthorityService;
     }
 
@@ -134,11 +77,7 @@ public class UserDetailsManageService implements UserDetailsService, MessageSour
         this.grantAuthorityService = grantAuthorityService;
     }
 
-    public void setMessageSource(MessageSourceAccessor messageSource) {
-        this.messageSource = messageSource;
-    }
-
-    public BackendUserServiceMapper getBackendUserServiceMapper() {
+    protected BackendUserServiceMapper getBackendUserServiceMapper() {
         return backendUserServiceMapper;
     }
 
@@ -146,15 +85,7 @@ public class UserDetailsManageService implements UserDetailsService, MessageSour
         this.backendUserServiceMapper = backendUserServiceMapper;
     }
 
-    public GrantAuthorityHandler getPermissionHandler() {
-        return permissionHandler;
-    }
-
-    public void setPermissionHandler(GrantAuthorityHandler permissionHandler) {
-        this.permissionHandler = permissionHandler;
-    }
-
-    public boolean isEnablePermissions() {
+    protected boolean isEnablePermissions() {
         return enablePermissions;
     }
 

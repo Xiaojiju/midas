@@ -38,7 +38,6 @@ import java.io.IOException;
  * @since 1.0.0
  */
 public class RequestBodyAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
-
     /**
      * 请求api
      */
@@ -48,6 +47,8 @@ public class RequestBodyAuthenticationProcessingFilter extends AbstractAuthentic
 
     public RequestBodyAuthenticationProcessingFilter() {
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER);
+        setAuthenticationSuccessHandler(new ReturnResponseAuthenticationSuccessHandler());
+        setAuthenticationFailureHandler(new ReturnResponseAuthenticationFailHandler());
     }
 
     /**

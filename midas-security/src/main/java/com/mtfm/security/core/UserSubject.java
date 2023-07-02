@@ -15,133 +15,144 @@
  */
 package com.mtfm.security.core;
 
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 /**
- * 会话第一层用户信息，主要包含多设备多平台信息
+ * 保存到redis的中用户信息
  * @author 一块小饼干
  * @since 1.0.0
  */
 public class UserSubject implements Serializable {
 
-    private String id;
+    /**
+     * 过期时间
+     */
+    private long expiredTimestamps;
 
-    private List<PlatformSession> sessions;
+    /**
+     * 刷新时间
+     */
+    private long refreshTimestamps;
+
+    /**
+     * 签发时间
+     */
+    private long signTimestamps;
+
+    /**
+     * 权限
+     */
+    private Set<String> permissions;
+
+    /**
+     * 请求标志
+     */
+    private SessionRequest sessionRequest;
 
     public UserSubject() {
     }
 
-    public UserSubject(String id) {
-        this(id, new ArrayList<>());
+    public UserSubject(long expiredTimestamps, long refreshTimestamps, long signTimestamps,
+                       Set<String> permissions, SessionRequest sessionRequest) {
+        this.expiredTimestamps = expiredTimestamps;
+        this.refreshTimestamps = refreshTimestamps;
+        this.signTimestamps = signTimestamps;
+        this.permissions = permissions;
+        this.sessionRequest = sessionRequest;
     }
 
-    public UserSubject(String id, List<PlatformSession> sessions) {
-        this.id = id;
-        this.sessions = sessions;
+    public static UserSubjectBuilder builder() {
+        return new UserSubjectBuilder();
     }
 
-    public void addSession(PlatformSession session, boolean client) {
-        if (CollectionUtils.isEmpty(this.sessions)) {
-            this.sessions = new ArrayList<>();
+    public long getExpiredTimestamps() {
+        return expiredTimestamps;
+    }
+
+    public void setExpiredTimestamps(long expiredTimestamps) {
+        this.expiredTimestamps = expiredTimestamps;
+    }
+
+    public long getRefreshTimestamps() {
+        return refreshTimestamps;
+    }
+
+    public void setRefreshTimestamps(long refreshTimestamps) {
+        this.refreshTimestamps = refreshTimestamps;
+    }
+
+    public long getSignTimestamps() {
+        return signTimestamps;
+    }
+
+    public void setSignTimestamps(long signTimestamps) {
+        this.signTimestamps = signTimestamps;
+    }
+
+    public Set<String> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(Set<String> permissions) {
+        this.permissions = permissions;
+    }
+
+    public SessionRequest getSessionRequest() {
+        return sessionRequest;
+    }
+
+    public void setSessionRequest(SessionRequest sessionRequest) {
+        this.sessionRequest = sessionRequest;
+    }
+
+    public static class UserSubjectBuilder {
+
+        private long expiredTimestamps;
+        private long refreshTimestamps;
+        private long signTimestamps;
+        private Set<String> permissions;
+        private SessionRequest sessionRequest;
+
+        private UserSubjectBuilder() {
         }
-        String sessionKey = session.getSessionKey();
-        int index = indexOf(sessionKey);
-        if (index < 0) {
-            // 找出是否有同平台的session
-            if (client) {
-                int clientIndex = indexOfClient(session.getSessionRequest().getClient());
-                if (clientIndex >= 0) {
-                    this.sessions.remove(clientIndex);
-                }
+
+        public UserSubjectBuilder expiredAt(long expiredTimestamps) {
+            this.expiredTimestamps = expiredTimestamps;
+            return this;
+        }
+
+        public UserSubjectBuilder refreshIn(long refreshTimestamps) {
+            this.refreshTimestamps = refreshTimestamps;
+            return this;
+        }
+
+        public UserSubjectBuilder signAt(long signTimestamps) {
+            this.signTimestamps = signTimestamps;
+            return this;
+        }
+
+        public UserSubjectBuilder withPermissions(Set<String> permissions) {
+            this.permissions = permissions;
+            return this;
+        }
+
+        public UserSubjectBuilder requestDetails(SessionRequest sessionRequest) {
+            this.sessionRequest = sessionRequest;
+            return this;
+        }
+
+        public UserSubjectBuilder withIp(String ip) {
+            if (sessionRequest == null) {
+                this.sessionRequest = new SessionRequest();
             }
-            this.sessions.add(session);
-        } else {
-            if (client) {
-                int clientIndex = indexOfClient(session.getSessionRequest().getClient());
-                if (clientIndex >= 0) {
-                    this.sessions.remove(clientIndex);
-                }
-            }
-            this.sessions.set(index, session);
+            this.sessionRequest.setIp(ip);
+            return this;
         }
-    }
 
-    public void removeSession(String sessionKey) {
-        if (CollectionUtils.isEmpty(this.sessions)) {
-            return ;
+        public UserSubject build() {
+            return new UserSubject(this.expiredTimestamps, this.refreshTimestamps, this.signTimestamps,
+                    this.permissions, this.sessionRequest);
         }
-        int index = indexOf(sessionKey);
-        if (index > -1) {
-            this.sessions.remove(index);
-        }
-    }
-
-    public PlatformSession getPlatformSession(String sessionKey) {
-        int index = indexOf(sessionKey);
-        if (index >= 0) {
-            return this.sessions.get(index);
-        }
-        return null;
-    }
-
-    public boolean hasSession() {
-        return StringUtils.hasText(this.id) && !CollectionUtils.isEmpty(this.sessions);
-    }
-
-    private int indexOf(String sessionKey) {
-        if (!StringUtils.hasText(sessionKey)) {
-            throw new NullPointerException("session key could not be null");
-        }
-        int index = -1;
-        for (int i = 0; i < this.sessions.size(); i++) {
-            PlatformSession platformSession = this.sessions.get(i);
-            String existSessionKey = platformSession.getSessionKey();
-            if (existSessionKey.equals(sessionKey)) {
-                index = i;
-                break;
-            }
-        }
-        return index;
-    }
-
-    private int indexOfClient(String client) {
-        if (!StringUtils.hasText(client)) {
-            throw new NullPointerException("session key could not be null");
-        }
-        int index = -1;
-        for (int i = 0; i < this.sessions.size(); i++) {
-            PlatformSession platformSession = this.sessions.get(i);
-            String clientKey = platformSession.getSessionRequest().getClient();
-            if (clientKey.equals(client)) {
-                index = i;
-                break;
-            }
-        }
-        return index;
-    }
-
-    public static UserSubject unSignedLocalUserSubject(String id) {
-        return new UserSubject(id);
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public List<PlatformSession> getSessions() {
-        return sessions;
-    }
-
-    public void setSessions(List<PlatformSession> sessions) {
-        this.sessions = sessions;
     }
 }

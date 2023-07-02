@@ -3,7 +3,6 @@ package com.mtfm.app_support.service.user;
 import com.mtfm.app_support.entity.AppUserBaseInfo;
 import com.mtfm.app_support.entity.AppUserReference;
 import com.mtfm.app_support.service.AppUserBaseInfoService;
-import com.mtfm.app_support.service.provisioning.AppUser;
 import com.mtfm.app_support.service.provisioning.AppUserDetails;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;

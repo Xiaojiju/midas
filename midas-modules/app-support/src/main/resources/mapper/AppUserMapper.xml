@@ -17,7 +17,7 @@
 -->
 <mapper namespace="com.mtfm.app_support.mapper.AppUserMapper">
     <!-- AppUser Mapper Result-->
-    <resultMap id="app_user_result_map" type="com.mtfm.app_support.service.provisioning.AppUser">
+    <resultMap id="app_user_result_map" type="com.mtfm.security.AppUser">
         <id column="id" property="id" javaType="string" jdbcType="VARCHAR"/>
         <result column="username" property="username" javaType="string" jdbcType="VARCHAR"/>
         <result column="identifier" property="identifier" javaType="string" jdbcType="VARCHAR"/>

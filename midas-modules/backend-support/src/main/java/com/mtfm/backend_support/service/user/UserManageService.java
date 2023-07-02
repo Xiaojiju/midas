@@ -26,6 +26,7 @@ import com.mtfm.backend_support.service.UserSecretManager;
 import com.mtfm.backend_support.service.mapper.UserMapper;
 import com.mtfm.backend_support.service.provisioning.UserDetailSample;
 import com.mtfm.backend_support.service.provisioning.UserSample;
+import com.mtfm.backend_support.service.secret.UserSecretManagerService;
 import com.mtfm.core.context.exceptions.ServiceException;
 import com.mtfm.security.SecurityCode;
 import com.mtfm.tools.enums.Judge;
@@ -68,7 +69,11 @@ public class UserManageService extends ServiceImpl<UserMapper, SolarUser>
     private UserRoleManager userRoleManager;
     private MessageSourceAccessor messageSource;
 
-    public UserManageService(UserDetailsService userDetailsService, UserReferenceManager userReferenceManager, 
+    public UserManageService(UserDetailsService userDetailsService, UserRoleManager userRoleManager) {
+        this(userDetailsService, new UserReferenceManagerService(), new UserSecretManagerService(), userRoleManager);
+    }
+
+    public UserManageService(UserDetailsService userDetailsService, UserReferenceManager userReferenceManager,
                              UserSecretManager userSecretManager, UserRoleManager userRoleManager) {
         this.userDetailsService = userDetailsService;
         this.userReferenceManager = userReferenceManager;

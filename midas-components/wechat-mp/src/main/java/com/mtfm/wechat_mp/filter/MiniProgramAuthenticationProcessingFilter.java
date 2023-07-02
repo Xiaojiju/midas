@@ -16,6 +16,8 @@
 package com.mtfm.wechat_mp.filter;
 
 import com.mtfm.core.util.tools.IOUtils;
+import com.mtfm.security.filter.ReturnResponseAuthenticationFailHandler;
+import com.mtfm.security.filter.ReturnResponseAuthenticationSuccessHandler;
 import com.mtfm.tools.JSONUtils;
 import com.mtfm.wechat_mp.authentication.MiniProgramAuthenticationToken;
 import com.mtfm.wechat_mp.authentication.MpUser;
@@ -49,6 +51,10 @@ public class MiniProgramAuthenticationProcessingFilter extends AbstractAuthentic
             new AntPathRequestMatcher(LOGIN_URL, "POST");
     private final AuthenticationSuccessHandler successHandler;
     private final AuthenticationFailureHandler failureHandler;
+
+    public MiniProgramAuthenticationProcessingFilter() {
+        this(new ReturnResponseAuthenticationSuccessHandler(), new ReturnResponseAuthenticationFailHandler());
+    }
 
     public MiniProgramAuthenticationProcessingFilter(AuthenticationSuccessHandler successHandler,
                                                      AuthenticationFailureHandler failureHandler) {
