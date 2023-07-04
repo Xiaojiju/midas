@@ -9,10 +9,7 @@ import com.mtfm.tools.JSONUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
-import org.springframework.security.authentication.AccountExpiredException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.authentication.LockedException;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -59,6 +56,10 @@ public class ReturnResponseAuthenticationFailHandler implements AuthenticationFa
             failResult = RestResult.error(SecurityCode.LOCKED.getCode(),
                     this.messages.getMessage("ReturnResponseAuthenticationFailHandler.locked",
                             "User has been locked"));
+        } else if (exception instanceof CredentialsExpiredException) {
+            failResult = RestResult.error(SecurityCode.PASSWORD_EXPIRED.getCode(),
+                    this.messages.getMessage("UserTemplatePreAuthenticationChecks.passwordExpired",
+                            "password had expired"));
         } else {
             failResult = RestResult.complete(ResultCode.FORBIDDEN);
         }

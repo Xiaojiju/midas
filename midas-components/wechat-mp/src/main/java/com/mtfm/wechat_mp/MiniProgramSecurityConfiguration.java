@@ -15,21 +15,6 @@
  */
 package com.mtfm.wechat_mp;
 
-import com.mtfm.security.core.LocalSessionProvider;
-import com.mtfm.security.core.LocalSessionToken;
-import com.mtfm.security.core.SessionContext;
-import com.mtfm.security.filter.ReturnResponseAuthenticationFailHandler;
-import com.mtfm.security.filter.ReturnResponseAuthenticationSuccessHandler;
-import com.mtfm.wechat_mp.authentication.MiniProgramUserDetailsAuthenticationProvider;
-import com.mtfm.wechat_mp.filter.MiniProgramAuthenticationProcessingFilter;
-import com.mtfm.weixin.mp.service.OauthCodeService;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.provisioning.UserDetailsManager;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-
 /**
  * @author 一块小饼干
  * @since 1.0.0

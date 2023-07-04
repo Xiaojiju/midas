@@ -28,20 +28,12 @@ public class TokenResolutionProcessingFilter extends AbstractTokenResolutionProc
     private SessionContext<Authentication> sessionContext;
     private MessageSourceAccessor messageSource = SolarMessageSource.getAccessor();
 
-    public TokenResolutionProcessingFilter() {
-        this(new SecuritySessionContextHolder());
-    }
-
-    public TokenResolutionProcessingFilter(String...skipUrls) {
-        this(skipUrls, new SecuritySessionContextHolder());
-    }
-
     public TokenResolutionProcessingFilter(SessionContext<Authentication> sessionContext) {
         this(new HttpRequestSessionHandler(), sessionContext);
     }
 
-    public TokenResolutionProcessingFilter(String[] skipUrls, SessionContext<Authentication> sessionContext) {
-        this(skipUrls, new HttpRequestSessionHandler(), sessionContext);
+    public TokenResolutionProcessingFilter(SessionContext<Authentication> sessionContext, String...skipUrls) {
+        this(skipUrls.clone(), new HttpRequestSessionHandler(), sessionContext);
     }
 
     public TokenResolutionProcessingFilter(HttpRequestSessionHandler httpRequestSessionHandler,
@@ -57,12 +49,8 @@ public class TokenResolutionProcessingFilter extends AbstractTokenResolutionProc
     }
 
     @Override
-    protected Object checkSession(HttpServletRequest request) throws AccountExpiredException {
-        Authentication session = sessionContext.getSession();
-        if (session == null) {
-            throw new AccountExpiredException("token had been expired");
-        }
-        return session;
+    protected boolean checkSession(HttpServletRequest request) throws AccountExpiredException {
+        return sessionContext.checkSession();
     }
 
     @Override

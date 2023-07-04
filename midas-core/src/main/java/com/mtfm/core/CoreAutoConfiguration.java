@@ -15,13 +15,8 @@
  */
 package com.mtfm.core;
 
-import com.mtfm.core.context.request.DefaultRequestBodyHandler;
-import com.mtfm.core.context.request.RequestBodyHandler;
-import com.mtfm.core.context.response.DefaultResponseBodyAdvice;
-import com.mtfm.core.context.response.ResponseBodyHandler;
 import com.mtfm.core.convert.LocalDateConverter;
 import com.mtfm.core.convert.LocalDateTimeConverter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -39,18 +34,6 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 })
 @Configuration
 public class CoreAutoConfiguration {
-
-    @Bean
-    @ConditionalOnMissingBean(RequestBodyHandler.class)
-    public RequestBodyHandler requestBodyHandler() {
-        return new DefaultRequestBodyHandler();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(ResponseBodyHandler.class)
-    public ResponseBodyHandler responseBodyHandler() {
-        return new DefaultResponseBodyAdvice();
-    }
 
     @Bean
     public ResourceBundleMessageSource messageSource() {

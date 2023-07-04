@@ -16,8 +16,6 @@
 package com.mtfm.wechat_mp.filter;
 
 import com.mtfm.core.util.tools.IOUtils;
-import com.mtfm.security.filter.ReturnResponseAuthenticationFailHandler;
-import com.mtfm.security.filter.ReturnResponseAuthenticationSuccessHandler;
 import com.mtfm.tools.JSONUtils;
 import com.mtfm.wechat_mp.authentication.MiniProgramAuthenticationToken;
 import com.mtfm.wechat_mp.authentication.MpUser;
@@ -49,18 +47,16 @@ public class MiniProgramAuthenticationProcessingFilter extends AbstractAuthentic
     private static final String JS_CODE = "jsCode";
     private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER =
             new AntPathRequestMatcher(LOGIN_URL, "POST");
-    private final AuthenticationSuccessHandler successHandler;
-    private final AuthenticationFailureHandler failureHandler;
 
     public MiniProgramAuthenticationProcessingFilter() {
-        this(new ReturnResponseAuthenticationSuccessHandler(), new ReturnResponseAuthenticationFailHandler());
+        super(DEFAULT_ANT_PATH_REQUEST_MATCHER);
     }
 
     public MiniProgramAuthenticationProcessingFilter(AuthenticationSuccessHandler successHandler,
                                                      AuthenticationFailureHandler failureHandler) {
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER);
-        this.successHandler = successHandler;
-        this.failureHandler = failureHandler;
+        super.setAuthenticationFailureHandler(failureHandler);
+        super.setAuthenticationSuccessHandler(successHandler);
     }
 
     @Override
@@ -78,13 +74,13 @@ public class MiniProgramAuthenticationProcessingFilter extends AbstractAuthentic
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
-        this.successHandler.onAuthenticationSuccess(request, response, chain, authResult);
+        super.successfulAuthentication(request, response, chain, authResult);
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException failed) throws IOException, ServletException {
-        this.failureHandler.onAuthenticationFailure(request, response, failed);
+        super.unsuccessfulAuthentication(request, response, failed);
     }
 
     private MpUser.UserInfo getCode(HttpServletRequest request) throws IOException {

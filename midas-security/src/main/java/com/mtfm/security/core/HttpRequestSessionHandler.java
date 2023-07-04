@@ -49,7 +49,11 @@ public class HttpRequestSessionHandler implements RequestSession {
     }
 
     public HttpRequestSessionHandler(String header, TokenProvider tokenProvider) {
-        this.header = header;
+        if (StringUtils.hasText(header)) {
+            this.header = header;
+        } else {
+            this.header = SESSION_HEADER;
+        }
         this.tokenProvider = tokenProvider;
     }
 

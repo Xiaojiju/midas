@@ -13,37 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.core.context;
-
-import java.nio.charset.Charset;
+package com.mtfm.crypto.response;
 
 /**
- * 加解密
  * @author 一块小饼干
  * @since 1.0.0
  */
-public interface Crypto {
-    /**
-     * 获取算法类型
-     * @return 算法类型，默认转为大写
-     */
-    String getAlgorithm();
+public class DefaultResponseBodyAdvice implements ResponseBodyHandler {
 
-    /**
-     * 解密
-     * @param source 加密字符串
-     * @return 解密后的字符串
-     */
-    String decrypt(String source);
-
-    String decrypt(String source, Charset charset);
-
-    /**
-     * 加密
-     * @param source 字符串源
-     * @return 加密后的字符串
-     */
-    String encrypt(String source);
-
-    String encrypt(String source, Charset charset);
+    @Override
+    public Object handle(Object body) {
+        return body;
+    }
 }

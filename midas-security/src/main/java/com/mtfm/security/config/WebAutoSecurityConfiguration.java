@@ -1,8 +1,13 @@
 package com.mtfm.security.config;
 
 import com.mtfm.security.SecurityConstants;
+import com.mtfm.security.authentication.AppUserPostAuthenticationChecks;
 import com.mtfm.security.authentication.AppUserPreAuthenticationChecks;
 import com.mtfm.security.cache.RedisUserCache;
+import com.mtfm.security.core.AnySessionContextHandler;
+import com.mtfm.security.core.SecuritySessionContextHolder;
+import com.mtfm.security.filter.ReturnResponseAuthenticationFailHandler;
+import com.mtfm.security.filter.ReturnResponseAuthenticationSuccessHandler;
 import com.mtfm.security.service.NullUserFromJdbcImpl;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -82,17 +87,49 @@ public class WebAutoSecurityConfiguration {
         daoAuthenticationProvider.setUserDetailsService(new NullUserFromJdbcImpl());
         daoAuthenticationProvider.setUserCache(new RedisUserCache(redisTemplate));
         daoAuthenticationProvider.setPreAuthenticationChecks(new AppUserPreAuthenticationChecks(this.enableAccountExpired,
-                this.enableUsernameExpired, this.enableCredentialsExpired));
+                this.enableUsernameExpired));
+        daoAuthenticationProvider.setPostAuthenticationChecks(new AppUserPostAuthenticationChecks(this.enableCredentialsExpired));
         return daoAuthenticationProvider;
     }
 
     /**
      * 默认的密钥加密
-     * @return
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    /**
+     * 默认的Session上下文处理器
+     */
+    @Bean
+    public AnySessionContextHandler anySessionContextHandler() {
+        return new AnySessionContextHandler();
+    }
+
+    /**
+     * 默认的用户处理会话持有器
+     */
+    @Bean
+    public SecuritySessionContextHolder securitySessionContextHolder(AnySessionContextHandler anySessionContextHandler) {
+        return new SecuritySessionContextHolder(anySessionContextHandler);
+    }
+
+    /**
+     * 认证成功处理器
+     */
+    @Bean
+    public ReturnResponseAuthenticationSuccessHandler successHandler(SecuritySessionContextHolder contextHolder) {
+        return new ReturnResponseAuthenticationSuccessHandler(contextHolder);
+    }
+
+    /**
+     * 认证失败处理器
+     */
+    @Bean
+    public ReturnResponseAuthenticationFailHandler failHandler() {
+        return new ReturnResponseAuthenticationFailHandler();
     }
 
     public boolean isEnablePermissions() {

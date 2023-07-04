@@ -25,8 +25,6 @@ import java.util.Arrays;
  */
 public final class SecurityRedisKey extends RedisKey {
 
-    private static final String KEY_SEPARATOR = ":";
-    public static final String SCAN_ALL = "*";
     public static final String HEADER_TOKEN = "authentication:token";
     public static final String TARGET_KEY_BLACK_ITEM = "security:target_key:black_item";
     public static final String TARGET_KEY_FAIL_COUNTER = "security:target_key:fail_counter";
@@ -37,7 +35,7 @@ public final class SecurityRedisKey extends RedisKey {
 
     public static String makeKey(String key, String...patterns) {
         StringBuffer buffer = new StringBuffer(key);
-        Arrays.stream(patterns).sorted().forEach(item -> buffer.append(KEY_SEPARATOR).append(item));
+        Arrays.stream(patterns).sorted().forEach(item -> buffer.append(RedisKey.KEY_SEPARATOR).append(item));
         return buffer.toString();
     }
 }

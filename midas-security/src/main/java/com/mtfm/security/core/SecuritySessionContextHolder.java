@@ -23,26 +23,34 @@ import org.springframework.util.Assert;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * 用户会话操作类
- * 信息。
+ * 其中在{@link #putSession(Authentication)}方法和{@link #getSession()}方法中，包含获取本地时间的
+ *
+ *         long curMills = System.currentTimeMillis();
+ *
+ * 这段代码可能在一些场景中会出现不是预期效果，比如在国外服务器上，但是需要保持与国内的时间统一，则该代码就会导致时间不精准的问题；
+ * 如果遇到该类似场景下，可以使用以后代码替换：
+ *
+ *         long curMills = LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8")); // 设置东八区时区
+ *
+ * 或者设置机器的时区也可以让System.currentTimeMills()获取到期望的时间戳；
  * @author 一块小饼干
  * @since 1.0.0
  */
 public class SecuritySessionContextHolder implements SessionContext<Authentication> {
+
     /**
      * 15分钟
      */
-    private static final long EXPIRED_TIMESTAMP = 900L;
+    private static final long EXPIRED_TIMESTAMP = 900L * 1000L;
     /**
-     * 30天
+     * 7天
      */
-    private static final long REFRESH_TIMESTAMP = 2592000L;
+    private static final long REFRESH_TIMESTAMP = 604800L * 1000L;
     private static final ThreadLocal<Authentication> localSubject = new ThreadLocal<>();
     private RequestSession requestSession;
     private AnySessionContext<UserSubject> sessionContext;
@@ -51,8 +59,8 @@ public class SecuritySessionContextHolder implements SessionContext<Authenticati
     private final long refreshTimestamp;
     private final boolean enableRefresh;
 
-    public SecuritySessionContextHolder() {
-        this(new HttpRequestSessionHandler(), new AnySessionContextHandler(), new LocalSessionProvider());
+    public SecuritySessionContextHolder(AnySessionContext<UserSubject> sessionContext) {
+        this(new HttpRequestSessionHandler(), sessionContext, new LocalSessionProvider());
     }
 
     public SecuritySessionContextHolder(RequestSession requestSession,
@@ -94,9 +102,10 @@ public class SecuritySessionContextHolder implements SessionContext<Authenticati
         if (request != null) {
             ip = HttpRequestHolder.getIpAddress(request);
         }
-        UserSubject userSubject = UserSubject.builder().expiredAt(this.expiredTimestamp)
-                .refreshIn(this.refreshTimestamp)
-                .signAt(LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8")))
+        long curMills = System.currentTimeMillis();
+        UserSubject userSubject = UserSubject.builder().expiredAt(this.expiredTimestamp + curMills)
+                .refreshIn(this.refreshTimestamp + curMills)
+                .signAt(curMills)
                 .withIp(ip)
                 .withPermissions(AuthorityUtils.authorityListToSet(localSessionToken.getAuthorities()))
                 .build();
@@ -117,14 +126,14 @@ public class SecuritySessionContextHolder implements SessionContext<Authenticati
         }
         Payload payload = this.requestSession.obtainSessionKey(HttpRequestHolder.getRequest());
         if (payload.isEmpty()) {
-            return null;
+            authentication = new LocalSessionToken();
         }
         UserSubject userSubject = this.sessionContext.getSession(payload.getId());
         if (userSubject == null) {
-            return null;
+            authentication = new LocalSessionToken();
         }
         long curMills = System.currentTimeMillis();
-        if (userSubject.getExpiredTimestamps() <= curMills) {
+        if (userSubject != null && userSubject.getExpiredTimestamps() <= curMills) {
             // 过期进行刷新
             if (userSubject.getRefreshTimestamps() <= curMills) {
                 // 过期
@@ -137,9 +146,9 @@ public class SecuritySessionContextHolder implements SessionContext<Authenticati
                 userSubject.setRefreshTimestamps(curMills + refreshTimestamp);
                 this.sessionContext.putSession(payload.getId(), userSubject);
             }
+            authentication = new LocalSessionToken(createAuthorityList(userSubject.getPermissions()), payload.getId(),
+                    payload.getSessionKey());
         }
-        authentication = new LocalSessionToken(createAuthorityList(userSubject.getPermissions()), payload.getId(),
-                payload.getSessionKey());
         localSubject.set(authentication);
         return authentication;
     }

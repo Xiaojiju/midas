@@ -1,8 +1,9 @@
 com.mtfm.app_support.service.user.AppUserManageService
 com.mtfm.app_support.service.user.MiniProgramUserProxyAdapter
-com.mtfm.app_support.config.AppSupportConfiguration
-com.mtfm.app_support.config.AppSupportProviderConfiguration
 com.mtfm.app_support.service.user.AppUserAccountServiceImpl
 com.mtfm.app_support.service.user.AppUserBaseInfoServiceImpl
 com.mtfm.app_support.service.user.AppUserReferenceServiceImpl
 com.mtfm.app_support.service.user.AppUserSecretServiceImpl
+com.mtfm.app_support.config.AppSupportConfiguration
+com.mtfm.app_support.config.AppSupportProviderConfiguration
+com.mtfm.app_support.config.ImportAppFilter

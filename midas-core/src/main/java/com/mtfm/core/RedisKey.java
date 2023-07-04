@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public abstract class RedisKey {
 
-    private static final String KEY_SEPARATOR = ":";
+    public static final String KEY_SEPARATOR = ":";
     public static final String SCAN_ALL = "*";
 
     public static String makeKey(String key, String...patterns) {

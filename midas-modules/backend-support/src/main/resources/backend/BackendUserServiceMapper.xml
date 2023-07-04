@@ -29,6 +29,8 @@
         <result column="usernameExpiredTime" property="usernameExpiredTime" javaType="java.time.LocalDateTime" jdbcType="DATE" />
         <result column="secretAccess" property="secretAccess" javaType="com.mtfm.tools.enums.Judge" jdbcType="INTEGER"
                 typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+        <result column="loginAccess" property="loginAccess" javaType="com.mtfm.tools.enums.Judge" jdbcType="INTEGER"
+                typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
         <result column="thirdPart" property="thirdPart" javaType="com.mtfm.tools.enums.Judge" jdbcType="INTEGER"
                 typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
         <result column="validated" property="validated" javaType="com.mtfm.tools.enums.Judge" jdbcType="INTEGER"
@@ -39,15 +41,18 @@
     <!-- 查询用户详情 -->
     <select id="selectUserByReferenceKey" resultMap="app_user_result_map">
         SELECT
-            `u`.`u_id` `uniqueId`,
-            `ur`.`reference_key` `currentReferenceKey`,
-            `s`.`secret_key` `secretKey`,
+            `u`.`u_id` `id`,
+            `ur`.`reference_key` `username`,
+            `ur`.`identifier` `identifier`,
+            `s`.`secret_key` `password`,
+            `s`.`secret_expired_time` `secretExpiredTime`,
             `u`.`expired_time` `accountExpiredTime`,
             `u`.`locked` `accountLocked`,
-            `ur`.`identifier` `currentMethod`,
-            `ur`.`expired_time` `currentMethodExpiredTime`,
-            IF(`ur`.`login_access` = 1, 0, 1) `currentMethodLocked`,
-            `s`.`secret_expired_time` `credentialsExpired`
+            `ur`.`expired_time` `usernameExpiredTime`,
+            `ur`.`login_access` `loginAccess`,
+            `ur`.`secret_access` `secretAccess`,
+            `ur`.`third_part` `thirdPart`,
+            `ur`.`validated` `validated`
         FROM
             `solar_user_reference` `ur`
             LEFT JOIN `solar_secret` `s` ON `ur`.`u_id` = `s`.`u_id`

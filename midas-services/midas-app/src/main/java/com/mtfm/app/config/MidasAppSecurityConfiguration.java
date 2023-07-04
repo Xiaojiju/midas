@@ -1,10 +1,14 @@
 package com.mtfm.app.config;
 
-import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
-@MapperScan("com.mtfm.app_support.mapper")
 public class MidasAppSecurityConfiguration {
 
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 }

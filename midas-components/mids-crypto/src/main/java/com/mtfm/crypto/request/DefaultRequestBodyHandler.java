@@ -13,16 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.core.context.response;
+package com.mtfm.crypto.request;
+
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
- * @author 一块小饼干
- * @since 1.0.0
- */
-public class DefaultResponseBodyAdvice implements ResponseBodyHandler {
+  * 默认RequestBody处理类
+  * @author 一块小饼干
+  * @since 1.0.0
+  */
+public class DefaultRequestBodyHandler implements RequestBodyHandler {
 
     @Override
-    public Object handle(Object body) {
+    public String Handle(String body) {
         return body;
+    }
+
+    @Override
+    public InputStream handle(InputStream inputStream) {
+        return handle(inputStream, StandardCharsets.UTF_8);
+    }
+
+    @Override
+    public InputStream handle(InputStream inputStream, Charset charset) {
+        return inputStream;
     }
 }

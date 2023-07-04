@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.core.context.response;
+package com.mtfm.crypto.response;
 
 public interface ResponseBodyHandler {
 

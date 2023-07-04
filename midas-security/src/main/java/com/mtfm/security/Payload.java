@@ -27,35 +27,34 @@ public class Payload implements Serializable {
     /**
      * 账号
      */
-    private String principal;
+    private String username;
     /**
      * 密码
      */
-    private String credentials;
+    private String password;
 
     public Payload() {
         this(null, null);
     }
 
-    public Payload(String principal, String credentials) {
-        this.principal = principal;
-        this.credentials = credentials;
+    public Payload(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
-    public String getPrincipal() {
-        return principal;
+    public String getUsername() {
+        return username;
     }
 
-    public void setPrincipal(String principal) {
-        this.principal = principal;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getCredentials() {
-        return credentials;
+    public String getPassword() {
+        return password;
     }
 
-    public void setCredentials(String credentials) {
-        this.credentials = credentials;
+    public void setPassword(String password) {
+        this.password = password;
     }
-
 }

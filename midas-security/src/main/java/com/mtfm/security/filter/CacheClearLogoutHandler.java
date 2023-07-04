@@ -1,6 +1,5 @@
 package com.mtfm.security.filter;
 
-import com.mtfm.security.core.SecuritySessionContextHolder;
 import com.mtfm.security.core.SessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +14,6 @@ public class CacheClearLogoutHandler implements LogoutHandler {
 
     private final Logger logger = LoggerFactory.getLogger(CacheClearLogoutHandler.class);
     private SessionContext<Authentication> sessionContext;
-
-    public CacheClearLogoutHandler() {
-        this(new SecuritySessionContextHolder());
-    }
 
     public CacheClearLogoutHandler(SessionContext<Authentication> sessionContext) {
         this.sessionContext = sessionContext;

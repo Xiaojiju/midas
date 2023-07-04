@@ -1,3 +1,18 @@
+/*
+ * Copyright 2022 一块小饼干(莫杨)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.mtfm.app_support.service.user;
 
 import com.mtfm.app_support.AppSupportCode;
@@ -23,10 +38,18 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+/**
+ * @author 一块小饼干
+ * @since 1.0.0
+ * 用户账号管理
+ * 该类主要是为更新用户的账号信息，如果需要一同更新用户的基本信息，需要使用代理类{@link AppUserInfoDetailsService}
+ */
+@Service
 @Transactional(rollbackFor = Exception.class)
 public class AppUserManageService extends AppUserDetailsService implements UserDetailsManager, InitializingBean, MessageSourceAware {
 
@@ -42,6 +65,10 @@ public class AppUserManageService extends AppUserDetailsService implements UserD
         this.appUserSecretService = appUserSecretService;
     }
 
+    /**
+     * 创建用户
+     * @param user 用户账号信息，只支持{@link AppUser}或其子类
+     */
     @Override
     public void createUser(UserDetails user) {
         Assert.isInstanceOf(AppUser.class, user, "only supports AppUser.class");
@@ -83,7 +110,7 @@ public class AppUserManageService extends AppUserDetailsService implements UserD
 
     /**
      * App用户只能更新账号信息[表设计为所有的手机邮箱等等关联信息都可以为账号]
-     * @param user 用户
+     * @param user 用户账号信息，只支持{@link AppUser}或其子类
      */
     @Override
     public void updateUser(UserDetails user) {
@@ -93,7 +120,8 @@ public class AppUserManageService extends AppUserDetailsService implements UserD
         AppUserReference appUserReference = this.appUserReferenceService.getOneByUsername(appUser.getUsername());
         if (appUserReference != null) {
             if (!appUserReference.getUserId().equals(userId)) {
-                throw new ServiceException(this.messages.getMessage("UserDetailsManager.hadExist"), SecurityCode.USERNAME_EXIST.getCode());
+                throw new ServiceException(this.messages.getMessage("UserDetailsManager.hadExist"),
+                        SecurityCode.USERNAME_EXIST.getCode());
             } else {
                 // 如果为当前修改的用户，则不进行操作
                 return ;

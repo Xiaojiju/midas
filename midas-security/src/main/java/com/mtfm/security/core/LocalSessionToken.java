@@ -47,6 +47,13 @@ public class LocalSessionToken extends AbstractAuthenticationToken {
         super.setAuthenticated(true);
     }
 
+    public LocalSessionToken() {
+        super(null);
+        this.principal = "";
+        this.credentials = "";
+        super.setAuthenticated(false);
+    }
+
     @Override
     public Object getCredentials() {
         return this.credentials;

@@ -6,47 +6,18 @@ import com.mtfm.backend_support.service.mapper.UserRoleMapper;
 import com.mtfm.backend_support.service.secret.UserSecretManagerService;
 import com.mtfm.backend_support.service.user.*;
 import com.mtfm.security.config.WebAutoSecurityConfiguration;
-import com.mtfm.security.filter.RequestBodyAuthenticationProcessingFilter;
-import com.mtfm.security.filter.RequestBodyLogoutFilter;
-import com.mtfm.security.filter.TokenResolutionProcessingFilter;
 import com.mtfm.security.service.GrantAuthorityService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
-public class BackendSupportServiceConfiguration {
+public class BackendSupportComponentConfiguration {
 
     private final WebAutoSecurityConfiguration configuration;
 
-    public BackendSupportServiceConfiguration(WebAutoSecurityConfiguration configuration,
-                                              ResourceBundleMessageSource messageSource) {
+    public BackendSupportComponentConfiguration(WebAutoSecurityConfiguration configuration) {
         this.configuration = configuration;
-        messageSource.addBasenames("i18n/backend_support_messages");
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
-        security.logout().disable()
-                .csrf().disable()
-                .addFilterAfter(new RequestBodyAuthenticationProcessingFilter(), LogoutFilter.class)
-                .addFilterAfter(new TokenResolutionProcessingFilter("solar/api/v1/login/**"),
-                        RequestBodyAuthenticationProcessingFilter.class)
-                .addFilterAfter(new RequestBodyLogoutFilter(), LogoutFilter.class)
-                .sessionManagement().disable();
-        return security.build();
-    }
-
-    @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider(UserDetailsManageService userDetailsManageService) {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsManageService);
-        return provider;
     }
 
     /**
@@ -56,7 +27,7 @@ public class BackendSupportServiceConfiguration {
      */
     @Bean
     public UserDetailsManageService userDetailsManageService(BackendUserServiceMapper backendUserServiceMapper,
-                                                 GrantAuthorityService grantAuthorityService) {
+                                                             GrantAuthorityService grantAuthorityService) {
         UserDetailsManageService userDetailsManageService
                 = new UserDetailsManageService(backendUserServiceMapper, this.configuration.isEnablePermissions());
         userDetailsManageService.setGrantAuthorityService(grantAuthorityService);

@@ -13,31 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.core.context.request;
+package com.mtfm.crypto;
 
-import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 /**
-  * 默认RequestBody处理类
-  * @author 一块小饼干
-  * @since 1.0.0
-  */
-public class DefaultRequestBodyHandler implements RequestBodyHandler {
+ * 加解密
+ * @author 一块小饼干
+ * @since 1.0.0
+ */
+public interface Crypto {
+    /**
+     * 获取算法类型
+     * @return 算法类型，默认转为大写
+     */
+    String getAlgorithm();
 
-    @Override
-    public String Handle(String body) {
-        return body;
-    }
+    /**
+     * 解密
+     * @param source 加密字符串
+     * @return 解密后的字符串
+     */
+    String decrypt(String source);
 
-    @Override
-    public InputStream handle(InputStream inputStream) {
-        return handle(inputStream, StandardCharsets.UTF_8);
-    }
+    String decrypt(String source, Charset charset);
 
-    @Override
-    public InputStream handle(InputStream inputStream, Charset charset) {
-        return inputStream;
-    }
+    /**
+     * 加密
+     * @param source 字符串源
+     * @return 加密后的字符串
+     */
+    String encrypt(String source);
+
+    String encrypt(String source, Charset charset);
 }

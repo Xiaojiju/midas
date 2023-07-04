@@ -46,6 +46,8 @@ public enum SecurityCode implements CodeExpression {
      */
     LOCKED(500104, "locked"),
 
+    PASSWORD_EXPIRED(500106, "password had expired"),
+
     //------------------- 用户信息 ---------------------
     /**
      * 用户名存在

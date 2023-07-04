@@ -41,13 +41,12 @@ public class AppUserPreAuthenticationChecks implements UserDetailsChecker, Messa
     private MessageSourceAccessor messages = SolarMessageSource.getAccessor();
     private final boolean enableAccountExpired;
     private final boolean enableUsernameExpired;
-    private final boolean enableCredentialExpired;
 
     /**
      * 启动默认配置检验
      */
     public AppUserPreAuthenticationChecks() {
-        this(true, true, false);
+        this(false, false);
     }
 
     /**
@@ -56,19 +55,17 @@ public class AppUserPreAuthenticationChecks implements UserDetailsChecker, Messa
      * @param enableUsernameExpired 当前认证方式过期
      * @param enableCredentialExpired 允许密钥过期
      */
-    public AppUserPreAuthenticationChecks(boolean enableAccountExpired, boolean enableUsernameExpired, boolean enableCredentialExpired) {
+    public AppUserPreAuthenticationChecks(boolean enableAccountExpired, boolean enableUsernameExpired) {
         this.enableAccountExpired = enableAccountExpired;
         this.enableUsernameExpired = enableUsernameExpired;
-        this.enableCredentialExpired = enableCredentialExpired;
     }
 
     @Override
     public void check(UserDetails user) {
-        Assert.isInstanceOf(AppUser.class, user, "only supposed UserTemplate.class");
+        Assert.isInstanceOf(AppUser.class, user, "only supposed AppUser.class");
         AppUser appUser = (AppUser) user;
         this.accountCheck(appUser);
         this.usernameCheck(appUser);
-        this.credentialCheck(appUser);
     }
 
     private void accountCheck(AppUser user) {
@@ -96,14 +93,6 @@ public class AppUserPreAuthenticationChecks implements UserDetailsChecker, Messa
             AppUserPreAuthenticationChecks.this.logger.debug("Failed to authenticate since username locked");
             throw new AccountExpiredException(AppUserPreAuthenticationChecks.this.messages
                     .getMessage("UserTemplatePreAuthenticationChecks.usernameLocked", "username has locked"));
-        }
-    }
-
-    private void credentialCheck(AppUser user) {
-        if (enableCredentialExpired && !user.isCredentialsNonExpired()) {
-            AppUserPreAuthenticationChecks.this.logger.debug("Failed to authenticate since password expired");
-            throw new AccountExpiredException(AppUserPreAuthenticationChecks.this.messages
-                    .getMessage("UserTemplatePreAuthenticationChecks.passwordExpired", "password has expired"));
         }
     }
 

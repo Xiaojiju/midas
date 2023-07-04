@@ -15,7 +15,6 @@
  */
 package com.mtfm.backend_support.service.user;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mtfm.backend_support.entity.SolarRole;
 import com.mtfm.backend_support.service.UserRoleManager;
 import com.mtfm.backend_support.service.mapper.UserRoleMapper;
@@ -24,6 +23,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  * 用户角色管理
  */
+@Service
 @Transactional(rollbackFor = Exception.class)
 public class UserRoleManageService implements UserRoleManager, MessageSourceAware, InitializingBean {
 

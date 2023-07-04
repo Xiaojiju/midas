@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.core.annotations;
+package com.mtfm.crypto.annotations;
 
-import com.mtfm.core.context.request.RequestBodyHandler;
-import com.mtfm.core.context.response.ResponseBodyHandler;
+import com.mtfm.crypto.request.RequestBodyHandler;
+import com.mtfm.crypto.response.ResponseBodyHandler;
 
 import java.lang.annotation.*;
 

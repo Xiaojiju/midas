@@ -7,7 +7,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.SpringSecurityMessageSource;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.CollectionUtils;
@@ -43,34 +42,37 @@ public abstract class AbstractTokenResolutionProcessingFilter extends GenericFil
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         boolean resolve = preResolve((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, filterChain);
         if (resolve) {
-            return ;
-        }
-        try {
-            checkSession((HttpServletRequest) servletRequest);
-            success((HttpServletRequest) servletRequest,(HttpServletResponse) servletResponse, filterChain);
-        } catch (AccountExpiredException e) {
-            log.debug("User token has expired");
-            fail((HttpServletRequest) servletRequest,(HttpServletResponse) servletResponse,
-                    e);
-        } finally {
-            SecuritySessionContextHolder.close();
+            filterChain.doFilter(servletRequest, servletResponse);
+        } else {
+            try {
+                if (checkSession((HttpServletRequest) servletRequest)) {
+                    throw new AccountExpiredException("token had been expired");
+                }
+                success((HttpServletRequest) servletRequest,(HttpServletResponse) servletResponse, filterChain);
+            } catch (AccountExpiredException e) {
+                log.debug("User token has expired");
+                fail((HttpServletRequest) servletRequest,(HttpServletResponse) servletResponse,
+                        e);
+            } finally {
+                SecuritySessionContextHolder.close();
+            }
         }
     }
 
     protected boolean preResolve(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        System.out.println(request.getRequestURI());
         if (CollectionUtils.isEmpty(this.requestMatchers)) {
             return false;
         }
         for (RequestMatcher matcher : this.requestMatchers) {
             if (matcher.matcher(request).isMatch()) {
-                filterChain.doFilter(request, response);
                 return true;
             }
         }
         return false;
     }
 
-    protected abstract Object checkSession(HttpServletRequest request) throws AccountExpiredException;
+    protected abstract boolean checkSession(HttpServletRequest request) throws AccountExpiredException;
 
     protected abstract void success(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain chain) throws IOException, ServletException;

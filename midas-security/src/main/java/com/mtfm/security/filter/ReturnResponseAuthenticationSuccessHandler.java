@@ -3,9 +3,13 @@ package com.mtfm.security.filter;
 import com.mtfm.core.context.response.RestResult;
 import com.mtfm.core.util.ResponseUtils;
 import com.mtfm.security.authentication.SecurityToken;
-import com.mtfm.security.core.*;
+import com.mtfm.security.core.LocalSessionProvider;
+import com.mtfm.security.core.LocalSessionToken;
+import com.mtfm.security.core.SessionContext;
+import com.mtfm.security.core.UserSubject;
 import com.mtfm.tools.JSONUtils;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,8 +21,8 @@ public class ReturnResponseAuthenticationSuccessHandler implements Authenticatio
     private SessionContext<Authentication> securitySessionContextHolder;
     private LocalSessionProvider localSessionProvider;
 
-    public ReturnResponseAuthenticationSuccessHandler() {
-        this(new SecuritySessionContextHolder(), new LocalSessionProvider());
+    public ReturnResponseAuthenticationSuccessHandler(SessionContext<Authentication> securitySessionContextHolder) {
+        this(securitySessionContextHolder, new LocalSessionProvider());
     }
 
     public ReturnResponseAuthenticationSuccessHandler(SessionContext<Authentication> securitySessionContextHolder,
@@ -32,6 +36,7 @@ public class ReturnResponseAuthenticationSuccessHandler implements Authenticatio
         Authentication authentication) throws IOException {
         LocalSessionToken localSessionToken = localSessionProvider.provide(authentication);
         securitySessionContextHolder.putSession(localSessionToken);
+        SecurityContextHolder.getContext().setAuthentication(localSessionToken);
         UserSubject userSubject = (UserSubject) localSessionToken.getDetails();
         SecurityToken securityToken = SecurityToken.SecurityTokenBuilder.withAccessToken((String) localSessionToken.getCredentials())
                         .setSignAccessTimestamp(userSubject.getSignTimestamps()).build();

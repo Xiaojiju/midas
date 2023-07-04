@@ -47,8 +47,6 @@ public class RequestBodyAuthenticationProcessingFilter extends AbstractAuthentic
 
     public RequestBodyAuthenticationProcessingFilter() {
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER);
-        setAuthenticationSuccessHandler(new ReturnResponseAuthenticationSuccessHandler());
-        setAuthenticationFailureHandler(new ReturnResponseAuthenticationFailHandler());
     }
 
     /**
@@ -62,7 +60,7 @@ public class RequestBodyAuthenticationProcessingFilter extends AbstractAuthentic
             payload = new Payload();
         }
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        payload.getPrincipal(), payload.getCredentials());
+                        payload.getUsername(), payload.getPassword());
         return this.getAuthenticationManager().authenticate(authenticationToken);
     }
 

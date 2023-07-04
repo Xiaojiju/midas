@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.core.context.request;
+package com.mtfm.crypto.request;
 
 import org.springframework.http.HttpInputMessage;
 
@@ -23,7 +23,7 @@ import java.nio.charset.Charset;
 
 /**
   * request body 处理定义
-  * 默认是进行不处理，{@link com.mtfm.core.context.request.DefaultRequestBodyHandler}
+  * 默认是进行不处理，{@link DefaultRequestBodyHandler}
   * 主要是以application/json，如果是另外的格式，需要使用{@link HttpServletRequestWrapper}进行包装处理，request只能读取一次body，
   * 需要进行注意处理；或者使用拦截器和AOP切面进行，但都需要进行注意body的读取，不可多次读；
   * @author 一块小饼干

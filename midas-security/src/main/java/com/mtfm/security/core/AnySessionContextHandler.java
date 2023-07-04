@@ -35,17 +35,22 @@ import org.springframework.util.StringUtils;
  * @author 一块小饼干
  * @since 1.0.0
  */
-@Component
 public class AnySessionContextHandler implements AnySessionContext<UserSubject>, ApplicationContextAware, InitializingBean {
 
     private static final Logger logger = LoggerFactory.getLogger(AnySessionContextHandler.class);
+
     private RedisTemplate<String, String> redisTemplate;
 
+    private String redisKey;
+
     @Autowired
-    public AnySessionContextHandler() {}
+    public AnySessionContextHandler() {
+        this.redisKey = SecurityRedisKey.USER_STORAGE;
+    }
 
     public AnySessionContextHandler(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
+        this.redisKey = SecurityRedisKey.USER_STORAGE;
     }
 
     @Override
@@ -77,7 +82,10 @@ public class AnySessionContextHandler implements AnySessionContext<UserSubject>,
     @SuppressWarnings("unchecked")
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.redisTemplate = (RedisTemplate<String, String>) applicationContext.getBean("redisTemplate");
+        // 防止初始化redisTemplate不被覆盖，如果为空，则从容器当中取
+        if (this.redisTemplate == null) {
+            this.redisTemplate = (RedisTemplate<String, String>) applicationContext.getBean("redisTemplate");
+        }
     }
 
     /**
@@ -93,19 +101,30 @@ public class AnySessionContextHandler implements AnySessionContext<UserSubject>,
                 "constructor,you could call constructor which is created by redisTemplate");
     }
 
-    private BoundValueOperations<String, String> ops(String key) {
-        return redisTemplate.boundValueOps(getKey(key));
+    protected BoundValueOperations<String, String> ops(String key) {
+        if (this.redisTemplate == null) {
+            this.redisTemplate = new RedisTemplate<>();
+        }
+        return this.redisTemplate.boundValueOps(getKey(key));
     }
 
-    private String getKey(String key) {
+    protected String getKey(String key) {
         return SecurityRedisKey.makeKey(SecurityRedisKey.USER_STORAGE, key);
     }
 
-    public RedisTemplate<String, String> getRedisTemplate() {
+    protected RedisTemplate<String, String> getRedisTemplate() {
         return redisTemplate;
     }
 
     public void setRedisTemplate(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
+    }
+
+    protected String getRedisKey() {
+        return redisKey;
+    }
+
+    public void setRedisKey(String redisKey) {
+        this.redisKey = redisKey;
     }
 }

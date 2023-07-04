@@ -71,7 +71,7 @@ public class RedisUserCache implements UserCache {
             ops.set(authorityValue);
         } catch (Exception e) {
             if (logger.isDebugEnabled()) {
-                logger.debug("UserDetails cast to UserTemplate error");
+                logger.debug("UserDetails cast to AppUser error");
             }
         }
     }

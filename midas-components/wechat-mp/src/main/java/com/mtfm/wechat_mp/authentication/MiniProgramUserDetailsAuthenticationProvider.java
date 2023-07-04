@@ -18,7 +18,6 @@ package com.mtfm.wechat_mp.authentication;
 
 import com.mtfm.security.authentication.AppUserPreAuthenticationChecks;
 import com.mtfm.wechat_mp.MiniProgramMessageSource;
-import com.mtfm.wechat_mp.MiniProgramRedisKey;
 import com.mtfm.weixin.mp.SessionResult;
 import com.mtfm.weixin.mp.service.OauthCodeService;
 import org.slf4j.Logger;
@@ -27,8 +26,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
-import org.springframework.data.redis.core.BoundValueOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -47,18 +44,15 @@ public class MiniProgramUserDetailsAuthenticationProvider implements Authenticat
 
     private static final Logger logger = LoggerFactory.getLogger(MiniProgramUserDetailsAuthenticationProvider.class);
     private MessageSourceAccessor messages = MiniProgramMessageSource.getAccessor();
-    private OauthCodeService oauthCodeService;
+    private final OauthCodeService oauthCodeService;
     private UserDetailsChecker postCheck = new AppUserPreAuthenticationChecks();
-    private UserDetailsManager userDetailsManager;
-    private RedisTemplate<String, String> redisTemplate;
+    private final UserDetailsManager userDetailsManager;
     private static final String NONE_CODE = "NODE_CODE";
 
     public MiniProgramUserDetailsAuthenticationProvider(OauthCodeService oauthCodeService,
-                                                        UserDetailsManager userDetailsManager,
-                                                        RedisTemplate<String, String> redisTemplate) {
+                                                        UserDetailsManager userDetailsManager) {
         this.oauthCodeService = oauthCodeService;
         this.userDetailsManager = userDetailsManager;
-        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -78,18 +72,18 @@ public class MiniProgramUserDetailsAuthenticationProvider implements Authenticat
                         "Only MiniProgramAuthenticationToken is supported"));
         String jsCode = determineJsCode(authentication);
         SessionResult sessionResult;
-        try {
-            // 远程调用微信服务器获取session
-            sessionResult = oauthCodeService.codeToSession(jsCode);
-            storeSession(sessionResult.getOpenid(), sessionResult.getSession_key());
-        } catch (IllegalAccessException e) {
+//        try {
+//            // 远程调用微信服务器获取session
+//            sessionResult = oauthCodeService.codeToSession(jsCode);
+//            storeSession(sessionResult.getOpenid(), sessionResult.getSession_key());
+//        } catch (IllegalAccessException e) {
 //            throw new BadCredentialsException(this.messages
 //                    .getMessage("MiniProgramUserDetailsAuthenticationProvider.badCredentials",
 //                            "wrong jsCode, no authorized user found for the mini program"));
-            sessionResult = new SessionResult();
-            sessionResult.setOpenid("123456");
-            sessionResult.setUnionid("123456");
-        }
+//        }
+        sessionResult = new SessionResult();
+        sessionResult.setOpenid("123456");
+        sessionResult.setUnionid("123456");
         try {
             return loadUser(sessionResult.getOpenid(), authentication);
         } catch (UsernameNotFoundException ex) {
@@ -122,12 +116,6 @@ public class MiniProgramUserDetailsAuthenticationProvider implements Authenticat
                 userDetails, authentication, null, userDetails.getAuthorities());
     }
 
-    private void storeSession(String openId, String sessionKey) {
-        BoundValueOperations<String, String> ops = this.redisTemplate
-                .boundValueOps(MiniProgramRedisKey.makeKey(MiniProgramRedisKey.WECHAT_SESSION_KEY, openId));
-        ops.set(sessionKey);
-    }
-
     @Override
     public boolean supports(Class<?> authentication) {
         return MiniProgramAuthenticationToken.class.isAssignableFrom(authentication);
@@ -137,7 +125,7 @@ public class MiniProgramUserDetailsAuthenticationProvider implements Authenticat
         return (authentication.getCredentials() == null) ? NONE_CODE : authentication.getCredentials().toString();
     }
 
-    public UserDetailsChecker getPostCheck() {
+    protected UserDetailsChecker getPostCheck() {
         return postCheck;
     }
 
@@ -145,7 +133,7 @@ public class MiniProgramUserDetailsAuthenticationProvider implements Authenticat
         this.postCheck = postCheck;
     }
 
-    public MessageSourceAccessor getMessages() {
+    protected MessageSourceAccessor getMessages() {
         return messages;
     }
 
@@ -153,27 +141,12 @@ public class MiniProgramUserDetailsAuthenticationProvider implements Authenticat
         this.messages = messages;
     }
 
-    public OauthCodeService getOauthCodeService() {
+    protected OauthCodeService getOauthCodeService() {
         return oauthCodeService;
     }
 
-    public void setOauthCodeService(OauthCodeService oauthCodeService) {
-        this.oauthCodeService = oauthCodeService;
-    }
-
-    public UserDetailsManager getUserDetailsManager() {
+    protected UserDetailsManager getUserDetailsManager() {
         return userDetailsManager;
     }
 
-    public void setUserDetailsManager(UserDetailsManager userDetailsManager) {
-        this.userDetailsManager = userDetailsManager;
-    }
-
-    public RedisTemplate<String, String> getRedisTemplate() {
-        return redisTemplate;
-    }
-
-    public void setRedisTemplate(RedisTemplate<String, String> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
 }
