@@ -11,7 +11,7 @@
  Target Server Version : 80031 (8.0.31)
  File Encoding         : 65001
 
- Date: 29/06/2023 10:55:25
+ Date: 04/07/2023 18:05:36
 */
 
 SET NAMES utf8mb4;
@@ -30,12 +30,31 @@ CREATE TABLE `app_account` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `update_by` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '更新人',
   `current_version` datetime DEFAULT NULL COMMENT '乐观锁',
-  `deleted` int DEFAULT NULL COMMENT '逻辑删除 0 未删除 1 删除',
+  `deleted` int DEFAULT '0' COMMENT '逻辑删除 0 未删除 1 删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Records of app_account
+-- ----------------------------
+BEGIN;
+INSERT INTO `app_account` (`id`, `locked`, `expired_time`, `create_time`, `create_by`, `update_time`, `update_by`, `current_version`, `deleted`) VALUES ('1674740786308067329', 0, NULL, '2023-06-30 19:24:53', NULL, NULL, NULL, NULL, 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for app_secret
+-- ----------------------------
+DROP TABLE IF EXISTS `app_secret`;
+CREATE TABLE `app_secret` (
+  `id` char(19) COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
+  `secret` varchar(128) COLLATE utf8mb4_general_ci NOT NULL COMMENT '密钥',
+  `expired_time` datetime DEFAULT NULL COMMENT '过期时间',
+  `user_id` char(19) COLLATE utf8mb4_general_ci NOT NULL COMMENT '关联用户',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- ----------------------------
+-- Records of app_secret
 -- ----------------------------
 BEGIN;
 COMMIT;
@@ -61,6 +80,7 @@ CREATE TABLE `app_user_base_info` (
 -- Records of app_user_base_info
 -- ----------------------------
 BEGIN;
+INSERT INTO `app_user_base_info` (`id`, `nickname`, `avatar`, `gender`, `birth`, `country`, `province`, `city`, `user_id`) VALUES ('1674740791018270722', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1674740786308067329');
 COMMIT;
 
 -- ----------------------------
@@ -86,24 +106,7 @@ CREATE TABLE `app_user_reference` (
 -- Records of app_user_reference
 -- ----------------------------
 BEGIN;
-COMMIT;
-
--- ----------------------------
--- Table structure for app_user_secret
--- ----------------------------
-DROP TABLE IF EXISTS `app_user_secret`;
-CREATE TABLE `app_user_secret` (
-  `id` char(19) COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
-  `secret` varchar(128) COLLATE utf8mb4_general_ci NOT NULL COMMENT '密钥',
-  `expired_time` datetime DEFAULT NULL COMMENT '过期时间',
-  `user_id` char(19) COLLATE utf8mb4_general_ci NOT NULL COMMENT '关联用户',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- ----------------------------
--- Records of app_user_secret
--- ----------------------------
-BEGIN;
+INSERT INTO `app_user_reference` (`id`, `username`, `identifier`, `additional_key`, `validated`, `validated_time`, `expired_time`, `login_access`, `secret_access`, `third_part`, `user_id`) VALUES ('1674740788623323137', '123456', 'MINI PROGRAM', NULL, 1, '2023-06-30 19:24:54', NULL, 1, 0, 1, '1674740786308067329');
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
