@@ -1,3 +1,18 @@
+/*
+ * Copyright 2022 一块小饼干(莫杨)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.mtfm.core.context;
 
 import org.springframework.web.context.request.RequestContextHolder;
@@ -5,6 +20,12 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * @author 一块小饼干
+ * @since 1.0.0
+ * 当前请求处理
+ * 注意：请不要在异步或者离线下使用
+ */
 public abstract class HttpRequestHolder {
 
     private static final String LOCALHOST = "localhost";
@@ -18,7 +39,7 @@ public abstract class HttpRequestHolder {
         if (requestAttributes != null) {
             return requestAttributes.getRequest();
         }
-        return null;
+        throw new NullPointerException("could not get current request, you shouldn't get it in async thread");
     }
 
     public static String get(String header) {

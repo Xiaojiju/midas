@@ -20,7 +20,8 @@
         <module>midas-file-loader/file-core</module>
         <module>midas-file-loader/qiniu-kodo</module>
         <module>wechat-mp</module>
-        <module>mids-crypto</module>
+        <module>midas-crypto</module>
+        <module>midas-merchant</module>
     </modules>
 
     <properties>
