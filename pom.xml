@@ -28,6 +28,7 @@
 		<module>midas-modules</module>
 		<module>midas-modules/backend-support</module>
         <module>midas-modules/app-support</module>
+        <module>midas-modules/app-mall</module>
     </modules>
 	<properties>
 		<java.version>11</java.version>

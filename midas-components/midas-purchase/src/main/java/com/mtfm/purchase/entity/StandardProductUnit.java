@@ -51,10 +51,14 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
     @TableField("brand_id")
     private Long brandId;
     /**
-     * 重量
+     * 重量（克）
      */
     @TableField(value = "weight", jdbcType = JdbcType.DECIMAL)
     private String weight;
+    /**
+     * 单位
+     */
+    private String unit;
     /**
      * 是否上架
      */
@@ -119,5 +123,13 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
 
     public void setBrief(String brief) {
         this.brief = brief;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 }

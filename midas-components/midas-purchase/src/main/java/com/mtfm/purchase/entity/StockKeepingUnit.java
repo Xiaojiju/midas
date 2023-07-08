@@ -72,6 +72,9 @@ public class StockKeepingUnit extends BaseModel<StandardProductUnit> {
     private String price;
     /**
      * 销量
+     * 注意：
+     *   1. 尽量采用缓存的方式，定时进行或其他策略来更新，频繁的更新该字段，会增加数据库压力；
+     *   2. 要制定如果缓存出现问题后，销量的统计补救问题
      */
     private Integer sale;
     /**

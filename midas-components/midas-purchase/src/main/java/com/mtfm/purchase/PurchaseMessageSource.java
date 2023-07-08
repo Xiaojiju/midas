@@ -15,21 +15,23 @@
  */
 package com.mtfm.purchase;
 
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 /**
  * @author 一块小饼干
  * @since 1.0.0
- * 必须将国际化文件加入在messageSource中，否则在引入{@link org.springframework.context.MessageSourceAware}后，可能导致加载不到模块的
- * 国际化文件；当然这是在spring bean中的场景下，如果在静态文件中需要使用国际化，可以使用{@link PurchaseMessageSource#getAccessor()}来进
- * 行获取{@link org.springframework.context.support.MessageSourceAccessor};
+ * 绝大部分注册为Spring bean的类可以直接实现{@link org.springframework.context.MessageSourceAware}进行容器自动
+ * 注入{@link org.springframework.context.MessageSource}，本类主要用于那些没有注册为Spring bean的类，可以直接使用
+ * {@link PurchaseMessageSource#getAccessor()}进行直接使用spring的国际化；
  */
-@Configuration
-public class MidasPurchaseConfiguration {
+public class PurchaseMessageSource extends ResourceBundleMessageSource {
 
-    public MidasPurchaseConfiguration(ResourceBundleMessageSource messageSource) {
-        // 添加国际化文件
-        messageSource.addBasenames("i18n/purchase_messages");
+    public PurchaseMessageSource() {
+        this.addBasenames("i18n/purchase_messages");
+    }
+
+    public static MessageSourceAccessor getAccessor() {
+        return new MessageSourceAccessor(new PurchaseMessageSource());
     }
 }

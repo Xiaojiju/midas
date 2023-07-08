@@ -225,6 +225,7 @@ CREATE TABLE `purchase_spu` (
   `category_id` bigint NOT NULL COMMENT '所属分类',
   `brand_id` bigint NOT NULL COMMENT '所属品牌',
   `weight` decimal(18,4) DEFAULT NULL COMMENT '重量',
+  `unit` varchar(16) COLLATE utf8mb4_general_ci NOT NULL COMMENT '单位',
   `grounding` int NOT NULL DEFAULT '0' COMMENT '上架 0 未上架 1 已上架',
   `brief` text COLLATE utf8mb4_general_ci COMMENT '简要说明',
   `create_time` datetime NOT NULL COMMENT '创建时间',
