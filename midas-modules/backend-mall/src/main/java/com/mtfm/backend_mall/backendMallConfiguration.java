@@ -1,4 +1,4 @@
-package com.mtfm.app_purchase;
+package com.mtfm.backend_mall;
 
 import com.mtfm.purchase.manager.BrandManager;
 import com.mtfm.purchase.manager.BrandRelationManager;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class AppMallConfiguration {
+public class backendMallConfiguration {
 
     @Bean
     public BrandRelationManager brandRelationManager() {

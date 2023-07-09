@@ -15,6 +15,7 @@
  */
 package com.mtfm.purchase.manager.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mtfm.core.util.page.Page;
 import com.mtfm.core.util.page.PageTemplate;
@@ -23,18 +24,25 @@ import com.mtfm.purchase.entity.Brand;
 import com.mtfm.purchase.exceptions.PurchaseExistException;
 import com.mtfm.purchase.exceptions.PurchaseNotFoundException;
 import com.mtfm.purchase.manager.BrandManager;
-import com.mtfm.purchase.manager.CategoryManager;
-import com.mtfm.purchase.manager.mapper.base.BrandMapper;
+import com.mtfm.purchase.manager.BrandRelationManager;
+import com.mtfm.purchase.manager.mapper.BrandMapper;
 import com.mtfm.purchase.manager.provisioning.BrandDetails;
+import com.mtfm.purchase.manager.provisioning.CategoryDetails;
+import com.mtfm.tools.StringUtils;
+import com.mtfm.tools.enums.Judge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author 一块小饼干
@@ -42,45 +50,107 @@ import java.util.List;
  * 品牌管理业务
  * 该类主要是{@link BrandManager}的实现类
  */
-public class BrandDetailsService extends ServiceImpl<BrandMapper, Brand> implements BrandManager, MessageSourceAware, InitializingBean {
+@Transactional(rollbackFor = Exception.class)
+public class BrandDetailsService extends ServiceImpl<BrandMapper, Brand>
+        implements BrandManager, MessageSourceAware, InitializingBean {
 
     private static final Logger logger = LoggerFactory.getLogger(BrandDetailsService.class);
 
     private MessageSourceAccessor messages = PurchaseMessageSource.getAccessor();
-    private CategoryManager categoryManager;
 
-    public BrandDetailsService(CategoryManager categoryManager) {
-        this.categoryManager = categoryManager;
+    private BrandRelationManager brandRelationManager;
+
+    public BrandDetailsService(BrandRelationManager brandRelationManager) {
+        this.brandRelationManager = brandRelationManager;
     }
 
     @Override
-    public void createBrand(BrandDetails details) throws PurchaseExistException {
-
+    public void createBrand(@NotNull BrandDetails details) throws PurchaseExistException {
+        if (this.brandExist(details.getBrand())) {
+            throw new PurchaseExistException(this.messages.getMessage("BrandManager.exist",
+                    "brand name had exist"));
+        }
+        Brand brand = details.convertTo();
+        boolean success = this.save(brand);
+        if (success && logger.isDebugEnabled()) {
+            logger.debug("brand {} has be saved, id: {}", brand.getBrand(), brand.getId());
+        }
+        List<CategoryDetails> categories = details.getCategories();
+        if (!CollectionUtils.isEmpty(categories)) {
+            this.brandRelationManager.addRelations(brand.getId(),
+                    categories.stream().map(CategoryDetails::getTarget).collect(Collectors.toList()));
+        }
     }
 
     @Override
-    public void updateBrand(BrandDetails details) throws PurchaseNotFoundException {
-
+    public void updateBrand(@NotNull BrandDetails details) throws PurchaseNotFoundException {
+        Brand exist = this.loadBrand(details.getBrand());
+        if (exist != null && !exist.getId().equals(details.getId())) {
+            throw new PurchaseExistException(this.messages.getMessage("BrandManager.exist",
+                    "brand name had exist"));
+        }
+        Brand brand = details.convertTo();
+        boolean success = this.save(brand);
+        if (success && logger.isDebugEnabled()) {
+            logger.debug("brand {} has be updated, id: {}", brand.getBrand(), brand.getId());
+        }
+        // 删除所有
+        this.brandRelationManager.removeRelations(brand.getId(), null);
+        // 然后再添加
+        List<CategoryDetails> categories = details.getCategories();
+        if (!CollectionUtils.isEmpty(categories)) {
+            this.brandRelationManager.addRelations(brand.getId(),
+                    categories.stream().map(CategoryDetails::getTarget).collect(Collectors.toList()));
+        }
     }
 
     @Override
     public BrandDetails loadBrand(Long id, String brand) {
-        return null;
+        if (id == null && !StringUtils.hasText(brand)) {
+            throw new IllegalArgumentException("at least one of the two parameters cannot be empty or null");
+        }
+        List<BrandDetails> brandDetails = this.baseMapper.selectBrand(id, brand, null);
+        if (CollectionUtils.isEmpty(brandDetails)) {
+            return null;
+        }
+        return brandDetails.get(0);
     }
 
     @Override
     public List<BrandDetails> loadBrandByLetter(String letter) {
-        return null;
+        if (StringUtils.hasText(letter)) {
+            throw new NullPointerException("letter must not be null or empty");
+        }
+        return this.baseMapper.selectBrand(null, null, letter);
     }
 
     @Override
     public void removeBrand(Long id, String brand) {
-
+        if (id == null && !StringUtils.hasText(brand)) {
+            throw new IllegalArgumentException("at least one of the two parameters cannot be empty or null");
+        }
+        QueryWrapper<Brand> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(id != null, Brand::getId, id)
+                .eq(StringUtils.hasText(brand), Brand::getBrand, brand);
+        this.baseMapper.delete(queryWrapper);
     }
 
     @Override
-    public PageTemplate<BrandDetails> page(Page page) {
+    public PageTemplate<BrandDetails> page(Page page, String brand, String letter) {
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<BrandDetails> detailsPage
+                = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>();
+        detailsPage.setCurrent(page.getCurrent()).setSize(page.getSize()).setSearchCount(false);
+        detailsPage = this.baseMapper.selectBrandPage(detailsPage, brand, letter);
+        detailsPage.setTotal(this.baseMapper.selectBrandCount(brand, letter));
         return null;
+    }
+
+    @Override
+    public boolean brandExist(String brand) {
+        QueryWrapper<Brand> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Brand::getBrand, brand)
+                .eq(Brand::getDeleted, Judge.NO.getCode());
+        return this.baseMapper.exists(queryWrapper);
     }
 
     @Override
@@ -93,11 +163,18 @@ public class BrandDetailsService extends ServiceImpl<BrandMapper, Brand> impleme
         this.messages = new MessageSourceAccessor(messageSource);
     }
 
-    protected CategoryManager getCategoryManager() {
-        return categoryManager;
+    private Brand loadBrand(String brand) {
+        QueryWrapper<Brand> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Brand::getBrand, brand)
+                .eq(Brand::getDeleted, Judge.NO.getCode());
+        return this.baseMapper.selectOne(queryWrapper);
     }
 
-    public void setCategoryManager(CategoryManager categoryManager) {
-        this.categoryManager = categoryManager;
+    protected BrandRelationManager getBrandRelationManager() {
+        return brandRelationManager;
+    }
+
+    public void setBrandRelationManager(BrandRelationManager brandRelationManager) {
+        this.brandRelationManager = brandRelationManager;
     }
 }

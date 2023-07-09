@@ -21,6 +21,7 @@ import com.mtfm.purchase.exceptions.PurchaseExistException;
 import com.mtfm.purchase.exceptions.PurchaseNotFoundException;
 import com.mtfm.purchase.manager.provisioning.BrandDetails;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -34,13 +35,13 @@ public interface BrandManager {
      * 创建品牌
      * @param details 品牌详情
      */
-    void createBrand(BrandDetails details) throws PurchaseExistException;
+    void createBrand(@NotNull BrandDetails details) throws PurchaseExistException;
 
     /**
      * 修改品牌
      * @param details 品牌详情
      */
-    void updateBrand(BrandDetails details) throws PurchaseNotFoundException;
+    void updateBrand(@NotNull BrandDetails details) throws PurchaseNotFoundException;
 
     /**
      * 加载品牌详情
@@ -71,5 +72,12 @@ public interface BrandManager {
      * @param page 分页参数
      * @return 品牌详情
      */
-    PageTemplate<BrandDetails> page(Page page);
+    PageTemplate<BrandDetails> page(Page page, String brand, String letter);
+
+    /**
+     * 品牌名是否存在
+     * @param brand 品牌名
+     * @return true 存在 false 不存在
+     */
+    boolean brandExist(String brand);
 }

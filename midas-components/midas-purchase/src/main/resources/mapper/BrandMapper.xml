@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+  Copyright 2022 一块小饼干(莫杨)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<mapper namespace="com.mtfm.purchase.manager.mapper.BrandMapper">
+    <resultMap id="brand_details_map" type="com.mtfm.purchase.manager.provisioning.BrandDetails">
+        <id property="id" column="id" jdbcType="BIGINT" javaType="long"/>
+        <result property="brand" column="brand" jdbcType="VARCHAR" javaType="string"/>
+        <result property="description" column="description" jdbcType="VARCHAR" javaType="string"/>
+        <result property="logo" column="logo" jdbcType="VARCHAR" javaType="string"/>
+        <result property="indexLetter" column="index_letter" jdbcType="VARCHAR" javaType="string"/>
+        <result property="show" column="show" jdbcType="INTEGER" javaType="com.mtfm.tools.enums.Judge"
+                typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+        <result property="sort" column="sort" jdbcType="INTEGER" javaType="int"/>
+        <collection property="categories" ofType="com.mtfm.purchase.manager.provisioning.CategoryDetails">
+            <id property="target" column="category_id" jdbcType="BIGINT" javaType="long"/>
+            <result property="category" column="category" jdbcType="VARCHAR" javaType="string"/>
+            <result property="parentId" column="parent_id" jdbcType="BIGINT" javaType="long"/>
+            <result property="show" column="show" jdbcType="INTEGER" javaType="com.mtfm.tools.enums.Judge"
+                    typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+            <result property="icon" column="icon" jdbcType="VARCHAR" javaType="string"/>
+            <result property="level" column="level" jdbcType="INTEGER" javaType="int"/>
+        </collection>
+    </resultMap>
+    <!-- 查询品牌详情 -->
+    <select id="selectBrand" resultMap="brand_details_map">
+        SELECT
+            `temp`.*,
+            `pc`.`id` `category_id`,
+            `pc`.`category`,
+            `pc`.`parent_id`,
+            `pc`.`show`,
+            `pc`.`icon`,
+            `pc`.`level`
+        FROM (
+            SELECT
+                `pb`.`id`,
+                `pb`.`brand`,
+                `pb`.`logo`,
+                `pb`.`description`,
+                `pb`.`show`,
+                `pb`.`index_letter`,
+                `pb`.`sort`
+            FROM
+                `purchase_brand` `pb`
+            <where>
+                `pb`.`deleted` = 0
+                <if test="id != null">
+                    AND `pb`.`id` = #{ id }
+                </if>
+                <if test="brand != null and brand != ''">
+                    AND `pb`.`brand` = #{ brand }
+                </if>
+                <if test="letter != null and letter != ''">
+                    AND `pb`.`letter` = #{ letter }
+                </if>
+            </where>
+        ) `temp`
+        LEFT JOIN `purchase_brand_category_relation` `pbcr` ON `temp`.`id` = `pbcr`.`brand_id`
+        LEFT JOIN `purchase_category` `pc` ON `pbcr`.`category_id` = `pc`.`id`
+        WHERE
+            `pc`.`deleted` = 0
+    </select>
+
+    <!-- 查询品牌分页 -->
+    <select id="selectBrandPage" resultMap="brand_details_map">
+        SELECT
+            `temp`.*,
+            `pc`.`id` `category_id`,
+            `pc`.`category`,
+            `pc`.`parent_id`,
+            `pc`.`show`,
+            `pc`.`icon`,
+            `pc`.`level`
+        FROM (
+            SELECT
+                `pb`.`id`,
+                `pb`.`brand`,
+                `pb`.`logo`,
+                `pb`.`description`,
+                `pb`.`show`,
+                `pb`.`index_letter`,
+                `pb`.`sort`
+            FROM
+                `purchase_brand` `pb`
+            <where>
+                `pb`.`deleted` = 0
+                <if test="brand != null and brand != ''">
+                    AND `pb`.`brand` LIKE CONCAT('%', #{brand}, '%')
+                </if>
+                <if test="letter != null and letter != ''">
+                    AND `pb`.`letter` = #{ letter }
+                </if>
+            </where>
+            ORDER BY `pb`.`create_time` DESC
+        ) `temp`
+        LEFT JOIN `purchase_brand_category_relation` `pbcr` ON `temp`.`id` = `pbcr`.`brand_id`
+        LEFT JOIN `purchase_category` `pc` ON `pbcr`.`category_id` = `pc`.`id`
+        WHERE
+            `pc`.`deleted` = 0
+    </select>
+    <!-- 查询品牌数量 -->
+    <select id="selectBrandCount" resultType="int">
+        SELECT
+            COUNT(`pb`.`id`)
+        FROM
+        `purchase_brand` `pb`
+        <where>
+            `pb`.`deleted` = 0
+            <if test="brand != null and brand != ''">
+                AND `pb`.`brand` LIKE CONCAT('%', #{brand}, '%')
+            </if>
+            <if test="letter != null and letter != ''">
+                AND `pb`.`letter` = #{ letter }
+            </if>
+        </where>
+    </select>
+</mapper>

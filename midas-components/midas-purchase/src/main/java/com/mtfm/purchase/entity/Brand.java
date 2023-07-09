@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.mtfm.datasource.BaseModel;
 import com.mtfm.datasource.handler.CommonEnumTypeHandler;
+import com.mtfm.tools.StringUtils;
 import com.mtfm.tools.enums.Judge;
 import org.apache.ibatis.type.JdbcType;
 
@@ -62,6 +63,27 @@ public class Brand extends BaseModel<Brand> {
      * 排序
      */
     private Integer sort;
+
+    public Brand() {
+    }
+
+    public Brand(Long id, String brand, String logo, String description, Judge show, String indexLetter, Integer sort) {
+        this.id = id;
+        this.brand = brand;
+        this.logo = logo;
+        this.description = description;
+        this.show = show;
+        this.indexLetter = indexLetter;
+        this.sort = sort;
+    }
+
+    public static BrandBuilder withName(String brand) {
+        return new BrandBuilder(brand);
+    }
+
+    public static BrandBuilder created(Long id, String brand) {
+        return new BrandBuilder(id, brand);
+    }
 
     public Long getId() {
         return id;
@@ -117,5 +139,56 @@ public class Brand extends BaseModel<Brand> {
 
     public void setSort(Integer sort) {
         this.sort = sort;
+    }
+
+    public static class BrandBuilder {
+
+        private final Long id;
+        private final String brand;
+        private String logo;
+        private String description;
+        private Judge show;
+        private Integer sort;
+
+        private BrandBuilder(String name) {
+            this(null, name);
+        }
+
+        private BrandBuilder(Long id, String name) {
+            this.id = id;
+            this.brand = name;
+        }
+
+        public BrandBuilder withLogo(String logo) {
+            this.logo = logo;
+            return this;
+        }
+
+        public BrandBuilder describe(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public BrandBuilder show(boolean show) {
+            if (show) {
+                this.show = Judge.YES;
+            } else {
+                this.show = Judge.NO;
+            }
+            return this;
+        }
+
+        public BrandBuilder sort(int sort) {
+            this.sort = sort;
+            return this;
+        }
+
+        public Brand build() {
+            if (this.show == null) {
+                this.show = Judge.YES;
+            }
+            return new Brand(this.id, this.brand, this.logo, this.description, this.show,
+                    StringUtils.chineseFirstLetter(this.brand), this.sort);
+        }
     }
 }

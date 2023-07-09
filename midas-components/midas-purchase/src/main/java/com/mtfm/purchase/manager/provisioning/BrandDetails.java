@@ -18,6 +18,7 @@ package com.mtfm.purchase.manager.provisioning;
 import com.mtfm.core.convert.BeanConverter;
 import com.mtfm.purchase.entity.Brand;
 import com.mtfm.tools.enums.Judge;
+import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -30,17 +31,33 @@ import java.util.List;
 public class BrandDetails implements BeanConverter<Brand>, Serializable {
 
     private Long id;
-    private List<Long> categoryId;
+
     private String brand;
+
     private String logo;
+
     private String description;
+
     private Judge show;
+
     private String indexLetter;
+
     private Integer sort;
+
+    private List<CategoryDetails> categories;
 
     @Override
     public Brand convertTo() {
-        return null;
+        return Brand.created(this.id, this.brand)
+                .withLogo(this.logo)
+                .describe(this.description)
+                .show(this.show == null || this.show == Judge.YES)
+                .sort(this.sort)
+                .build();
+    }
+
+    public boolean hasCategory() {
+        return !CollectionUtils.isEmpty(this.categories);
     }
 
     public Long getId() {
@@ -51,12 +68,12 @@ public class BrandDetails implements BeanConverter<Brand>, Serializable {
         this.id = id;
     }
 
-    public List<Long> getCategoryId() {
-        return categoryId;
+    public List<CategoryDetails> getCategories() {
+        return categories;
     }
 
-    public void setCategoryId(List<Long> categoryId) {
-        this.categoryId = categoryId;
+    public void setCategories(List<CategoryDetails> categories) {
+        this.categories = categories;
     }
 
     public String getBrand() {
@@ -106,4 +123,5 @@ public class BrandDetails implements BeanConverter<Brand>, Serializable {
     public void setSort(Integer sort) {
         this.sort = sort;
     }
+
 }

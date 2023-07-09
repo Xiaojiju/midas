@@ -29,6 +29,7 @@
 		<module>midas-modules/backend-support</module>
         <module>midas-modules/app-support</module>
         <module>midas-modules/app-mall</module>
+        <module>midas-modules/backend-mall</module>
     </modules>
 	<properties>
 		<java.version>11</java.version>
@@ -38,6 +39,7 @@
 		<commons.fileupload.version>1.4</commons.fileupload.version>
 		<commons.collections.version>3.2.2</commons.collections.version>
 		<jwt.version>4.2.1</jwt.version>
+		<pinyin.version>2.5.1</pinyin.version>
 	</properties>
 	<dependencies>
 		<dependency>
