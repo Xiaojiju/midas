@@ -1,13 +1,9 @@
 package com.mtfm.backend_support.config;
 
-import com.mtfm.backend_support.service.user.*;
-import com.mtfm.security.AppUser;
-import com.mtfm.security.authentication.AppUserPreAuthenticationChecks;
 import com.mtfm.security.filter.RequestBodyAuthenticationProcessingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;

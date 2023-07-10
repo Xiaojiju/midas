@@ -16,7 +16,6 @@
 package com.mtfm.purchase.manager.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mtfm.purchase.entity.Brand;
 import com.mtfm.purchase.manager.provisioning.BrandDetails;

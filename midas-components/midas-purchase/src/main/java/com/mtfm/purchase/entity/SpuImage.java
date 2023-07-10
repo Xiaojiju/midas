@@ -15,7 +15,10 @@
  */
 package com.mtfm.purchase.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.mtfm.datasource.handler.CommonEnumTypeHandler;
 import com.mtfm.tools.enums.Judge;
 import org.apache.ibatis.type.JdbcType;
