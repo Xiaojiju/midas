@@ -45,12 +45,17 @@ public interface BrandManager {
 
     /**
      * 加载品牌详情
-     * id和brand可以任选，也可以同时使用
      * @param id 品牌id
+     * @return 品牌详情
+     */
+    BrandDetails loadBrandById(Long id);
+
+    /**
+     * 加载品牌详情
      * @param brand 品牌名称
      * @return 品牌详情
      */
-    BrandDetails loadBrand(Long id, String brand);
+    BrandDetails loadBrandByName(String brand);
 
     /**
      * 通过首字母加载品牌详情
@@ -61,15 +66,21 @@ public interface BrandManager {
 
     /**
      * 删除品牌
-     * id和brand可以任选，也可以同时使用
      * @param id 品牌id
+     */
+    void removeBrandById(Long id);
+
+    /**
+     * 删除品牌
      * @param brand 品牌名
      */
-    void removeBrand(Long id, String brand);
+    void removeBrandByName(String brand);
 
     /**
      * 分页品牌
      * @param page 分页参数
+     * @param brand 品牌名（支持模糊查询）
+     * @param letter 首字母
      * @return 品牌详情
      */
     PageTemplate<BrandDetails> page(Page page, String brand, String letter);

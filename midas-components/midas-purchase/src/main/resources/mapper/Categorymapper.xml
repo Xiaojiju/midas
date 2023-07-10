@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+  Copyright 2022 一块小饼干(莫杨)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<mapper namespace="com.mtfm.purchase.manager.mapper.CategoryMapper">
+    <!-- CategoryDetails {@link com.mtfm.purchase.manager.provisioning.CategoryDetails} -->
+    <resultMap id="category_details_map" type="com.mtfm.purchase.manager.provisioning.CategoryDetails">
+        <id property="target" column="id" jdbcType="BIGINT" javaType="long"/>
+        <result property="category" column="category" jdbcType="VARCHAR" javaType="string"/>
+        <result property="parentId" column="parent_id" jdbcType="BIGINT" javaType="long"/>
+        <result property="level" column="level" jdbcType="INTEGER" javaType="int"/>
+        <result property="show" column="show" jdbcType="INTEGER" javaType="com.mtfm.tools.enums.Judge"
+                typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+        <result property="icon" column="icon" jdbcType="VARCHAR" javaType="string"/>
+    </resultMap>
+    <!-- 通过id或分类名查询分类 -->
+    <select id="selectCategory" resultMap="category_details_map">
+        SELECT
+            `pc`.`id` `target`,
+            `pc`.`category`,
+            `pc`.`parent_id`,
+            `pc`.`level`,
+            `pc`.`show`,
+            `pc`.`icon`
+        FROM
+            `purchase_category` `pc`
+        <where>
+            `pc`.`deleted` = 0
+            <if test="id != null">
+                AND `pc`.`id` = #{ id }
+            </if>
+            <if test="category != null and category != ''">
+                AND `pc`.`category` = { category }
+            </if>
+        </where>
+    </select>
+</mapper>

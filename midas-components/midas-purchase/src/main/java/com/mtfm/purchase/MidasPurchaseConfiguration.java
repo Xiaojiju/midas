@@ -32,4 +32,5 @@ public class MidasPurchaseConfiguration {
         // 添加国际化文件
         messageSource.addBasenames("i18n/purchase_messages");
     }
+
 }

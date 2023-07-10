@@ -20,7 +20,9 @@ import com.mtfm.purchase.entity.Brand;
 import com.mtfm.purchase.entity.BrandCategoryRelation;
 import com.mtfm.purchase.entity.Category;
 import com.mtfm.purchase.manager.BrandRelationManager;
+import com.mtfm.purchase.manager.CategoryManager;
 import com.mtfm.purchase.manager.mapper.BrandCategoryRelationMapper;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
 
@@ -31,9 +33,20 @@ import java.util.Collection;
  */
 public class BrandRelationService extends ServiceImpl<BrandCategoryRelationMapper, BrandCategoryRelation> implements BrandRelationManager {
 
+    private CategoryManager categoryManager;
+
+    public BrandRelationService(CategoryManager categoryManager) {
+        this.categoryManager = categoryManager;
+    }
+
     @Override
     public void addRelations(Long brandId, Collection<Long> categories) {
+        if (CollectionUtils.isEmpty(categories)) {
+            return ;
+        }
+        // 校验每个分类是否都存在，仅添加已存在的分类
 
+        // 比对已存在的分类，进行添加没有关联的分类
     }
 
     @Override
@@ -49,5 +62,13 @@ public class BrandRelationService extends ServiceImpl<BrandCategoryRelationMappe
     @Override
     public Collection<Category> loadCategoriesByBrand(Long id, String brand) {
         return null;
+    }
+
+    protected CategoryManager getCategoryManager() {
+        return categoryManager;
+    }
+
+    public void setCategoryManager(CategoryManager categoryManager) {
+        this.categoryManager = categoryManager;
     }
 }

@@ -17,7 +17,11 @@ package com.mtfm.purchase.manager.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mtfm.purchase.entity.Category;
+import com.mtfm.purchase.manager.provisioning.CategoryDetails;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author 一块小饼干
@@ -26,4 +30,12 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface CategoryMapper extends BaseMapper<Category> {
+    /**
+     * 通过id或分类名查询分类
+     * 如果参数都为空的情况下，会直接返回所有的分类
+     * @param id 分类id
+     * @param category 分类名
+     * @return 分类详情
+     */
+    List<CategoryDetails> selectCategory(@Param("id") Long id, @Param("category") String category);
 }

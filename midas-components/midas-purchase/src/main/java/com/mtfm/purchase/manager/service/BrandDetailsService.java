@@ -71,6 +71,7 @@ public class BrandDetailsService extends ServiceImpl<BrandMapper, Brand>
                     "brand name had exist"));
         }
         Brand brand = details.convertTo();
+        brand.setId(null);
         boolean success = this.save(brand);
         if (success && logger.isDebugEnabled()) {
             logger.debug("brand {} has be saved, id: {}", brand.getBrand(), brand.getId());
@@ -105,11 +106,23 @@ public class BrandDetailsService extends ServiceImpl<BrandMapper, Brand>
     }
 
     @Override
-    public BrandDetails loadBrand(Long id, String brand) {
-        if (id == null && !StringUtils.hasText(brand)) {
-            throw new IllegalArgumentException("at least one of the two parameters cannot be empty or null");
+    public BrandDetails loadBrandById(Long id) {
+        if (id == null) {
+            throw new NullPointerException("brand id must not be null");
         }
-        List<BrandDetails> brandDetails = this.baseMapper.selectBrand(id, brand, null);
+        List<BrandDetails> brandDetails = this.baseMapper.selectBrand(id, null, null);
+        if (CollectionUtils.isEmpty(brandDetails)) {
+            return null;
+        }
+        return brandDetails.get(0);
+    }
+
+    @Override
+    public BrandDetails loadBrandByName(String brand) {
+        if (!StringUtils.hasText(brand)) {
+            throw new NullPointerException("brand name must not be null");
+        }
+        List<BrandDetails> brandDetails = this.baseMapper.selectBrand(null, brand, null);
         if (CollectionUtils.isEmpty(brandDetails)) {
             return null;
         }
@@ -125,13 +138,22 @@ public class BrandDetailsService extends ServiceImpl<BrandMapper, Brand>
     }
 
     @Override
-    public void removeBrand(Long id, String brand) {
-        if (id == null && !StringUtils.hasText(brand)) {
-            throw new IllegalArgumentException("at least one of the two parameters cannot be empty or null");
+    public void removeBrandById(Long id) {
+        if (id == null) {
+            throw new NullPointerException("brand id must not be null");
         }
         QueryWrapper<Brand> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(id != null, Brand::getId, id)
-                .eq(StringUtils.hasText(brand), Brand::getBrand, brand);
+        queryWrapper.lambda().eq(Brand::getId, id).eq(Brand::getDeleted, Judge.NO);
+        this.baseMapper.delete(queryWrapper);
+    }
+
+    @Override
+    public void removeBrandByName(String brand) {
+        if (!StringUtils.hasText(brand)) {
+            throw new NullPointerException("brand name must not be null");
+        }
+        QueryWrapper<Brand> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(StringUtils.hasText(brand), Brand::getBrand, brand).eq(Brand::getDeleted, Judge.NO);
         this.baseMapper.delete(queryWrapper);
     }
 
@@ -147,6 +169,7 @@ public class BrandDetailsService extends ServiceImpl<BrandMapper, Brand>
 
     @Override
     public boolean brandExist(String brand) {
+
         QueryWrapper<Brand> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Brand::getBrand, brand)
                 .eq(Brand::getDeleted, Judge.NO.getCode());
