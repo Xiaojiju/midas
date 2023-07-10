@@ -29,7 +29,9 @@ import java.nio.charset.Charset;
 public class HandleHttpInputMessage implements HttpInputMessage {
 
     private HttpInputMessage inputMessage;
+
     private Charset charset;
+
     private RequestBodyHandler requestBodyHandler;
 
     public HandleHttpInputMessage(HttpInputMessage inputMessage, Charset charset, RequestBodyHandler requestBodyHandler) {

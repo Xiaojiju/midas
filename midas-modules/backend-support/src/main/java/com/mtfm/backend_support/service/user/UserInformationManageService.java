@@ -55,8 +55,11 @@ public class UserInformationManageService extends ServiceImpl<UserMapper, SolarU
     private static final Logger logger = LoggerFactory.getLogger(UserInformationManageService.class);
 
     private ApplicationContext applicationContext;
+
     private UserManageService userManageService;
+
     private UserBaseInfoManager userBaseInfoManager;
+
     private UserReferenceManager userReferenceManager;
 
     public UserInformationManageService(UserManageService userManageService) {

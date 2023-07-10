@@ -42,6 +42,7 @@ public class RequestBodyAuthenticationProcessingFilter extends AbstractAuthentic
      * 请求api
      */
     private static final String LOGIN_URL = "/solar/api/v1/login";
+
     private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER =
             new AntPathRequestMatcher(LOGIN_URL, "POST");
 

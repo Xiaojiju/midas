@@ -26,9 +26,13 @@ import java.util.Arrays;
 public final class SecurityRedisKey extends RedisKey {
 
     public static final String HEADER_TOKEN = "authentication:token";
+
     public static final String TARGET_KEY_BLACK_ITEM = "security:target_key:black_item";
+
     public static final String TARGET_KEY_FAIL_COUNTER = "security:target_key:fail_counter";
+
     public static final String USER_STORAGE = "security:target_key:user_storage";
+
     public static final String TARGET_USER_CACHE = "target_user:target_key";
 
 

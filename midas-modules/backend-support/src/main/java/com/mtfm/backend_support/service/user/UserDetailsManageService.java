@@ -36,8 +36,11 @@ import java.util.List;
 public class UserDetailsManageService implements UserDetailsService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserDetailsManageService.class);
+
     private GrantAuthorityService grantAuthorityService;
+
     private BackendUserServiceMapper backendUserServiceMapper;
+
     private boolean enablePermissions;
 
     /**

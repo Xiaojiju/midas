@@ -19,6 +19,7 @@ import java.io.IOException;
 public class ReturnResponseAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private SessionContext<Authentication> securitySessionContextHolder;
+
     private LocalSessionProvider localSessionProvider;
 
     public ReturnResponseAuthenticationSuccessHandler(SessionContext<Authentication> securitySessionContextHolder) {

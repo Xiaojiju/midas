@@ -34,18 +34,31 @@ import java.util.Collection;
 public class AppUser implements UserDetails, CredentialsContainer, Serializable {
 
     private String id;
+
     private String username;
+
     private String identifier;
+
     private String password;
+
     private LocalDateTime secretExpiredTime;
+
     private LocalDateTime accountExpiredTime;
+
     private Judge validated;
+
     private Judge accountLocked;
+
     private String additionalKey;
+
     private LocalDateTime usernameExpiredTime;
+
     private Judge secretAccess;
+
     private Judge loginAccess;
+
     private Judge thirdPart;
+
     private Collection<? extends GrantedAuthority> authorities;
 
     public AppUser() {

@@ -6,10 +6,15 @@ import com.mtfm.tools.enums.Judge;
 public class CategoryDetails implements PropertyEntity<Long> {
 
     private Long target;
+
     private String category;
+
     private Long parentId;
+
     private Integer level;
+
     private Judge show;
+
     private String icon;
 
     @Override

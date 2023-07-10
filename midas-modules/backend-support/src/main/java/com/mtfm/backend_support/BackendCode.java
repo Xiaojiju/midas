@@ -28,6 +28,7 @@ public enum BackendCode implements CodeExpression {
     ROLE_NAME_DUPLICATE(500200, "role name duplicate");
 
     private final int code;
+
     private final String message;
 
     BackendCode(int code, String message) {

@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 public class UserRoleManageService implements UserRoleManager, MessageSourceAware, InitializingBean {
 
     protected MessageSourceAccessor messageSource;
+
     private final UserRoleMapper userRoleMapper;
 
     public UserRoleManageService(UserRoleMapper userRoleMapper) {

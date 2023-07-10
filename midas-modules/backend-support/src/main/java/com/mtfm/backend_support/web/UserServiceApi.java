@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserServiceApi implements MessageSourceAware {
 
     private UserInformationManageService userManage;
+
     private MessageSourceAccessor messageSource;
 
     public UserServiceApi(UserInformationManageService userManage) {

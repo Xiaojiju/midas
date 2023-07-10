@@ -15,7 +15,9 @@ import org.springframework.util.Assert;
 public class AppUserPostAuthenticationChecks implements UserDetailsChecker, MessageSourceAware, InitializingBean {
 
     private static final Logger logger = LoggerFactory.getLogger(AppUserPostAuthenticationChecks.class);
+
     private final boolean enableCredentialExpired;
+
     private MessageSourceAccessor messages = SolarMessageSource.getAccessor();
 
     public AppUserPostAuthenticationChecks() {

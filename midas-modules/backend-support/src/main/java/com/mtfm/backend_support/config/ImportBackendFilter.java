@@ -38,9 +38,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 public class ImportBackendFilter {
 
     private final SecuritySessionContextHolder securitySessionContextHolder;
+
     private final AuthenticationManager authenticationManager;
+
     private final ReturnResponseAuthenticationSuccessHandler successHandler;
+
     private final ReturnResponseAuthenticationFailHandler failHandler;
+
     private final WebAutoSecurityConfiguration configuration;
 
     public ImportBackendFilter(SecuritySessionContextHolder securitySessionContextHolder,

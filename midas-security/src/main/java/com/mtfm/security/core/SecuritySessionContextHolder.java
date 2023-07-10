@@ -29,14 +29,10 @@ import java.util.Set;
 /**
  * 用户会话操作类
  * 其中在{@link #putSession(Authentication)}方法和{@link #getSession()}方法中，包含获取本地时间的
- *
  *         long curMills = System.currentTimeMillis();
- *
  * 这段代码可能在一些场景中会出现不是预期效果，比如在国外服务器上，但是需要保持与国内的时间统一，则该代码就会导致时间不精准的问题；
  * 如果遇到该类似场景下，可以使用以后代码替换：
- *
  *         long curMills = LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8")); // 设置东八区时区
- *
  * 或者设置机器的时区也可以让System.currentTimeMills()获取到期望的时间戳；
  * @author 一块小饼干
  * @since 1.0.0

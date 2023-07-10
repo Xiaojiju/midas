@@ -54,10 +54,15 @@ import org.springframework.util.StringUtils;
 public class AppUserManageService extends AppUserDetailsService implements UserDetailsManager, InitializingBean, MessageSourceAware {
 
     private static final Logger logger = LoggerFactory.getLogger(AppUserManageService.class);
+
     private MessageSourceAccessor messages;
+
     private PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
     private AppUserReferenceService appUserReferenceService;
+
     private AppUserSecretService appUserSecretService;
+
 
     public AppUserManageService(AppUserMapper appUserMapper, AppUserReferenceService appUserReferenceService, AppUserSecretService appUserSecretService) {
         super(appUserMapper);

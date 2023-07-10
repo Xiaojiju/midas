@@ -30,8 +30,11 @@ public class PageQuery implements Page {
     private static final String ORDER_BY_DESC = "desc";
 
     private long current = Page.CURRENT;
+
     private long size = Page.SIZE;
+
     private String order;
+
     @Override
     public long getCurrent() {
         return this.current;

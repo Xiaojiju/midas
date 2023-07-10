@@ -62,11 +62,17 @@ public class UserManageService extends ServiceImpl<UserMapper, SolarUser>
         implements UserDetailsManager, InitializingBean, MessageSourceAware {
 
     private static final String DEFAULT_PASSWORD = "midas888888";
+
     private static final Logger logger = LoggerFactory.getLogger(UserManageService.class);
+
     private UserDetailsService userDetailsService;
+
     private UserReferenceManager userReferenceManager;
+
     private UserSecretManager userSecretManager;
+
     private UserRoleManager userRoleManager;
+
     private MessageSourceAccessor messageSource;
 
     public UserManageService(UserDetailsService userDetailsService, UserRoleManager userRoleManager) {

@@ -47,7 +47,9 @@ import java.util.*;
 public final class JSONUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(JSONUtils.class);
+
     private static ObjectMapper mapper;
+
     private static final String BLANK_EMPTY = "";
 
     private static final Set<JsonReadFeature> JSON_READ_FEATURES_ENABLED = new HashSet<>();

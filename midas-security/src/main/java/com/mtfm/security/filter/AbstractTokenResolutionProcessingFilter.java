@@ -25,8 +25,11 @@ import java.util.List;
 public abstract class AbstractTokenResolutionProcessingFilter extends GenericFilterBean {
 
     private final Log log = LogFactory.getLog(AbstractTokenResolutionProcessingFilter.class);
+
     private String[] skipUrls;
+
     protected MessageSourceAccessor messages = SolarMessageSource.getAccessor();;
+
     private List<RequestMatcher> requestMatchers;
 
     public AbstractTokenResolutionProcessingFilter() {
@@ -39,14 +42,16 @@ public abstract class AbstractTokenResolutionProcessingFilter extends GenericFil
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+            throws IOException, ServletException {
         boolean resolve = preResolve((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, filterChain);
         if (resolve) {
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
             try {
                 if (checkSession((HttpServletRequest) servletRequest)) {
-                    throw new AccountExpiredException("token had been expired");
+                    throw new AccountExpiredException(this.messages.getMessage("UserAuthentication.tokenExpired",
+                            "token had been expired"));
                 }
                 success((HttpServletRequest) servletRequest,(HttpServletResponse) servletResponse, filterChain);
             } catch (AccountExpiredException e) {

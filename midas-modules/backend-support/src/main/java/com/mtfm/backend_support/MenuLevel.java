@@ -25,10 +25,13 @@ public enum MenuLevel implements IEnum<Integer> {
 
     // 菜单
     MENU(0),
+
     // 页面
     PAGE(1),
+
     // 组件
     COMPONENT(2),
+
     // 按钮
     BUTTON(3);
 

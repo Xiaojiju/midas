@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 public class CacheClearLogoutHandler implements LogoutHandler {
 
     private final Logger logger = LoggerFactory.getLogger(CacheClearLogoutHandler.class);
+
     private SessionContext<Authentication> sessionContext;
 
     public CacheClearLogoutHandler(SessionContext<Authentication> sessionContext) {

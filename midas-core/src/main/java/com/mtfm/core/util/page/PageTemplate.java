@@ -60,8 +60,11 @@ import java.util.Collection;
 public class PageTemplate<T extends Serializable> implements PageResult<T> {
 
     private long current = Page.CURRENT;
+
     private long size = Page.CURRENT;
+
     private long total = 0;
+
     private Collection<T> items = new ArrayList<>();
 
     @Override

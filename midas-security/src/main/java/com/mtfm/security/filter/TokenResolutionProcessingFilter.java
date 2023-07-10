@@ -25,7 +25,9 @@ import java.io.IOException;
 public class TokenResolutionProcessingFilter extends AbstractTokenResolutionProcessingFilter implements MessageSourceAware {
 
     private HttpRequestSessionHandler httpRequestSessionHandler;
+
     private SessionContext<Authentication> sessionContext;
+
     private MessageSourceAccessor messageSource = SolarMessageSource.getAccessor();
 
     public TokenResolutionProcessingFilter(SessionContext<Authentication> sessionContext) {

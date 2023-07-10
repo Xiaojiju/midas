@@ -7,6 +7,7 @@ import java.util.Arrays;
 public final class StringUtils {
 
     private static final String SPACE = " ";
+
     private static final String SPACE_TRIM = "";
 
     public static String chineseFirstLetter(String source) {

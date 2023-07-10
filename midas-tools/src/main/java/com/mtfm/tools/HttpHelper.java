@@ -39,7 +39,9 @@ public class HttpHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpHelper.class);
 
     private static final String LOWER_QUESTION_MARK = "?";
+
     private static final String LOWER_AND_MARK = "&";
+
     private static final String LOWER_EQUAL_MARK = "=";
 
     public static String getRequestUrl(String url, Map<String, String> variables) {

@@ -25,6 +25,7 @@ import java.io.Serializable;
 public interface Page extends Serializable {
 
     long CURRENT = 1;
+
     long SIZE = 12;
 
     /**

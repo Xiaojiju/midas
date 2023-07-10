@@ -38,8 +38,11 @@ import org.springframework.util.Assert;
 public class AppUserPreAuthenticationChecks implements UserDetailsChecker, MessageSourceAware, InitializingBean {
 
     protected final Log logger = LogFactory.getLog(getClass());
+
     private MessageSourceAccessor messages = SolarMessageSource.getAccessor();
+
     private final boolean enableAccountExpired;
+
     private final boolean enableUsernameExpired;
 
     /**

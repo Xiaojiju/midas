@@ -40,6 +40,7 @@ import java.util.Objects;
 public class RoleServiceApi implements MessageSourceAware {
 
     private RoleManager roleService;
+
     private MessageSourceAccessor messageSource;
 
     public RoleServiceApi(RoleManager roleService) {

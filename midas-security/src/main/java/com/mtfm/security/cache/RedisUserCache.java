@@ -38,6 +38,7 @@ import org.springframework.util.StringUtils;
 public class RedisUserCache implements UserCache {
 
     protected Logger logger = LoggerFactory.getLogger(RedisUserCache.class);
+
     private final RedisTemplate<String, String> redisTemplate;
 
     public RedisUserCache(RedisTemplate<String, String> redisTemplate) {

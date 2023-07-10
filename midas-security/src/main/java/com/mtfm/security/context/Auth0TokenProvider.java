@@ -36,8 +36,11 @@ import java.util.Map;
 public class Auth0TokenProvider implements TokenProvider {
 
     private static final String SECRET = "X5V7QZ2Z4CB40A7T";
+
     private static final Algorithm DEFAULT_ALGORITHM = Algorithm.HMAC256(SECRET);
+
     protected static final String ISSUER = "一块小饼干";
+
     private final Algorithm algorithm;
 
     public Auth0TokenProvider() {

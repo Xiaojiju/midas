@@ -22,6 +22,7 @@ import java.io.Serializable;
 public class SecurityToken implements SignToken, Serializable {
 
     private final String accessToken;
+
     private final long signAccessTimestamp;
 
     public SecurityToken(String accessToken) {

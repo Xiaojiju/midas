@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProfileServiceApi {
 
     private UserInformationManageService userManage;
+
     private UserBaseInfoManager userBaseInfoManager;
 
     public ProfileServiceApi(UserInformationManageService userManage, UserBaseInfoManager userBaseInfoManager) {

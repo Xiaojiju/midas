@@ -14,7 +14,8 @@ import java.io.IOException;
 public class JsonBasedLogoutSuccessHandler implements LogoutSuccessHandler {
 
     @Override
-    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+            throws IOException, ServletException {
         ResponseUtils.writeObject(response, JSONUtils.toJsonString(RestResult.success()));
     }
 }
