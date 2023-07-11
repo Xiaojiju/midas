@@ -40,6 +40,7 @@
 		<commons.collections.version>3.2.2</commons.collections.version>
 		<jwt.version>4.2.1</jwt.version>
 		<pinyin.version>2.5.1</pinyin.version>
+		<p6spy.version>3.9.1</p6spy.version>
 	</properties>
 	<dependencies>
 		<dependency>

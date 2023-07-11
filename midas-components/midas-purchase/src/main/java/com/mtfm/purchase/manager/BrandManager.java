@@ -48,7 +48,7 @@ public interface BrandManager {
      * @param id 品牌id
      * @return 品牌详情
      */
-    BrandDetails loadBrandById(Long id);
+    BrandDetails loadBrandById(long id);
 
     /**
      * 加载品牌详情
@@ -76,14 +76,14 @@ public interface BrandManager {
      */
     void removeBrandByName(String brand);
 
-    /**
-     * 分页品牌
-     * @param page 分页参数
-     * @param brand 品牌名（支持模糊查询）
-     * @param letter 首字母
-     * @return 品牌详情
-     */
-    PageTemplate<BrandDetails> page(Page page, String brand, String letter);
+//    /**
+//     * 分页品牌
+//     * @param page 分页参数
+//     * @param brand 品牌名（支持模糊查询）
+//     * @param letter 首字母
+//     * @return 品牌详情
+//     */
+//    PageTemplate<BrandDetails> page(Page page, String brand, String letter);
 
     /**
      * 品牌名是否存在

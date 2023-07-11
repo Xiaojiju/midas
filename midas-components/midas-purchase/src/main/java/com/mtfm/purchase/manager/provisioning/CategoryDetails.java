@@ -15,7 +15,6 @@
  */
 package com.mtfm.purchase.manager.provisioning;
 
-import com.mtfm.core.PropertyEntity;
 import com.mtfm.core.convert.BeanConverter;
 import com.mtfm.purchase.entity.Category;
 import com.mtfm.tools.enums.Judge;
@@ -25,11 +24,11 @@ import com.mtfm.tools.enums.Judge;
  * @since 1.0.0
  * 分类详情
  */
-public class CategoryDetails implements PropertyEntity<Long>, BeanConverter<Category> {
+public class CategoryDetails implements BeanConverter<Category> {
     /**
      * id
      */
-    private Long target;
+    private Long id;
 
     private String category;
 
@@ -44,7 +43,7 @@ public class CategoryDetails implements PropertyEntity<Long>, BeanConverter<Cate
     @Override
     public Category convertTo() {
         Category bean = new Category();
-        bean.setId(target);
+        bean.setId(id);
         bean.setCategory(this.category);
         bean.setParentId(this.parentId);
         bean.setLevel(this.level);
@@ -53,13 +52,12 @@ public class CategoryDetails implements PropertyEntity<Long>, BeanConverter<Cate
         return bean;
     }
 
-    @Override
-    public Long getTarget() {
-        return this.target;
+    public Long getId() {
+        return id;
     }
 
-    public void setTarget(Long target) {
-        this.target = target;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getCategory() {

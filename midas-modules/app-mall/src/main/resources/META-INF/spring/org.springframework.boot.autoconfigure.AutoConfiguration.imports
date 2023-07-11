@@ -1,2 +1,5 @@
 com.mtfm.app_purchase.AppMallConfiguration
-com.mtfm.app_purchase.web.api.BrandManageApi
+com.mtfm.app_purchase.service.purchase.impl.BrandServiceImpl
+com.mtfm.app_purchase.service.purchase.impl.CategoryServiceImpl
+com.mtfm.app_purchase.web.api.BrandViewApi
+com.mtfm.app_purchase.web.api.CategoryViewApi

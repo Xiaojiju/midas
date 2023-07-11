@@ -78,8 +78,8 @@ public class BrandDetailsService extends ServiceImpl<BrandMapper, Brand>
         }
         List<CategoryDetails> categories = details.getCategories();
         if (!CollectionUtils.isEmpty(categories)) {
-            this.brandRelationManager.addRelations(brand.getId(),
-                    categories.stream().map(CategoryDetails::getTarget).collect(Collectors.toList()));
+            this.brandRelationManager.setRelations(brand.getId(),
+                    categories.stream().map(CategoryDetails::getId).collect(Collectors.toList()));
         }
     }
 
@@ -100,16 +100,13 @@ public class BrandDetailsService extends ServiceImpl<BrandMapper, Brand>
         // 然后再添加
         List<CategoryDetails> categories = details.getCategories();
         if (!CollectionUtils.isEmpty(categories)) {
-            this.brandRelationManager.addRelations(brand.getId(),
-                    categories.stream().map(CategoryDetails::getTarget).collect(Collectors.toList()));
+            this.brandRelationManager.setRelations(brand.getId(),
+                    categories.stream().map(CategoryDetails::getId).collect(Collectors.toList()));
         }
     }
 
     @Override
-    public BrandDetails loadBrandById(Long id) {
-        if (id == null) {
-            throw new NullPointerException("brand id must not be null");
-        }
+    public BrandDetails loadBrandById(long id) {
         List<BrandDetails> brandDetails = this.baseMapper.selectBrand(id, null, null);
         if (CollectionUtils.isEmpty(brandDetails)) {
             return null;
@@ -157,15 +154,15 @@ public class BrandDetailsService extends ServiceImpl<BrandMapper, Brand>
         this.baseMapper.delete(queryWrapper);
     }
 
-    @Override
-    public PageTemplate<BrandDetails> page(Page page, String brand, String letter) {
-        com.baomidou.mybatisplus.extension.plugins.pagination.Page<BrandDetails> detailsPage
-                = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>();
-        detailsPage.setCurrent(page.getCurrent()).setSize(page.getSize()).setSearchCount(false);
-        detailsPage = this.baseMapper.selectBrandPage(detailsPage, brand, letter);
-        detailsPage.setTotal(this.baseMapper.selectBrandCount(brand, letter));
-        return null;
-    }
+//    @Override
+//    public PageTemplate<BrandDetails> page(Page page, String brand, String letter) {
+//        com.baomidou.mybatisplus.extension.plugins.pagination.Page<BrandDetails> detailsPage
+//                = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>();
+//        detailsPage.setCurrent(page.getCurrent()).setSize(page.getSize()).setSearchCount(false);
+//        detailsPage = this.baseMapper.selectBrandPage(detailsPage, brand, letter);
+//        detailsPage.setTotal(this.baseMapper.selectBrandCount(brand, letter));
+//        return new PageTemplate<>(page.getCurrent(), page.getSize(), detailsPage.getTotal(), detailsPage.getRecords());
+//    }
 
     @Override
     public boolean brandExist(String brand) {

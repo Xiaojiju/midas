@@ -47,7 +47,7 @@ public class CategoryTree extends CategoryDetails implements Serializable, Linka
 
     @Override
     public String getKey() {
-        return String.valueOf(this.getTarget());
+        return String.valueOf(this.getId());
     }
 
     @Override
@@ -76,7 +76,7 @@ public class CategoryTree extends CategoryDetails implements Serializable, Linka
     }
 
     public void setKey(String key) {
-        super.setTarget(Long.parseLong(key));
+        super.setId(Long.parseLong(key));
     }
 
     public void setParent(String parent) {

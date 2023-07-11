@@ -59,13 +59,28 @@ import java.util.Collection;
  */
 public class PageTemplate<T extends Serializable> implements PageResult<T> {
 
-    private long current = Page.CURRENT;
+    private long current;
 
-    private long size = Page.CURRENT;
+    private long size;
 
-    private long total = 0;
+    private long total;
 
-    private Collection<T> items = new ArrayList<>();
+    private Collection<T> items;
+
+    public PageTemplate() {
+        this(0L, new ArrayList<>());
+    }
+
+    public PageTemplate(long total, Collection<T> items) {
+        this(Page.CURRENT, Page.SIZE, total, items);
+    }
+
+    public PageTemplate(long current, long size, long total, Collection<T> items) {
+        this.current = current;
+        this.size = size;
+        this.total = total;
+        this.items = items;
+    }
 
     @Override
     public long getCurrent() {

@@ -15,10 +15,16 @@
  */
 package com.mtfm.purchase.manager;
 
+import com.mtfm.core.util.page.Page;
+import com.mtfm.core.util.page.PageTemplate;
 import com.mtfm.purchase.entity.Brand;
 import com.mtfm.purchase.entity.Category;
+import com.mtfm.purchase.manager.provisioning.BrandDetails;
+import com.mtfm.purchase.manager.provisioning.CategoryDetails;
+import com.mtfm.purchase.manager.service.bo.BrandPageQuery;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author 一块小饼干
@@ -31,7 +37,7 @@ public interface BrandRelationManager {
      * @param brandId 品牌id
      * @param categories 分类id
      */
-    void addRelations(Long brandId, Collection<Long> categories);
+    void setRelations(Long brandId, Collection<Long> categories);
 
     /**
      * 删除关系
@@ -41,20 +47,16 @@ public interface BrandRelationManager {
     void removeRelations(Long brandId, Collection<Long> categories);
 
     /**
-     * 获取关联分类的品牌
-     * @param id 分类id 可以为空
-     * @param category 分类名 可以为空
-     * @return 品牌集合
-     * 两个参数至少又一个不为空
+     * 获取关联品牌的分类
+     * @param brandId 品牌id
+     * @return 分类集合
      */
-    Collection<Brand> loadBrandByCategory(Long id, String category);
+    List<CategoryDetails> loadCategoriesByBrand(Long brandId);
 
     /**
-     * 获取关联品牌的分类
-     * @param id 分类id 可以为空
-     * @param brand 品牌 可以为空
-     * @return 分类集合
-     * 两个参数至少又一个不为空
+     * 分页查询
+     * @param query 过滤条件
+     * @return 品牌详情
      */
-    Collection<Category> loadCategoriesByBrand(Long id, String brand);
+    PageTemplate<BrandDetails> loadPage(BrandPageQuery query);
 }

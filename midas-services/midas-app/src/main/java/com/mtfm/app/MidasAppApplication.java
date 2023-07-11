@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 @SpringBootApplication
-@EnableWebSecurity(debug = true)
-@MapperScan("com.mtfm.app_support.mapper")
+@EnableWebSecurity(debug = false)
+@MapperScan(basePackages = {"com.mtfm.app_support.mapper", "com.mtfm.purchase.manager.mapper"})
 public class MidasAppApplication {
 
     public static void main(String[] args) {

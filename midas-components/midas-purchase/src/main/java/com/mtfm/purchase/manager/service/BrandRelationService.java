@@ -15,16 +15,22 @@
  */
 package com.mtfm.purchase.manager.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.mtfm.purchase.entity.Brand;
+import com.mtfm.core.util.page.PageTemplate;
 import com.mtfm.purchase.entity.BrandCategoryRelation;
-import com.mtfm.purchase.entity.Category;
 import com.mtfm.purchase.manager.BrandRelationManager;
 import com.mtfm.purchase.manager.CategoryManager;
 import com.mtfm.purchase.manager.mapper.BrandCategoryRelationMapper;
+import com.mtfm.purchase.manager.provisioning.BrandDetails;
+import com.mtfm.purchase.manager.provisioning.CategoryDetails;
+import com.mtfm.purchase.manager.service.bo.BrandPageQuery;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author 一块小饼干
@@ -40,28 +46,52 @@ public class BrandRelationService extends ServiceImpl<BrandCategoryRelationMappe
     }
 
     @Override
-    public void addRelations(Long brandId, Collection<Long> categories) {
+    public void setRelations(Long brandId, Collection<Long> categories) {
+        if (brandId == null) {
+            throw new NullPointerException("brand id should not be null");
+        }
         if (CollectionUtils.isEmpty(categories)) {
             return ;
         }
         // 校验每个分类是否都存在，仅添加已存在的分类
-
+        List<Long> categoryIds = this.baseMapper.selectExist(categories);
+        // 仅仅允许添加最低一级分类，如果包含不存在的分类或者不是最低一级的分类，默认不进行处理；
+        if (CollectionUtils.isEmpty(categoryIds)) {
+            return ;
+        }
         // 比对已存在的分类，进行添加没有关联的分类
+        this.removeRelations(brandId, null);
+        List<BrandCategoryRelation> relations = categoryIds.stream().map(item -> {
+            BrandCategoryRelation relation = new BrandCategoryRelation();
+            relation.setBrandId(brandId);
+            relation.setCategoryId(item);
+            return relation;
+        }).collect(Collectors.toList());
+        this.saveBatch(relations);
     }
 
     @Override
     public void removeRelations(Long brandId, Collection<Long> categories) {
-
+        if (brandId == null) {
+            throw new NullPointerException("brand id should not be null");
+        }
+        // 如果分类集合为空，则删除所有
+        QueryWrapper<BrandCategoryRelation> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(BrandCategoryRelation::getBrandId, brandId)
+                .in(!CollectionUtils.isEmpty(categories), BrandCategoryRelation::getCategoryId, categories);
+        this.remove(queryWrapper);
     }
 
     @Override
-    public Collection<Brand> loadBrandByCategory(Long id, String category) {
-        return null;
+    public List<CategoryDetails> loadCategoriesByBrand(Long brandId) {
+        return this.baseMapper.selectCategoryByBrandId(brandId);
     }
 
     @Override
-    public Collection<Category> loadCategoriesByBrand(Long id, String brand) {
-        return null;
+    public PageTemplate<BrandDetails> loadPage(BrandPageQuery query) {
+        Page<BrandDetails> page = Page.of(query.getCurrent(), query.getSize());
+        page = this.baseMapper.selectBrandPage(page, query);
+        return new PageTemplate<>(page.getCurrent(), page.getSize(), page.getTotal(), page.getRecords());
     }
 
     protected CategoryManager getCategoryManager() {

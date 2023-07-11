@@ -13,34 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.app_purchase;
+package com.mtfm.app_purchase.service.purchase;
 
-import com.mtfm.core.CodeExpression;
+import com.mtfm.purchase.manager.provisioning.CategoryTree;
+
+import java.util.List;
 
 /**
  * @author 一块小饼干
  * @since 1.0.0
- * 产品错误码
+ * 分类定义
  */
-public enum MallCode implements CodeExpression {
+public interface CategoryService {
 
-    BRAND_NAME_EXIST(500300, "brand name exist");
+    CategoryTree getTree(String root);
 
-    private final int code;
-    private final String message;
-
-    MallCode(int code, String message) {
-        this.code = code;
-        this.message = message;
-    }
-
-    @Override
-    public int getCode() {
-        return this.code;
-    }
-
-    @Override
-    public String getMessage() {
-        return this.message;
-    }
 }

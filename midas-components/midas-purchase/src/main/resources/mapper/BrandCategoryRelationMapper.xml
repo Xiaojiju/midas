@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+  Copyright 2022 一块小饼干(莫杨)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<mapper namespace="com.mtfm.purchase.manager.mapper.BrandCategoryRelationMapper">
+    <resultMap id="category_id_map" type="java.lang.Long">
+        <result property="id" column="id" jdbcType="BIGINT" javaType="long"/>
+    </resultMap>
+    <!-- 判断分类id是否存在 -->
+    <select id="selectExist" resultMap="category_id_map">
+        SELECT
+            `id`
+        FROM
+            `purchase_category`
+        <where>
+            `level` = 2
+            AND `deleted` = 0
+            <if test="categories != null and categories.size &gt; 0">
+                AND `id` in
+                <foreach collection="categories" item="item" index="index" separator="," open="(" close=")" nullable="false">
+                    #{ item }
+                </foreach>
+            </if>
+            <!-- 主要是为如果分类数组为空，不允许查询所有 -->
+            <if test="categories == null or categories.size &lt;= 0">
+                AND `id` = -1
+            </if>
+        </where>
+    </select>
+    <!-- 通过分类查询品牌 -->
+    <select id="selectBrandPage" resultMap="com.mtfm.purchase.manager.mapper.BrandMapper.brand_details_map">
+        SELECT
+            `brand_temp`.*,
+            `pc`.`id` `category_id`,
+            `pc`.`category`,
+            `pc`.`parent_id`,
+            `pc`.`show`,
+            `pc`.`icon`,
+            `pc`.`level`
+        FROM (
+            SELECT
+                `pb`.`id`,
+                `pb`.`brand`,
+                `pb`.`logo`,
+                `pb`.`description`,
+                `pb`.`show`,
+                `pb`.`index_letter`,
+                `pb`.`sort`
+            FROM
+                `purchase_brand` `pb`
+            <where>
+                `pb`.`deleted` = 0
+                <if test="query.brand != null and query.brand != ''">
+                    AND `pb`.`brand` LIKE CONCAT('%', #{ query.brand }, '%')
+                </if>
+                <if test="query.letter != null and query.letter != ''">
+                    AND `pb`.`index_letter` = #{ query.letter }
+                </if>
+            </where>
+            <if test="query.sort != null and query.sort != ''">
+                <if test="query.sort = 'asc'">
+                    <if test="query.sortByLetter = null or query.sortByLetter = ''">
+                        ORDER BY `pb`.`create_time` ASC
+                    </if>
+                    <if test="query.sortByLetter != null and query.sortByLetter != ''">
+                        <if test="query.sortByLetter = 'asc'">
+                            ORDER BY `pb`.`create_time`, `pb`.`index_letter` ASC
+                        </if>
+                        <if test="query.sortByLetter = 'desc'">
+                            ORDER BY `pb`.`create_time` ASC, `pb`.`index_letter` DESC
+                        </if>
+                    </if>
+                </if>
+                <if test="query.sort = 'desc'">
+                    <if test="query.sortByLetter = null or query.sortByLetter = ''">
+                        ORDER BY `pb`.`create_time` DESC
+                    </if>
+                    <if test="query.sortByLetter != null and query.sortByLetter != ''">
+                        <if test="query.sortByLetter = 'asc'">
+                            ORDER BY `pb`.`create_time` DESC, `pb`.`index_letter` ASC
+                        </if>
+                        <if test="query.sortByLetter = 'desc'">
+                            ORDER BY `pb`.`create_time`, `pb`.`index_letter` DESC
+                        </if>
+                    </if>
+                </if>
+            </if>
+            <if test="query.sort = null or query.sort = ''">
+                <if test="query.sortByLetter != null and query.sortByLetter != ''">
+                    <if test="query.sortByLetter = 'asc'">
+                        ORDER BY `pb`.`index_letter` ASC
+                    </if>
+                    <if test="query.sortByLetter = 'desc'">
+                        ORDER BY `pb`.`index_letter` DESC
+                    </if>
+                </if>
+            </if>
+        ) `brand_temp`
+            LEFT JOIN `purchase_brand_category_relation` `pbcr` ON `brand_temp`.`id` = `pbcr`.`brand_id`
+            LEFT JOIN `purchase_category` `pc` ON `pbcr`.`category_id` = `pc`.`id` AND `pc`.`deleted` = 0
+        <where>
+            <if test="query.categoryId != null">
+                `pc`.`id` = #{ query.categoryId }
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCategoryByBrandId" resultMap="com.mtfm.purchase.manager.mapper.CategoryMapper.category_details_map">
+        SELECT
+            `pc`.`id` `target`,
+            `pc`.`category`,
+            `pc`.`parent_id`,
+            `pc`.`level`,
+            `pc`.`show`,
+            `pc`.`icon`
+        FROM
+            `purchase_brand_category_relation` `pbcr`
+            LEFT JOIN `purchase_category` `pc` ON `pbcr`.`category_id` = `pc`.`id`
+        WHERE
+            `pbcr`.`brand_id` = #{ brandId }
+            AND `pc`.`deleted` = 0
+            AND `pc`.`show` = 1
+    </select>
+</mapper>

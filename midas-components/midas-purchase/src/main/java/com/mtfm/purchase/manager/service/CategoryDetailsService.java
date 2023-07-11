@@ -30,7 +30,10 @@ import com.mtfm.tools.enums.Judge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
@@ -50,7 +53,7 @@ import java.util.stream.Collectors;
  */
 @Transactional(rollbackFor = Exception.class)
 public class CategoryDetailsService extends ServiceImpl<CategoryMapper, Category>
-        implements CategoryManager, MessageSourceAware, InitializingBean {
+        implements CategoryManager, MessageSourceAware, InitializingBean, ApplicationContextAware {
 
     private static final Logger logger = LoggerFactory.getLogger(CategoryDetailsService.class);
 
@@ -114,12 +117,12 @@ public class CategoryDetailsService extends ServiceImpl<CategoryMapper, Category
             throw new NullPointerException("category details could not be null");
         }
         String name = details.getCategory();
-        Long target = details.getTarget();
+        Long target = details.getId();
         if (target == null) {
             throw new NullPointerException("category id is null, should be set value to it");
         }
         CategoryDetails categoryDetails = this.loadCategoryByName(name);
-        if (categoryDetails != null && !categoryDetails.getTarget().equals(details.getTarget())) {
+        if (categoryDetails != null && !categoryDetails.getId().equals(details.getId())) {
             throw new PurchaseExistException(this.messages.getMessage("CategoryManager.exist",
                     "category name has exist or is empty"));
         }
@@ -191,7 +194,7 @@ public class CategoryDetailsService extends ServiceImpl<CategoryMapper, Category
     public void removeCategoryByName(String category) {
         CategoryTree categoryTree = this.loadTreeByName(category);
         if (CollectionUtils.isEmpty(categoryTree.getNodes())) {
-            this.removeById(categoryTree.getTarget());
+            this.removeById(categoryTree.getId());
         }
         throw new PurchaseExistException(this.messages.getMessage("CategoryManager.existNode",
                 "could not be removed category which has next node"));
@@ -211,15 +214,15 @@ public class CategoryDetailsService extends ServiceImpl<CategoryMapper, Category
 
     // todo 需要考虑多线程抢占的问题
     private NodeTree<CategoryTree> buildTree() {
-        if (redisTemplate == null) {
-            // 没有使用redis缓存的情况
-            if (this.nodeTree != null) {
-                return this.nodeTree;
-            }
-        } else {
-            // 获取缓存
-
-        }
+//        if (redisTemplate == null) {
+//            // 没有使用redis缓存的情况
+//            if (this.nodeTree != null) {
+//                return this.nodeTree;
+//            }
+//        } else {
+//            // 获取缓存
+//
+//        }
         List<CategoryDetails> categoryDetails = this.baseMapper.selectCategory(null, null);
         if (CollectionUtils.isEmpty(categoryDetails)) {
             return null;
@@ -236,12 +239,12 @@ public class CategoryDetailsService extends ServiceImpl<CategoryMapper, Category
         this.nodeTree = categoryTreeNodeTree;
         return categoryTreeNodeTree;
     }
-
-    private void removeCache() {
-        if (redisTemplate == null) {
-            this.nodeTree = null;
-        }
-    }
+//
+//    private void removeCache() {
+//        if (redisTemplate == null) {
+//            this.nodeTree = null;
+//        }
+//    }
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -251,5 +254,14 @@ public class CategoryDetailsService extends ServiceImpl<CategoryMapper, Category
     @Override
     public void setMessageSource(MessageSource messageSource) {
         this.messages = new MessageSourceAccessor(messageSource);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        // 防止初始化redisTemplate不被覆盖，如果为空，则从容器当中取
+        if (this.redisTemplate == null) {
+            this.redisTemplate = (RedisTemplate<String, String>) applicationContext.getBean("redisTemplate");
+        }
     }
 }

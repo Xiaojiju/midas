@@ -25,10 +25,15 @@ import java.io.Serializable;
 public class MpUser implements Serializable {
 
     private String nickname;
+
     private String avatar;
+
     private Integer gender;
+
     private String country;
+
     private String province;
+
     private String city;
 
     public MpUser() {

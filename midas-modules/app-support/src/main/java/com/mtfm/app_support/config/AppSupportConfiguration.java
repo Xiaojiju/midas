@@ -45,8 +45,8 @@ public class AppSupportConfiguration {
                 .csrf().disable()
                 .addFilterBefore(importAppFilter.requestBodyLogoutFilter(), LogoutFilter.class)
                 .addFilterBefore(importAppFilter.miniProgramAuthenticationProcessingFilter(), RequestBodyLogoutFilter.class)
-                .addFilterBefore(importAppFilter.tokenResolutionProcessingFilter(),
-                        MiniProgramAuthenticationProcessingFilter.class)
+//                .addFilterBefore(importAppFilter.tokenResolutionProcessingFilter(),
+//                        MiniProgramAuthenticationProcessingFilter.class)
                 .sessionManagement().disable();
         return security.build();
     }

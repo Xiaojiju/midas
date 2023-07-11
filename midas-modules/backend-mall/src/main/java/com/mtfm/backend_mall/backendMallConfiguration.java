@@ -2,8 +2,10 @@ package com.mtfm.backend_mall;
 
 import com.mtfm.purchase.manager.BrandManager;
 import com.mtfm.purchase.manager.BrandRelationManager;
+import com.mtfm.purchase.manager.CategoryManager;
 import com.mtfm.purchase.manager.service.BrandDetailsService;
 import com.mtfm.purchase.manager.service.BrandRelationService;
+import com.mtfm.purchase.manager.service.CategoryDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,8 +13,13 @@ import org.springframework.context.annotation.Configuration;
 public class backendMallConfiguration {
 
     @Bean
-    public BrandRelationManager brandRelationManager() {
-        return new BrandRelationService();
+    public CategoryManager categoryManager() {
+        return new CategoryDetailsService();
+    }
+
+    @Bean
+    public BrandRelationManager brandRelationManager(CategoryManager categoryManager) {
+        return new BrandRelationService(categoryManager);
     }
 
     @Bean
