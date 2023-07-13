@@ -26,6 +26,7 @@ import com.mtfm.purchase.manager.mapper.BrandCategoryRelationMapper;
 import com.mtfm.purchase.manager.provisioning.BrandDetails;
 import com.mtfm.purchase.manager.provisioning.CategoryDetails;
 import com.mtfm.purchase.manager.service.bo.BrandPageQuery;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  * 品牌分类关系管理
  */
+@Transactional(rollbackFor = Exception.class)
 public class BrandRelationService extends ServiceImpl<BrandCategoryRelationMapper, BrandCategoryRelation> implements BrandRelationManager {
 
     private CategoryManager categoryManager;

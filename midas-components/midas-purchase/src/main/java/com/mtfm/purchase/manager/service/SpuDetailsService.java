@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author 一块小饼干
@@ -48,6 +49,7 @@ import org.springframework.context.support.MessageSourceAccessor;
  *  第三步：可以是额外的设定，比如促销活动、无力等等；
  *  大致流程为上面的三个步骤，这样便于用户操作和理解；
  */
+@Transactional(rollbackFor = Exception.class)
 public class SpuDetailsService extends ServiceImpl<SpuMapper, StandardProductUnit> implements SpuManager, MessageSourceAware {
 
     private static final Logger logger = LoggerFactory.getLogger(SpuDetailsService.class);

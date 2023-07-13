@@ -18,6 +18,7 @@ package com.mtfm.purchase.manager.service;
 import com.mtfm.purchase.entity.SkuItem;
 import com.mtfm.purchase.manager.SkuManager;
 import com.mtfm.purchase.manager.provisioning.Spu;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ import java.util.List;
  * @since 1.0.0
  * 规格管理
  */
+@Transactional(rollbackFor = Exception.class)
 public class SkuManageService implements SkuManager {
 
     @Override

@@ -21,7 +21,7 @@ import com.mtfm.purchase.manager.provisioning.Spu;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * @auhtor 一块小饼干
+ * @author  一块小饼干
  * @since 1.0.0
  * Spu管理
  */

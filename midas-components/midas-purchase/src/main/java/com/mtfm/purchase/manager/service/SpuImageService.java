@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import java.util.List;
  * @since 1.0.0
  * spu图片管理业务实现
  */
+@Transactional(rollbackFor = Exception.class)
 public class SpuImageService extends ServiceImpl<SpuImageMapper, SpuImage> implements SpuImageManager, MessageSourceAware {
 
     private static final Logger logger = LoggerFactory.getLogger(SpuDetailsService.class);
