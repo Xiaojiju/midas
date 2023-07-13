@@ -40,20 +40,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryTree getTree(String root) {
-        if (!StringUtils.hasText(root)) {
-            throw new NullPointerException("load tree thieves must has a root node");
-        }
-        List<CategoryTree> trees = this.categoryManager.loadTree();
-        if (CollectionUtils.isEmpty(trees)) {
-            return null;
-        }
-        for (CategoryTree tree : trees) {
-            if (tree.getCategory().equals(root)) {
-                return tree;
-            }
-        }
-        return null;
+    public List<CategoryTree> getTree() {
+        return this.categoryManager.loadTree();
     }
 
     protected CategoryManager getCategoryManager() {

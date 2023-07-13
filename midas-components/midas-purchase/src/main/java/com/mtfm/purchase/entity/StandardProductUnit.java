@@ -21,8 +21,10 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.mtfm.datasource.BaseModel;
 import com.mtfm.datasource.handler.CommonEnumTypeHandler;
+import com.mtfm.tools.StringUtils;
 import com.mtfm.tools.enums.Judge;
 import org.apache.ibatis.type.JdbcType;
+import org.springframework.util.Assert;
 
 /**
  * @author 一块小饼干
@@ -51,11 +53,6 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
     @TableField("brand_id")
     private Long brandId;
     /**
-     * 重量（克）
-     */
-    @TableField(value = "weight", jdbcType = JdbcType.DECIMAL)
-    private String weight;
-    /**
      * 单位
      */
     private String unit;
@@ -68,6 +65,27 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
      * 简要说明
      */
     private String brief;
+
+    public StandardProductUnit() {
+    }
+
+    public StandardProductUnit(Long id, String product, Long categoryId, Long brandId, String unit, Judge grounding, String brief) {
+        this.id = id;
+        this.product = product;
+        this.categoryId = categoryId;
+        this.brandId = brandId;
+        this.unit = unit;
+        this.grounding = grounding;
+        this.brief = brief;
+    }
+
+    public static SpuBuilder created(Long id) {
+        return new SpuBuilder(id);
+    }
+
+    public static SpuBuilder uncreated() {
+        return new SpuBuilder();
+    }
 
     public Long getId() {
         return id;
@@ -101,14 +119,6 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
         this.brandId = brandId;
     }
 
-    public String getWeight() {
-        return weight;
-    }
-
-    public void setWeight(String weight) {
-        this.weight = weight;
-    }
-
     public Judge getGrounding() {
         return grounding;
     }
@@ -131,5 +141,83 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    public static class SpuBuilder {
+
+        private Long id;
+        /**
+         * 产品名称
+         */
+        private String product;
+        /**
+         * 所属分类
+         */
+        private Long categoryId;
+        /**
+         * 所属品牌
+         */
+        private Long brandId;
+        /**
+         * 单位
+         */
+        private String unit;
+        /**
+         * 是否上架
+         */
+        private Judge grounding;
+        /**
+         * 简要说明
+         */
+        private String brief;
+
+        private SpuBuilder() {
+            this(null);
+        }
+
+        private SpuBuilder(Long id) {
+            this.id = id;
+        }
+
+        public SpuBuilder withProductName(String product) {
+            this.product = product;
+            return this;
+        }
+
+        public SpuBuilder withCategoryId(Long categoryId) {
+            this.categoryId = categoryId;
+            return this;
+        }
+
+        public SpuBuilder withBrandId(Long brandId) {
+            this.brandId = brandId;
+            return this;
+        }
+
+        public SpuBuilder withUnit(String unit) {
+            this.unit = unit;
+            return this;
+        }
+
+        public SpuBuilder ground(Judge grounding) {
+            this.grounding = grounding;
+            return this;
+        }
+
+        public SpuBuilder writeBrief(String brief) {
+            this.brief = brief;
+            return this;
+        }
+
+        public StandardProductUnit build() {
+            Assert.isTrue(StringUtils.hasText(this.product), "product name could not be null");
+            Assert.notNull(this.categoryId, "spu should be related by category");
+            Assert.notNull(this.brandId, "spu should be related by brand");
+            if (this.grounding == null) {
+                this.grounding = Judge.YES;
+            }
+            return new StandardProductUnit(this.id, this.product, this.categoryId, this.brandId, this.unit,
+                    this.grounding, this.brief);
+        }
     }
 }

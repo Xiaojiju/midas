@@ -27,8 +27,8 @@ import java.io.Serializable;
  * @since 1.0.0
  * sku属性（即销售属性{@link Attribute#attrType）
  */
-@TableName(value = "purchase_sku_attr_val", autoResultMap = true)
-public class SkuAttributeValue implements Serializable {
+@TableName(value = "purchase_commodity_attr_val", autoResultMap = true)
+public class CommodityAttributeValue implements Serializable {
     /**
      * 主键
      */

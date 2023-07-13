@@ -20,14 +20,15 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.mtfm.datasource.BaseModel;
+import org.apache.ibatis.type.JdbcType;
 
 /**
  * @author 一块小饼干
  * @since 1.0.0
  * 商品sku
  */
-@TableName(value = "purchase_sku", autoResultMap = true)
-public class StockKeepingUnit extends BaseModel<StandardProductUnit> {
+@TableName(value = "purchase_commodity", autoResultMap = true)
+public class Commodity extends BaseModel<StandardProductUnit> {
     /**
      * 主键
      */
@@ -41,8 +42,13 @@ public class StockKeepingUnit extends BaseModel<StandardProductUnit> {
     /**
      * 名称
      */
-    @TableField("sku_name")
-    private String skuName;
+    @TableField("commodity_name")
+    private String commodityName;
+    /**
+     * 重量（克）
+     */
+    @TableField(value = "weight", jdbcType = JdbcType.DECIMAL)
+    private String weight;
     /**
      * 所属分类
      */
@@ -102,12 +108,12 @@ public class StockKeepingUnit extends BaseModel<StandardProductUnit> {
         this.spuId = spuId;
     }
 
-    public String getSkuName() {
-        return skuName;
+    public String getCommodityName() {
+        return commodityName;
     }
 
-    public void setSkuName(String skuName) {
-        this.skuName = skuName;
+    public void setCommodityName(String commodityName) {
+        this.commodityName = commodityName;
     }
 
     public Long getCategoryId() {
@@ -172,5 +178,13 @@ public class StockKeepingUnit extends BaseModel<StandardProductUnit> {
 
     public void setStocks(Integer stocks) {
         this.stocks = stocks;
+    }
+
+    public String getWeight() {
+        return weight;
+    }
+
+    public void setWeight(String weight) {
+        this.weight = weight;
     }
 }

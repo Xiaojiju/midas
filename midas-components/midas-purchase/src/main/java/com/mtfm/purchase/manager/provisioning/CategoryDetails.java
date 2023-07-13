@@ -24,13 +24,7 @@ import com.mtfm.tools.enums.Judge;
  * @since 1.0.0
  * 分类详情
  */
-public class CategoryDetails implements BeanConverter<Category> {
-    /**
-     * id
-     */
-    private Long id;
-
-    private String category;
+public class CategoryDetails extends Sample implements BeanConverter<Category> {
 
     private Long parentId;
 
@@ -43,29 +37,13 @@ public class CategoryDetails implements BeanConverter<Category> {
     @Override
     public Category convertTo() {
         Category bean = new Category();
-        bean.setId(id);
-        bean.setCategory(this.category);
+        bean.setId(getId());
+        bean.setCategory(getValue());
         bean.setParentId(this.parentId);
         bean.setLevel(this.level);
         bean.setShow(this.show);
         bean.setIcon(this.icon);
         return bean;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     public Long getParentId() {

@@ -21,7 +21,7 @@
         <module>midas-file-loader/qiniu-kodo</module>
         <module>wechat-mp</module>
         <module>midas-crypto</module>
-        <module>midas-merchant</module>
+        <module>midas-shop</module>
     </modules>
 
     <properties>

@@ -13,19 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.app_purchase.service.purchase;
+package com.mtfm.purchase.manager.provisioning;
 
-import com.mtfm.purchase.manager.provisioning.CategoryTree;
-
-import java.util.List;
+import java.io.Serializable;
 
 /**
  * @author 一块小饼干
  * @since 1.0.0
- * 分类定义
  */
-public interface CategoryService {
+public class Sample implements Serializable {
 
-    List<CategoryTree> getTree();
+    private Long id;
 
+    private String value;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
 }

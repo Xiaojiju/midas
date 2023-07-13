@@ -13,19 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.app_purchase.service.purchase;
+package com.mtfm.purchase.manager.mapper;
 
-import com.mtfm.purchase.manager.provisioning.CategoryTree;
-
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.mtfm.purchase.entity.SpuImage;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * @author 一块小饼干
  * @since 1.0.0
- * 分类定义
+ * Spu图片管理
  */
-public interface CategoryService {
-
-    List<CategoryTree> getTree();
-
+@Mapper
+public interface SpuImageMapper extends BaseMapper<SpuImage> {
 }

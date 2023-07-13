@@ -13,19 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.app_purchase.service.purchase;
+package com.mtfm.purchase.manager;
 
-import com.mtfm.purchase.manager.provisioning.CategoryTree;
+import com.mtfm.purchase.entity.SpuImage;
 
 import java.util.List;
 
 /**
  * @author 一块小饼干
  * @since 1.0.0
- * 分类定义
+ * spu图片管理
  */
-public interface CategoryService {
+public interface SpuImageManager {
+    /**
+     * 为spu设置图片
+     * @param spu spuId
+     * @param images 图片组
+     */
+    void setImages(long spu, List<SpuImage> images);
 
-    List<CategoryTree> getTree();
+    /**
+     * 删除spu的图片
+     * @param spu spuId
+     * @param images 需要删除的图片
+     */
+    void removeImages(long spu, List<Long> images);
+
+    /**
+     * 获取对应spu的图片
+     * @param spu spu id
+     * @return 图片组
+     */
+    List<SpuImage> loadImages(long spu);
 
 }

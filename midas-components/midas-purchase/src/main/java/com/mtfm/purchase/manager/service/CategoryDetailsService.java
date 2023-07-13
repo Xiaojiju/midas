@@ -100,7 +100,7 @@ public class CategoryDetailsService extends ServiceImpl<CategoryMapper, Category
         if (details == null) {
             throw new NullPointerException("category details could not be null");
         }
-        String name = details.getCategory();
+        String name = details.getValue();
         if (this.categoryExist(name)) {
             throw new PurchaseExistException(this.messages.getMessage("CategoryManager.exist",
                     "category name has exist or is empty"));
@@ -116,7 +116,7 @@ public class CategoryDetailsService extends ServiceImpl<CategoryMapper, Category
         if (details == null) {
             throw new NullPointerException("category details could not be null");
         }
-        String name = details.getCategory();
+        String name = details.getValue();
         Long target = details.getId();
         if (target == null) {
             throw new NullPointerException("category id is null, should be set value to it");
@@ -172,7 +172,7 @@ public class CategoryDetailsService extends ServiceImpl<CategoryMapper, Category
             if (item == null) {
                 return false;
             }
-            return item.getCategory().equals(category);
+            return item.getValue().equals(category);
         });
         if (nodeTree == null) {
             return null;

@@ -15,8 +15,6 @@
  */
 package com.mtfm.purchase.manager;
 
-import com.mtfm.core.util.page.Page;
-import com.mtfm.core.util.page.PageTemplate;
 import com.mtfm.purchase.exceptions.PurchaseExistException;
 import com.mtfm.purchase.exceptions.PurchaseNotFoundException;
 import com.mtfm.purchase.manager.provisioning.BrandDetails;
@@ -75,15 +73,6 @@ public interface BrandManager {
      * @param brand 品牌名
      */
     void removeBrandByName(String brand);
-
-//    /**
-//     * 分页品牌
-//     * @param page 分页参数
-//     * @param brand 品牌名（支持模糊查询）
-//     * @param letter 首字母
-//     * @return 品牌详情
-//     */
-//    PageTemplate<BrandDetails> page(Page page, String brand, String letter);
 
     /**
      * 品牌名是否存在

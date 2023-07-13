@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>midas-merchant</artifactId>
+    <artifactId>midas-shop</artifactId>
 
     <properties>
         <maven.compiler.source>15</maven.compiler.source>

@@ -154,16 +154,6 @@ public class BrandDetailsService extends ServiceImpl<BrandMapper, Brand>
         this.baseMapper.delete(queryWrapper);
     }
 
-//    @Override
-//    public PageTemplate<BrandDetails> page(Page page, String brand, String letter) {
-//        com.baomidou.mybatisplus.extension.plugins.pagination.Page<BrandDetails> detailsPage
-//                = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>();
-//        detailsPage.setCurrent(page.getCurrent()).setSize(page.getSize()).setSearchCount(false);
-//        detailsPage = this.baseMapper.selectBrandPage(detailsPage, brand, letter);
-//        detailsPage.setTotal(this.baseMapper.selectBrandCount(brand, letter));
-//        return new PageTemplate<>(page.getCurrent(), page.getSize(), detailsPage.getTotal(), detailsPage.getRecords());
-//    }
-
     @Override
     public boolean brandExist(String brand) {
 

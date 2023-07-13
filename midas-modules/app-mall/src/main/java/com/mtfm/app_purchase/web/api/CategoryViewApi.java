@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * @author 一块小饼干
  * @since 1.0.0
@@ -39,11 +41,10 @@ public class CategoryViewApi {
 
     /**
      * 获取不同模块的分类树
-     * @param category 分类名 现在仅有 逛一逛、特选
      * @return 分类树
      */
     @GetMapping("/categories/tree")
-    public RestResult<CategoryTree> pushTree(String category) {
-        return RestResult.success(this.categoryService.getTree(category));
+    public RestResult<List<CategoryTree>> pushTree() {
+        return RestResult.success(this.categoryService.getTree());
     }
 }

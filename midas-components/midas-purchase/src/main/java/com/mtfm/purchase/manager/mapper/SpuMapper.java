@@ -13,19 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.app_purchase.service.purchase;
+package com.mtfm.purchase.manager.mapper;
 
-import com.mtfm.purchase.manager.provisioning.CategoryTree;
-
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.mtfm.purchase.entity.StandardProductUnit;
+import com.mtfm.purchase.manager.provisioning.Spu;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
- * @author 一块小饼干
+ * @auhtor 一块小饼干
  * @since 1.0.0
- * 分类定义
+ * Spu管理
  */
-public interface CategoryService {
-
-    List<CategoryTree> getTree();
-
+@Mapper
+public interface SpuMapper extends BaseMapper<StandardProductUnit> {
+    /**
+     * 查询Spu基本信息
+     * @param spuId spu id
+     * @return spu基本信息
+     */
+    Spu selectSpuById(long spuId);
 }

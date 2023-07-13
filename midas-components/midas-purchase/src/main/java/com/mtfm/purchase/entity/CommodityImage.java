@@ -19,43 +19,41 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.mtfm.datasource.handler.CommonEnumTypeHandler;
 import com.mtfm.tools.enums.Judge;
-import org.apache.ibatis.type.JdbcType;
 
 import java.io.Serializable;
 
 /**
  * @author 一块小饼干
  * @since 1.0.0
- * 商品属性
+ * sku图片
  */
-@TableName(value = "purchase_attr", autoResultMap = true)
-public class Attribute implements Serializable {
+@TableName(value = "purchase_commodity_image", autoResultMap = true)
+public class CommodityImage implements Serializable {
     /**
      * 主键
      */
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
     /**
-     * 属性名
+     * 关联sku
      */
-    @TableField("attr_name")
-    private String attrName;
+    @TableField("sku_id")
+    private Long skuId;
     /**
-     * 图标
+     * 图片地址
      */
-    private String icon;
+    @TableField("image_url")
+    private String imageUrl;
     /**
-     * 是否可用
+     * 排序
      */
-    @TableField(value = "enable", jdbcType = JdbcType.INTEGER, typeHandler = CommonEnumTypeHandler.class)
-    private Judge enable;
+    private Integer sort;
     /**
-     * 所属分类
+     * 默认图片
      */
-    @TableField("category_id")
-    private Long categoryId;
+    @TableField("index_image")
+    private Judge indexImage;
 
     public Long getId() {
         return id;
@@ -65,35 +63,35 @@ public class Attribute implements Serializable {
         this.id = id;
     }
 
-    public String getAttrName() {
-        return attrName;
+    public Long getSkuId() {
+        return skuId;
     }
 
-    public void setAttrName(String attrName) {
-        this.attrName = attrName;
+    public void setSkuId(Long skuId) {
+        this.skuId = skuId;
     }
 
-    public String getIcon() {
-        return icon;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setIcon(String icon) {
-        this.icon = icon;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
-    public Judge getEnable() {
-        return enable;
+    public Integer getSort() {
+        return sort;
     }
 
-    public void setEnable(Judge enable) {
-        this.enable = enable;
+    public void setSort(Integer sort) {
+        this.sort = sort;
     }
 
-    public Long getCategoryId() {
-        return categoryId;
+    public Judge getIndexImage() {
+        return indexImage;
     }
 
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
+    public void setIndexImage(Judge indexImage) {
+        this.indexImage = indexImage;
     }
 }
