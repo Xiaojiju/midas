@@ -16,7 +16,6 @@
 package com.mtfm.app_support.config;
 
 import com.mtfm.security.filter.RequestBodyLogoutFilter;
-import com.mtfm.wechat_mp.filter.MiniProgramAuthenticationProcessingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;

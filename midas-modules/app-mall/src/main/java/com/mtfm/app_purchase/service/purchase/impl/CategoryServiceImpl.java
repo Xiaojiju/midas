@@ -19,10 +19,7 @@ import com.mtfm.app_purchase.service.purchase.CategoryService;
 import com.mtfm.purchase.manager.CategoryManager;
 import com.mtfm.purchase.manager.provisioning.CategoryTree;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

@@ -13,7 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>security-plus</module>
-        <module>midas-purchase</module>
+        <module>midas-mini-mall/mall-purchase</module>
         <module>midas-actuator</module>
         <module>midas-file-loader</module>
         <module>third-sdk</module>
@@ -22,6 +22,7 @@
         <module>wechat-mp</module>
         <module>midas-crypto</module>
         <module>midas-shop</module>
+        <module>midas-mini-mall</module>
     </modules>
 
     <properties>

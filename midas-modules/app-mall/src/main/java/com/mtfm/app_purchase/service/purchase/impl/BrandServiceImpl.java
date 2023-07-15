@@ -16,12 +16,12 @@
 package com.mtfm.app_purchase.service.purchase.impl;
 
 import com.mtfm.app_purchase.service.purchase.BrandService;
-import com.mtfm.purchase.manager.provisioning.CategoryDetails;
-import com.mtfm.purchase.manager.service.bo.BrandPageQuery;
 import com.mtfm.core.util.page.PageTemplate;
 import com.mtfm.purchase.manager.BrandManager;
 import com.mtfm.purchase.manager.BrandRelationManager;
 import com.mtfm.purchase.manager.provisioning.BrandDetails;
+import com.mtfm.purchase.manager.provisioning.CategoryDetails;
+import com.mtfm.purchase.manager.service.bo.BrandPageQuery;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

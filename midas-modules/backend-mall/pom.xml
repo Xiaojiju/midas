@@ -21,7 +21,7 @@
     <dependencies>
         <dependency>
             <groupId>com.mtfm</groupId>
-            <artifactId>midas-purchase</artifactId>
+            <artifactId>mall-purchase</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>

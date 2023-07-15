@@ -13,40 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.app_purchase.service.purchase;
+package com.mtfm.purchase.manager;
 
 import com.mtfm.core.util.page.PageTemplate;
 import com.mtfm.purchase.manager.provisioning.BrandDetails;
 import com.mtfm.purchase.manager.provisioning.CategoryDetails;
 import com.mtfm.purchase.manager.service.bo.BrandPageQuery;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
  * @author 一块小饼干
  * @since 1.0.0
- * 品牌业务类
+ * 品牌分类管理操作定义
  */
-public interface BrandService {
+public interface BrandRelationManager {
     /**
-     * 获取品牌详情
-     * @param id 品牌id
+     * 添加关系
+     * @param brandId 品牌id
+     * @param categories 分类id
+     */
+    void setRelations(Long brandId, Collection<Long> categories);
+
+    /**
+     * 删除关系
+     * @param brandId 品牌id
+     * @param categories 分类
+     */
+    void removeRelations(Long brandId, Collection<Long> categories);
+
+    /**
+     * 获取关联品牌的分类
+     * @param brandId 品牌id
+     * @return 分类集合
+     */
+    List<CategoryDetails> loadCategoriesByBrand(Long brandId);
+
+    /**
+     * 分页查询
+     * @param query 过滤条件
      * @return 品牌详情
      */
-    BrandDetails getBrand(long id);
-
-    /**
-     * 根据过滤条件查询品牌分页
-     * @param query 过滤条件
-     * @return 品牌分页
-     */
-    PageTemplate<BrandDetails> getPage(BrandPageQuery query);
-
-    /**
-     * 获取品牌的分类
-     * @param brand 品牌id
-     * @return 分类详情
-     */
-    List<CategoryDetails> getCategories(long brand);
-
+    PageTemplate<BrandDetails> loadPage(BrandPageQuery query);
 }

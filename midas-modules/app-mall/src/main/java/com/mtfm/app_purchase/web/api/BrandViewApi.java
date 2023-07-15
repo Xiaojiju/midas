@@ -16,12 +16,15 @@
 package com.mtfm.app_purchase.web.api;
 
 import com.mtfm.app_purchase.service.purchase.BrandService;
-import com.mtfm.purchase.manager.provisioning.CategoryDetails;
-import com.mtfm.purchase.manager.service.bo.BrandPageQuery;
 import com.mtfm.core.context.response.RestResult;
 import com.mtfm.core.util.page.PageTemplate;
 import com.mtfm.purchase.manager.provisioning.BrandDetails;
-import org.springframework.web.bind.annotation.*;
+import com.mtfm.purchase.manager.provisioning.CategoryDetails;
+import com.mtfm.purchase.manager.service.bo.BrandPageQuery;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
