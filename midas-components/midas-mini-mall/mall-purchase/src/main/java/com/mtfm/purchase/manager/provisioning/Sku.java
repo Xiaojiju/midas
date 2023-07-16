@@ -26,23 +26,39 @@ public class Sku implements Serializable {
     /**
      * 对应的商品id
      */
-    private Long skuId;
+    private Long commodityId;
+    /**
+     * 规格商品名
+     */
+    private String commodityName;
+    /**
+     * 规则组合
+     * 例如：颜色、尺码 则值为 黄色,xxl
+     */
+    private String sku;
     /**
      * 库存
      */
     private Integer stocks;
     /**
-     * 规则组合
-     * 例如：颜色、尺码 则值为 黄色,xxl
+     * 官方价
      */
-    private String attributes;
+    private String price;
 
-    public Long getSkuId() {
-        return skuId;
+    public Long getCommodityId() {
+        return commodityId;
     }
 
-    public void setSkuId(Long skuId) {
-        this.skuId = skuId;
+    public String getCommodityName() {
+        return commodityName;
+    }
+
+    public void setCommodityName(String commodityName) {
+        this.commodityName = commodityName;
+    }
+
+    public void setCommodityId(Long commodityId) {
+        this.commodityId = commodityId;
     }
 
     public Integer getStocks() {
@@ -53,11 +69,19 @@ public class Sku implements Serializable {
         this.stocks = stocks;
     }
 
-    public String getAttributes() {
-        return attributes;
+    public String getSku() {
+        return sku;
     }
 
-    public void setAttributes(String attributes) {
-        this.attributes = attributes;
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
     }
 }

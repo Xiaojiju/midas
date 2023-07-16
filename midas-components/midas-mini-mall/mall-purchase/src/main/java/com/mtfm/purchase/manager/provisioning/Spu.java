@@ -50,7 +50,7 @@ public class Spu implements Serializable {
     /**
      * 是否上架
      */
-    private Judge grounding;
+    private Judge listing;
     /**
      * 简要说明
      */
@@ -96,12 +96,12 @@ public class Spu implements Serializable {
         this.unit = unit;
     }
 
-    public Judge getGrounding() {
-        return grounding;
+    public Judge getListing() {
+        return listing;
     }
 
-    public void setGrounding(Judge grounding) {
-        this.grounding = grounding;
+    public void setListing(Judge listing) {
+        this.listing = listing;
     }
 
     public String getBrief() {
@@ -145,7 +145,7 @@ public class Spu implements Serializable {
                 super.setCategory(spu.category);
                 super.setProduct(spu.product);
                 super.setUnit(spu.unit);
-                super.setGrounding(spu.grounding);
+                super.setListing(spu.listing);
                 super.setBrief(spu.brief);
             }
             this.images = images;

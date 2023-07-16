@@ -36,7 +36,7 @@ public interface SpuManager {
      * 创建spu
      * @param spuDetails spu详情
      */
-    void createSpu(Spu.SpuDetails spuDetails);
+    long createSpu(Spu.SpuDetails spuDetails);
 
     /**
      * 修改spu

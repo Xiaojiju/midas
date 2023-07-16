@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -55,16 +55,17 @@ public class CommoditySkuRelationService extends ServiceImpl<CommoditySkuRelatio
     }
 
     @Override
-    public void withSku(long spuId, long commodity, long[] items) {
+    public void withSku(long spuId, long commodity, Collection<Long> items) {
         List<Spu.SkuItemGroup> skuItemGroups = this.skuManager.loadSpuSkuItems(spuId);
         // 获取商品设定的销售规格,如果为空，则不需要操作
         if (CollectionUtils.isEmpty(skuItemGroups)) {
             return ;
         }
-        if (items.length != skuItemGroups.size()) {
+        int settingNum = items.size();
+        if (CollectionUtils.isEmpty(items) || settingNum != skuItemGroups.size()) {
             throw new PurchaseNotFoundException("商品属性不对");
         }
-        int settingNum = items.length;
+
         for (Spu.SkuItemGroup group : skuItemGroups) {
             List<Spu.SkuVal> skuValues = group.getSkuValues();
             val:for (Spu.SkuVal val : skuValues) {
@@ -86,7 +87,7 @@ public class CommoditySkuRelationService extends ServiceImpl<CommoditySkuRelatio
         );
         if (remove) {
             List<CommoditySkuRelation> relations = new ArrayList<>();
-            Arrays.stream(items).forEach(item -> {
+            items.forEach(item -> {
                 CommoditySkuRelation relation = new CommoditySkuRelation();
                 relation.setCommodityId(commodity);
                 relation.setSkuId(item);

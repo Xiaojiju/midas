@@ -38,8 +38,8 @@ public class CommodityImage implements Serializable {
     /**
      * 关联sku
      */
-    @TableField("sku_id")
-    private Long skuId;
+    @TableField("commodity_id")
+    private Long commodityId;
     /**
      * 图片地址
      */
@@ -63,12 +63,12 @@ public class CommodityImage implements Serializable {
         this.id = id;
     }
 
-    public Long getSkuId() {
-        return skuId;
+    public Long getCommodityId() {
+        return commodityId;
     }
 
-    public void setSkuId(Long skuId) {
-        this.skuId = skuId;
+    public void setCommodityId(Long commodityId) {
+        this.commodityId = commodityId;
     }
 
     public String getImageUrl() {

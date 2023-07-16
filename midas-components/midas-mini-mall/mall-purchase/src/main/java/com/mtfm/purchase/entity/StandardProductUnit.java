@@ -59,8 +59,8 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
     /**
      * 是否上架
      */
-    @TableField(value = "grounding", jdbcType = JdbcType.INTEGER, typeHandler = CommonEnumTypeHandler.class)
-    private Judge grounding;
+    @TableField(value = "listing", jdbcType = JdbcType.INTEGER, typeHandler = CommonEnumTypeHandler.class)
+    private Judge listing;
     /**
      * 简要说明
      */
@@ -69,13 +69,13 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
     public StandardProductUnit() {
     }
 
-    public StandardProductUnit(Long id, String product, Long categoryId, Long brandId, String unit, Judge grounding, String brief) {
+    public StandardProductUnit(Long id, String product, Long categoryId, Long brandId, String unit, Judge listing, String brief) {
         this.id = id;
         this.product = product;
         this.categoryId = categoryId;
         this.brandId = brandId;
         this.unit = unit;
-        this.grounding = grounding;
+        this.listing = listing;
         this.brief = brief;
     }
 
@@ -119,12 +119,12 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
         this.brandId = brandId;
     }
 
-    public Judge getGrounding() {
-        return grounding;
+    public Judge getListing() {
+        return listing;
     }
 
-    public void setGrounding(Judge grounding) {
-        this.grounding = grounding;
+    public void setListing(Judge listing) {
+        this.listing = listing;
     }
 
     public String getBrief() {
@@ -145,7 +145,7 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
 
     public static class SpuBuilder {
 
-        private Long id;
+        private final Long id;
         /**
          * 产品名称
          */
@@ -165,7 +165,7 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
         /**
          * 是否上架
          */
-        private Judge grounding;
+        private Judge listing;
         /**
          * 简要说明
          */
@@ -199,8 +199,8 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
             return this;
         }
 
-        public SpuBuilder ground(Judge grounding) {
-            this.grounding = grounding;
+        public SpuBuilder listing(Judge listing) {
+            this.listing = listing;
             return this;
         }
 
@@ -213,11 +213,11 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
             Assert.isTrue(StringUtils.hasText(this.product), "product name could not be null");
             Assert.notNull(this.categoryId, "spu should be related by category");
             Assert.notNull(this.brandId, "spu should be related by brand");
-            if (this.grounding == null) {
-                this.grounding = Judge.YES;
+            if (this.listing == null) {
+                this.listing = Judge.YES;
             }
             return new StandardProductUnit(this.id, this.product, this.categoryId, this.brandId, this.unit,
-                    this.grounding, this.brief);
+                    this.listing, this.brief);
         }
     }
 }

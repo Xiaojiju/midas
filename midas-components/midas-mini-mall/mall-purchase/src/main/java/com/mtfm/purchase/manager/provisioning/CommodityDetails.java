@@ -38,8 +38,6 @@ public class CommodityDetails implements Serializable {
 
     private String weight;
 
-    private String indexImage;
-
     private String title;
 
     private String subtitle;
@@ -49,12 +47,10 @@ public class CommodityDetails implements Serializable {
     private Integer sale;
 
     private Integer stocks;
-
-    private Spu spu;
-
+    /**
+     * 对应选择的规则
+     */
     private List<Spu.SkuVal> skuVals;
-
-    private Sku sku;
 
     /**
      * 商品独有属性，即对应规格下的商品属性
@@ -97,14 +93,6 @@ public class CommodityDetails implements Serializable {
         this.weight = weight;
     }
 
-    public String getIndexImage() {
-        return indexImage;
-    }
-
-    public void setIndexImage(String indexImage) {
-        this.indexImage = indexImage;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -145,28 +133,12 @@ public class CommodityDetails implements Serializable {
         this.stocks = stocks;
     }
 
-    public Spu getSpu() {
-        return spu;
-    }
-
-    public void setSpu(Spu spu) {
-        this.spu = spu;
-    }
-
     public List<Spu.SkuVal> getSkuVals() {
         return skuVals;
     }
 
     public void setSkuVals(List<Spu.SkuVal> skuVals) {
         this.skuVals = skuVals;
-    }
-
-    public Sku getSku() {
-        return sku;
-    }
-
-    public void setSku(Sku sku) {
-        this.sku = sku;
     }
 
     public List<CommodityAttribute> getCommodityAttributes() {

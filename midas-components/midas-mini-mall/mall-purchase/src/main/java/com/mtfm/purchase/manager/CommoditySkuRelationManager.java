@@ -2,6 +2,7 @@ package com.mtfm.purchase.manager;
 
 import com.mtfm.purchase.manager.provisioning.Spu;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface CommoditySkuRelationManager {
@@ -19,6 +20,6 @@ public interface CommoditySkuRelationManager {
      * @param commodity 具体规格商品id
      * @param items 关联规格id
      */
-    void withSku(long spuId, long commodity, long[] items);
+    void withSku(long spuId, long commodity, Collection<Long> items);
 
 }

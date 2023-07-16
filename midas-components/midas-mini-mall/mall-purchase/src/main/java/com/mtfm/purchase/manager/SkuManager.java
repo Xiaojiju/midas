@@ -15,7 +15,6 @@
  */
 package com.mtfm.purchase.manager;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.mtfm.purchase.entity.SkuItem;
 import com.mtfm.purchase.manager.provisioning.Spu;
 
@@ -26,7 +25,7 @@ import java.util.List;
  * @since 1.0.0
  * 规格管理
  */
-public interface SkuManager extends IService<SkuItem> {
+public interface SkuManager {
 
     /**
      * 为spu设置规格

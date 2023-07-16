@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+  Copyright 2022 一块小饼干(莫杨)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<mapper namespace="com.mtfm.purchase.manager.mapper.CommodityMapper">
+    <!-- CommoditySplitDetails Map -->
+    <resultMap id="split_commodity_map" type="com.mtfm.purchase.manager.provisioning.CommoditySplitDetails">
+        <id property="id" column="spu_id" jdbcType="BIGINT" javaType="long"/>
+        <result property="product" column="product" jdbcType="VARCHAR" javaType="string"/>
+        <result property="category" column="category" jdbcType="VARCHAR" javaType="string"/>
+        <result property="brand" column="brand" jdbcType="VARCHAR" javaType="string"/>
+        <result property="unit" column="unit" jdbcType="VARCHAR" javaType="string"/>
+        <result property="listing" column="listing" jdbcType="INTEGER" javaType="com.mtfm.tools.enums.Judge"
+                typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+        <collection property="items" ofType="com.mtfm.purchase.manager.provisioning.Sku">
+            <id property="commodityId" column="commodity_id" jdbcType="BIGINT" javaType="long"/>
+            <result property="commodityName" column="commodity_name" jdbcType="VARCHAR" javaType="string"/>
+            <result property="sku" column="sku" jdbcType="VARCHAR" javaType="string"/>
+            <result property="stocks" column="stocks" jdbcType="INTEGER" javaType="int"/>
+            <result property="price" column="price" jdbcType="DECIMAL" javaType="string"/>
+        </collection>
+    </resultMap>
+    <!-- CommodityDetails Map -->
+    <resultMap id="commodity_details_map" type="com.mtfm.purchase.manager.provisioning.CommodityDetails">
+        <id property="id" column="commodity_id" jdbcType="BIGINT" javaType="long"/>
+        <result property="spuId" column="spu_id" jdbcType="BIGINT" javaType="long"/>
+        <result property="commodityName" column="commodity_name" jdbcType="VARCHAR" javaType="string"/>
+        <result property="weight" column="weight" jdbcType="DECIMAL" javaType="string"/>
+        <result property="title" column="title" jdbcType="VARCHAR" javaType="string"/>
+        <result property="subtitle" column="subtitle" jdbcType="VARCHAR" javaType="string"/>
+        <result property="price" column="price" jdbcType="DECIMAL" javaType="string"/>
+        <result property="sale" column="sale" jdbcType="INTEGER" javaType="int"/>
+        <result property="stocks" column="stocks" jdbcType="INTEGER" javaType="int"/>
+        <collection property="skuVals" ofType="com.mtfm.purchase.manager.provisioning.Spu$SkuVal">
+            <id property="id" column="sku_id" jdbcType="BIGINT" javaType="long"/>
+            <result property="itemName" column="item_name" jdbcType="VARCHAR" javaType="string"/>
+            <result property="itemValue" column="item_val" jdbcType="VARCHAR" javaType="string"/>
+            <result property="itemImage" column="item_image" jdbcType="VARCHAR" javaType="string"/>
+        </collection>
+        <collection property="commodityAttributes" ofType="com.mtfm.purchase.entity.CommodityAttribute">
+            <id property="id" column="attr_id" jdbcType="BIGINT" javaType="long"/>
+            <result property="commodityId" column="commodity_id" jdbcType="BIGINT" javaType="long"/>
+            <result property="attrName" column="attr_name" jdbcType="VARCHAR" javaType="string"/>
+            <result property="attrValue" column="attr_val" jdbcType="VARCHAR" javaType="string"/>
+            <result property="sort" column="attr_sort" jdbcType="INTEGER" javaType="int"/>
+        </collection>
+        <collection property="skuImages" ofType="com.mtfm.purchase.entity.CommodityImage">
+            <id property="id" column="image_id" jdbcType="BIGINT" javaType="long"/>
+            <result property="commodityId" column="commodity_id" jdbcType="BIGINT" javaType="long"/>
+            <result property="imageUrl" column="image_url" jdbcType="VARCHAR" javaType="string"/>
+            <result property="sort" column="image_sort" jdbcType="INTEGER" javaType="int"/>
+            <result property="indexImage" column="index_image" jdbcType="INTEGER" javaType="com.mtfm.tools.enums.Judge"
+                    typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+        </collection>
+    </resultMap>
+    <!-- CommodityView Map -->
+    <resultMap id="commodity_view_map" type="com.mtfm.purchase.manager.provisioning.CommodityView">
+        <id property="id" column="id" jdbcType="BIGINT" javaType="long"/>
+        <result property="spuId" column="spu_id" jdbcType="BIGINT" javaType="long"/>
+        <result property="product" column="product" jdbcType="VARCHAR" javaType="string"/>
+        <result property="commodityName" column="commodity_name" jdbcType="VARCHAR" javaType="string"/>
+        <result property="title" column="title" jdbcType="VARCHAR" javaType="string"/>
+        <result property="subtitle" column="subtitle" jdbcType="VARCHAR" javaType="string"/>
+        <result property="price" column="price" jdbcType="DECIMAL" javaType="string"/>
+        <result property="sale" column="sale" jdbcType="INTEGER" javaType="int"/>
+        <result property="stocks" column="stocks" jdbcType="INTEGER" javaType="int"/>
+        <result property="indexImage" column="index_image" jdbcType="VARCHAR" javaType="string"/>
+    </resultMap>
+    <!-- 商品系列列表 -->
+    <select id="selectCommodities" resultMap="split_commodity_map">
+        SELECT
+            `spu`.*,
+            `commodity`.`id` `commodity_id`,
+            `commodity`.`commodity_name`,
+            `commodity`.`stocks`,
+            `commodity`.`price`,
+            GROUP_CONCAT(`psiv`.`item_val`) `sku`
+        FROM (
+            SELECT
+                `ps`.`id` `spu_id`,
+                `ps`.`product`,
+                `pc`.`category`,
+                `pb`.`brand`,
+                `ps`.`unit`,
+                `ps`.`listing`
+            FROM
+                `purchase_spu` `ps`
+                LEFT JOIN `purchase_category` `pc` ON `ps`.`category_id` = `pc`.`id`
+                LEFT JOIN `purchase_brand` `pb` ON `ps`.`brand_id` = `pb`.`id`
+            <where>
+                `ps`.`deleted` = 0
+                <if test="query.product != null and query.product != ''">
+                    AND `ps`.`product` LIKE CONCAT('%', #{ query.product }, '%')
+                </if>
+                <if test="query.categoryId != null">
+                    AND `ps`.`category_id` = #{ query.categoryId }
+                </if>
+                <if test="query.brandId != null">
+                    AND `ps`.`brand_id` = #{ query.brandId }
+                </if>
+                <if test="query.listing != null">
+                    AND `ps`.`listing` = #{ query.listing }
+                </if>
+                <if test="query.lessDateTime != null">
+                    AND `ps`.`create_time` &lt; #{ query.lessDateTime }
+                </if>
+                <if test="query.greaterDateTime != null">
+                    AND `ps`.`create_time` &gt; #{ query.greaterDateTime }
+                </if>
+            </where>
+            <if test="query.sort = 'asc'">
+                ORDER BY `ps`.`create_time` ASC
+            </if>
+            <if test="query.sort = 'desc'">
+                ORDER BY `ps`.`create_time` DESC
+            </if>
+            LIMIT #{ query.current }, #{ query.size }
+        ) `spu`
+            LEFT JOIN `purchase_commodity` `commodity` ON `spu`.`spu_id` = `commodity`.`spu_id`
+            LEFT JOIN `purchase_commodity_sku_relation` `pcsr` ON `commodity`.`id` = `pcsr`.`commodity_id`
+            LEFT JOIN `purchase_sku_item_value` `psiv` ON `pcsr`.`sku_id` = `psiv`.`item_id`
+        GROUP BY `spu`.`spu_id`, `commodity`.`id`
+    </select>
+    <!-- 查询spu过滤总数 -->
+    <select id="selectSpuCount" resultType="long">
+        SELECT
+           COUNT(`ps`.`id`)
+        FROM
+            `purchase_spu` `ps`
+            LEFT JOIN `purchase_category` `pc` ON `ps`.`category_id` = `pc`.`id`
+            LEFT JOIN `purchase_brand` `pb` ON `ps`.`brand_id` = `pb`.`id`
+        <where>
+            `ps`.`deleted` = 0
+            <if test="query.product != null and query.product != ''">
+                AND `ps`.`product` LIKE CONCAT('%', #{ query.product }, '%')
+            </if>
+            <if test="query.categoryId != null">
+                AND `ps`.`category_id` = #{ query.categoryId }
+            </if>
+            <if test="query.brandId != null">
+                AND `ps`.`brand_id` = #{ query.brandId }
+            </if>
+            <if test="query.listing != null">
+                AND `ps`.`listing` = #{ query.listing }
+            </if>
+            <if test="query.lessDateTime != null">
+                AND `ps`.`create_time` &lt; #{ query.lessDateTime }
+            </if>
+            <if test="query.greaterDateTime != null">
+                AND `ps`.`create_time` &gt; #{ query.greaterDateTime }
+            </if>
+        </where>
+    </select>
+    <!-- 查询系列下的所有规格商品 -->
+    <select id="selectCommodityDetails" resultMap="commodity_details_map">
+        SELECT
+            `pc`.`id` `commodity_id`,
+            `pc`.`spu_id` `spu_id`,
+            `pc`.`commodity_name`,
+            `pc`.`weight`,
+            `pc`.`title`,
+            `pc`.`subtitle`,
+            `pc`.`price`,
+            `pc`.`sale`,
+            `pc`.`stocks`,
+            `psiv`.`id` `attr_id`,
+            `psiv`.`item_name`,
+            `psiv`.`item_image`,
+            `psiv`.`item_val`,
+            `pcav`.`id` `attr_id`,
+            `pcav`.`attr_name`,
+            `pcar`.`attr_val`,
+            `pcar`.`sort` `attr_sort`,
+            `pci`.`id` `image_id`,
+            `pci`.`image_url`,
+            `pci`.`sort` `image_sort`,
+            `pci`.`index_image`
+        FROM
+            `purchase_commodity` `pc`
+            LEFT JOIN `purchase_commodity_sku_relation` `pcsr` ON `commodity`.`id` = `pcsr`.`commodity_id`
+            LEFT JOIN `purchase_sku_item_value` `psiv` ON `pcsr`.`sku_id` = `psiv`.`item_id`
+            LEFT JOIN `purchase_commodity_attr_val` `pcav` ON `pc`.`id` = `pcar`.`commodity_id`
+            LEFT JOIN `purchase_commodity_image` `pci` ON `pc`.`id` = `pci`.`commodity_id`
+        WHERE
+            `pc`.`spu_id` = #{ spuId }
+    </select>
+    <!-- 查询规格商品详情 -->
+    <select id="selectCommodityById" resultMap="commodity_details_map">
+        SELECT
+            `pc`.`id` `commodity_id`,
+            `pc`.`spu_id` `spu_id`,
+            `pc`.`commodity_name`,
+            `pc`.`weight`,
+            `pc`.`title`,
+            `pc`.`subtitle`,
+            `pc`.`price`,
+            `pc`.`sale`,
+            `pc`.`stocks`,
+            `psiv`.`id` `attr_id`,
+            `psiv`.`item_name`,
+            `psiv`.`item_image`,
+            `psiv`.`item_val`,
+            `pcav`.`id` `attr_id`,
+            `pcav`.`attr_name`,
+            `pcar`.`attr_val`,
+            `pcar`.`sort` `attr_sort`,
+            `pci`.`id` `image_id`,
+            `pci`.`image_url`,
+            `pci`.`sort` `image_sort`,
+            `pci`.`index_image`
+        FROM
+            `purchase_commodity` `pc`
+            LEFT JOIN `purchase_commodity_sku_relation` `pcsr` ON `commodity`.`id` = `pcsr`.`commodity_id`
+            LEFT JOIN `purchase_sku_item_value` `psiv` ON `pcsr`.`sku_id` = `psiv`.`item_id`
+            LEFT JOIN `purchase_commodity_attr_val` `pcav` ON `pc`.`id` = `pcar`.`commodity_id`
+            LEFT JOIN `purchase_commodity_image` `pci` ON `pc`.`id` = `pci`.`commodity_id`
+        WHERE
+        `pc`.`id` = #{ commodityId } AND `pc`.`deleted` = 0
+    </select>
+    <!-- 查询规格商品的简要信息 -->
+    <select id="selectViews" resultMap="commodity_view_map">
+        SELECT
+            `commodity`.`id`,
+            `commodity`.`spu_id`,
+            `spu`.`product`,
+            `commodity`.`commodity_name`,
+            `commodity`.`title`,
+            `commodity`.`subtitle`,
+            `commodity`.`price`,
+            `commodity`.`stocks`,
+            `commodity`.`sale`,
+            `pci`.`image_url` `index_image`
+        FROM
+            `purchase_commodity` `commodity`
+            LEFT JOIN `purchase_spu` `spu` ON `commodity`.`spu_id` = `spu`.`id`
+            LEFT JOIN `purchase_category` `category` ON `spu`.`category_id` = `category`.`id`
+            LEFT JOIN `purchase_commodity_image` `pci` ON `commodity`.`id` = `pci`.`commodity_id`
+        <where>
+            `commodity`.`deleted` = 0
+            AND `pci`.`index_image` = 1
+            <if test="query.product != null and query.product != ''">
+                AND `spu`.`product` LIKE CONCAT('%', #{ query.product}, '%')
+            </if>
+            <if test="query.category != null">
+                AND `category`.`id` = #{ query.category }
+            </if>
+            <if test="query.categoryName != null and query.categoryName != ''">
+                AND `category`.`category` = #{ query.categoryName }
+            </if>
+        </where>
+        <if test="(query.sortBySale != null and query.sortBySale != '') or (query.sortByPrice != null and query.sortByprice != '')">
+            ORDER BY
+            <if test="query.sortBySale = 'asc'">
+                `commodity`.`sale` ASC
+            </if>
+            <if test="query.sortBySale = 'desc'">
+                `commodity`.`sale` DESC
+            </if>
+            <if test="query.sortBySale != null and query.sortBySale != ''">
+                ,
+            </if>
+            <if test="query.sortByPrice = 'asc'">
+                `commodity`.`price` ASC
+            </if>
+            <if test="query.sortByPrice = 'desc'">
+                `commodity`.`price` DESC
+            </if>
+        </if>
+    </select>
+</mapper>

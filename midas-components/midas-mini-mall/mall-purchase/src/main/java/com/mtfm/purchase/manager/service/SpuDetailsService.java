@@ -18,6 +18,7 @@ package com.mtfm.purchase.manager.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mtfm.purchase.PurchaseMessageSource;
+import com.mtfm.purchase.entity.SpuAttribute;
 import com.mtfm.purchase.entity.SpuImage;
 import com.mtfm.purchase.entity.StandardProductUnit;
 import com.mtfm.purchase.exceptions.PurchaseNotFoundException;
@@ -59,11 +60,11 @@ public class SpuDetailsService extends ServiceImpl<SpuMapper, StandardProductUni
 
     private ImageManager<SpuImage> spuImageManager;
 
-    private AttributeManager attributeValueManager;
+    private AttributeManager<SpuAttribute> attributeValueManager;
 
     private SkuManager skuManager;
 
-    public SpuDetailsService(ImageManager<SpuImage> spuImageManager, AttributeManager attributeValueManager, SkuManager skuManager) {
+    public SpuDetailsService(ImageManager<SpuImage> spuImageManager, AttributeManager<SpuAttribute> attributeValueManager, SkuManager skuManager) {
         this.spuImageManager = spuImageManager;
         this.attributeValueManager = attributeValueManager;
         this.skuManager = skuManager;
@@ -87,12 +88,12 @@ public class SpuDetailsService extends ServiceImpl<SpuMapper, StandardProductUni
             throw new PurchaseNotFoundException(this.messages.getMessage("SpuDetailsService.notFound",
                     "unable to find the specified product"));
         }
-        spu.setGrounding(grounding);
+        spu.setListing(grounding);
         this.updateById(spu);
     }
 
     @Override
-    public void createSpu(Spu.SpuDetails spuDetails) {
+    public long createSpu(Spu.SpuDetails spuDetails) {
         // 添加spu基本信息
         StandardProductUnit.SpuBuilder builder = StandardProductUnit.uncreated();
         StandardProductUnit spu = builder.withProductName(spuDetails.getProduct())
@@ -100,7 +101,7 @@ public class SpuDetailsService extends ServiceImpl<SpuMapper, StandardProductUni
                 .withBrandId(spuDetails.getBrand().getId())
                 .withUnit(spuDetails.getUnit())
                 .writeBrief(spuDetails.getBrief())
-                .ground(spuDetails.getGrounding())
+                .listing(spuDetails.getListing())
                 .build();
         this.save(spu);
         // 设置图片
@@ -109,6 +110,7 @@ public class SpuDetailsService extends ServiceImpl<SpuMapper, StandardProductUni
         this.attributeValueManager.setAttributes(spu.getId(), spuDetails.getSpuAttributes());
         // 设置商品销售规格
         this.skuManager.setSkuItems(spu.getId(), spu.getCategoryId(), spuDetails.getGroups());
+        return spu.getId();
     }
 
     @Override
@@ -120,7 +122,7 @@ public class SpuDetailsService extends ServiceImpl<SpuMapper, StandardProductUni
                 .withBrandId(spuDetails.getBrand().getId())
                 .withUnit(spuDetails.getUnit())
                 .writeBrief(spuDetails.getBrief())
-                .ground(spuDetails.getGrounding())
+                .listing(spuDetails.getListing())
                 .build();
         this.updateById(spu);
         // 更新spu图片
@@ -151,7 +153,7 @@ public class SpuDetailsService extends ServiceImpl<SpuMapper, StandardProductUni
         if (spu == null) {
             return ;
         }
-        spu.setGrounding(Judge.NO);
+        spu.setListing(Judge.NO);
         spu.setDeleted(Judge.YES.getCode());
         this.updateById(spu);
     }

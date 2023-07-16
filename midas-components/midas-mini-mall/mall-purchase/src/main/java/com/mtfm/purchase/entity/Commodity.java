@@ -50,21 +50,6 @@ public class Commodity extends BaseModel<StandardProductUnit> {
     @TableField(value = "weight", jdbcType = JdbcType.DECIMAL)
     private String weight;
     /**
-     * 所属分类
-     */
-    @TableField("category_id")
-    private Long categoryId;
-    /**
-     * 所属品牌
-     */
-    @TableField("brand_id")
-    private Long brandId;
-    /**
-     * 默认图片
-     */
-    @TableField("index_image")
-    private String indexImage;
-    /**
      * 标题
      */
     private String title;
@@ -92,6 +77,34 @@ public class Commodity extends BaseModel<StandardProductUnit> {
      */
     private Integer stocks;
 
+    public Commodity() {
+    }
+
+    public Commodity(Long id, Long spuId, String commodityName, String weight,  String title,
+                     String subtitle, String price, Integer sale, Integer stocks) {
+        this.id = id;
+        this.spuId = spuId;
+        this.commodityName = commodityName;
+        this.weight = weight;
+        this.title = title;
+        this.subtitle = subtitle;
+        this.price = price;
+        this.sale = sale;
+        this.stocks = stocks;
+    }
+
+    public static CommodityBuilder createdBuilder(long commodityId, long spuId) {
+        return new CommodityBuilder(commodityId, spuId);
+    }
+
+    public static CommodityBuilder uncreatedBuilder(long spuId) {
+        return new CommodityBuilder(spuId);
+    }
+
+    public static CommodityBuilder builder(Commodity commodity) {
+        return null;
+    }
+
     public Long getId() {
         return id;
     }
@@ -114,30 +127,6 @@ public class Commodity extends BaseModel<StandardProductUnit> {
 
     public void setCommodityName(String commodityName) {
         this.commodityName = commodityName;
-    }
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public Long getBrandId() {
-        return brandId;
-    }
-
-    public void setBrandId(Long brandId) {
-        this.brandId = brandId;
-    }
-
-    public String getIndexImage() {
-        return indexImage;
-    }
-
-    public void setIndexImage(String indexImage) {
-        this.indexImage = indexImage;
     }
 
     public String getTitle() {
@@ -186,5 +175,82 @@ public class Commodity extends BaseModel<StandardProductUnit> {
 
     public void setWeight(String weight) {
         this.weight = weight;
+    }
+
+    public static class CommodityBuilder {
+
+        private final Long id;
+
+        private final Long spuId;
+
+        private String commodityName;
+
+        private String weight;
+
+        private String title;
+
+        private String subtitle;
+
+        private String price;
+
+        private Integer sale;
+
+        private Integer stocks;
+
+        private CommodityBuilder(Long spuId) {
+            this(null, spuId);
+        }
+
+        private CommodityBuilder(Long id, Long spuId) {
+            this.id = id;
+            this.spuId = spuId;
+        }
+
+        public CommodityBuilder(Commodity commodity) {
+            this.id = commodity.id;
+            this.spuId = commodity.spuId;
+            this.commodityName = commodity.commodityName;
+            this.weight = commodity.weight;
+            this.title = commodity.title;
+            this.subtitle = commodity.subtitle;
+            this.price = commodity.price;
+            this.sale = commodity.sale;
+            this.stocks = commodity.stocks;
+        }
+
+        public CommodityBuilder setName(String commodityName) {
+            this.commodityName = commodityName;
+            return this;
+        }
+
+        public CommodityBuilder setWeight(String weight) {
+            this.weight = weight;
+            return this;
+        }
+
+        public CommodityBuilder setTitle(String title, String subtitle) {
+            this.title = title;
+            this.subtitle = subtitle;
+            return this;
+        }
+
+        public CommodityBuilder setPrice(String price) {
+            this.price = price;
+            return this;
+        }
+
+        public CommodityBuilder hadSale(Integer sale) {
+            this.sale = sale;
+            return this;
+        }
+
+        public CommodityBuilder listingStocks(Integer stocks) {
+            this.stocks = stocks;
+            return this;
+        }
+
+        public Commodity build() {
+            return new Commodity(this.id, this.spuId, this.commodityName, this.weight, this.title, this.subtitle, this.price, this.sale, this.stocks);
+        }
     }
 }
