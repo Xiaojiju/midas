@@ -13,17 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.app_purchase;
+package com.mtfm.backend_mall;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ResourceBundleMessageSource;
 
 /**
  * @author 一块小饼干
  * @since 1.0.0
- * 加载业务bean
+ * 商城后台配置文件
  */
 @Configuration
-public class AppMallConfiguration {
+public class BackendMallConfiguration {
 
+    public BackendMallConfiguration(ResourceBundleMessageSource resourceBundleMessageSource) {
+        resourceBundleMessageSource.addBasenames("i18n/backend_mall_messages");
+    }
 
 }

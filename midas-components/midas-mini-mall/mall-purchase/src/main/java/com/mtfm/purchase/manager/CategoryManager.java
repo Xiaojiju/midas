@@ -77,13 +77,13 @@ public interface CategoryManager {
      * 通过id删除，如果有子节点则不允许删除
      * @param id 分类id
      */
-    void removeCategoryById(Long id);
+    void removeCategoryById(Long id) throws PurchaseExistException;
 
     /**
      * 通过分类名删除，如果有子节点不允许删除
      * @param category 分类名
      */
-    void removeCategoryByName(String category);
+    void removeCategoryByName(String category) throws PurchaseExistException;
 
     /**
      * 是否存在重名分类

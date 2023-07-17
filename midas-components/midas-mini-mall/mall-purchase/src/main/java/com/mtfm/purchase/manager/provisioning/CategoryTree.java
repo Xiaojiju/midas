@@ -16,9 +16,9 @@
 package com.mtfm.purchase.manager.provisioning;
 
 import com.mtfm.core.util.Linkable;
+import com.mtfm.tools.enums.Judge;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,7 +26,17 @@ import java.util.List;
  * @since 1.0.0
  * 分类树
  */
-public class CategoryTree extends CategoryDetails implements Serializable, Linkable<CategoryTree> {
+public class CategoryTree implements Serializable, Linkable<CategoryTree> {
+
+    private String key;
+
+    private String category;
+
+    private String parent;
+
+    private Judge display;
+
+    private String icon;
     /**
      * 子节点
      */
@@ -36,28 +46,51 @@ public class CategoryTree extends CategoryDetails implements Serializable, Linka
      */
     private int height;
 
-    public CategoryTree() {
-        this(new ArrayList<>(), 0);
-    }
-
-    public CategoryTree(List<CategoryTree> nodes, int height) {
-        this.nodes = nodes;
-        this.height = height;
-    }
-
     @Override
     public String getKey() {
-        return String.valueOf(this.getId());
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     @Override
     public String getParent() {
-        return String.valueOf(super.getParentId());
+        return parent;
+    }
+
+    public void setParent(String parent) {
+        this.parent = parent;
+    }
+
+    public Judge getDisplay() {
+        return display;
+    }
+
+    public void setDisplay(Judge display) {
+        this.display = display;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
     @Override
     public List<CategoryTree> getNodes() {
-        return this.nodes;
+        return nodes;
     }
 
     @Override
@@ -67,19 +100,11 @@ public class CategoryTree extends CategoryDetails implements Serializable, Linka
 
     @Override
     public int getHeight() {
-        return this.height;
+        return height;
     }
 
     @Override
     public void setHeight(int height) {
         this.height = height;
-    }
-
-    public void setKey(String key) {
-        super.setId(Long.parseLong(key));
-    }
-
-    public void setParent(String parent) {
-        super.setParentId(Long.parseLong(parent));
     }
 }

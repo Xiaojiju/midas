@@ -41,6 +41,11 @@ public class CategoryServiceImpl implements CategoryService {
         return this.categoryManager.loadTree();
     }
 
+    @Override
+    public CategoryTree getTree(String category) {
+        return this.categoryManager.loadTreeByName(category);
+    }
+
     protected CategoryManager getCategoryManager() {
         return categoryManager;
     }

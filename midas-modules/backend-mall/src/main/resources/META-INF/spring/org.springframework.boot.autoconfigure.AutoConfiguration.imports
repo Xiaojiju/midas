@@ -1,2 +1,5 @@
-com.mtfm.app_purchase.AppMallConfiguration
-com.mtfm.app_purchase.web.api.BrandViewApi
+com.mtfm.backend_mall.BackendMallConfiguration
+com.mtfm.backend_mall.service.purchase.impl.CategoryManageServiceImpl
+com.mtfm.backend_mall.service.purchase.impl.CommodityManageServiceImpl
+com.mtfm.backend_mall.web.api.CategoryServiceApi
+com.mtfm.backend_mall.web.api.CommodityServiceApi

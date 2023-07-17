@@ -19,6 +19,7 @@ import com.mtfm.app_purchase.service.purchase.CategoryService;
 import com.mtfm.core.context.response.RestResult;
 import com.mtfm.purchase.manager.provisioning.CategoryTree;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,7 +45,12 @@ public class CategoryViewApi {
      * @return 分类树
      */
     @GetMapping("/categories/tree")
-    public RestResult<List<CategoryTree>> pushTree() {
+    public RestResult<List<CategoryTree>> pullTree() {
         return RestResult.success(this.categoryService.getTree());
+    }
+
+    @GetMapping("/category/{category}")
+    public RestResult<CategoryTree> pullTree(@PathVariable("category") String category) {
+        return RestResult.success(this.categoryService.getTree(category));
     }
 }

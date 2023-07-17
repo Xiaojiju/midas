@@ -21,6 +21,8 @@ import com.mtfm.core.util.NodeTree;
 import com.mtfm.purchase.PurchaseMessageSource;
 import com.mtfm.purchase.entity.Category;
 import com.mtfm.purchase.exceptions.PurchaseExistException;
+import com.mtfm.purchase.exceptions.PurchaseNotAllowedException;
+import com.mtfm.purchase.exceptions.PurchaseNotFoundException;
 import com.mtfm.purchase.manager.CategoryManager;
 import com.mtfm.purchase.manager.mapper.CategoryMapper;
 import com.mtfm.purchase.manager.provisioning.CategoryDetails;
@@ -29,7 +31,6 @@ import com.mtfm.tools.StringUtils;
 import com.mtfm.tools.enums.Judge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -96,14 +97,29 @@ public class CategoryDetailsService extends ServiceImpl<CategoryMapper, Category
 
     // todo 需要添加清空缓存
     @Override
-    public void createCategory(CategoryDetails details) {
+    public void createCategory(CategoryDetails details) throws PurchaseExistException {
         if (details == null) {
             throw new NullPointerException("category details could not be null");
         }
-        String name = details.getValue();
+        String name = details.getCategory();
         if (this.categoryExist(name)) {
             throw new PurchaseExistException(this.messages.getMessage("CategoryManager.exist",
                     "category name has exist or is empty"));
+        }
+        Long parentId = details.getParentId();
+        if (parentId == 0L) {
+            details.setLevel(0);
+        } else {
+            Category category = this.baseMapper.selectById(parentId);
+            if (category == null) {
+                throw new PurchaseNotFoundException(this.messages.getMessage("CategoryManager.notFound",
+                        "the parent of the added category does not exist"));
+            }
+            if (category.getLevel() >= 2) {
+                throw new PurchaseNotAllowedException(this.messages.getMessage("CategoryManager.notAllowedSaved",
+                        "classification allows up to 3 levels, no more levels are allowed to be added"));
+            }
+            details.setLevel(category.getLevel() + 1);
         }
         Category category = details.convertTo();
         category.setId(null);
@@ -112,11 +128,11 @@ public class CategoryDetailsService extends ServiceImpl<CategoryMapper, Category
 
     // todo 需要添加清空缓存
     @Override
-    public void updateCategory(CategoryDetails details) {
+    public void updateCategory(CategoryDetails details) throws PurchaseExistException {
         if (details == null) {
             throw new NullPointerException("category details could not be null");
         }
-        String name = details.getValue();
+        String name = details.getCategory();
         Long target = details.getId();
         if (target == null) {
             throw new NullPointerException("category id is null, should be set value to it");
@@ -125,6 +141,21 @@ public class CategoryDetailsService extends ServiceImpl<CategoryMapper, Category
         if (categoryDetails != null && !categoryDetails.getId().equals(details.getId())) {
             throw new PurchaseExistException(this.messages.getMessage("CategoryManager.exist",
                     "category name has exist or is empty"));
+        }
+        Long parentId = details.getParentId();
+        if (parentId == 0L) {
+            details.setLevel(0);
+        } else {
+            Category category = this.baseMapper.selectById(parentId);
+            if (category == null) {
+                throw new PurchaseNotFoundException(this.messages.getMessage("CategoryManager.notFound",
+                        "the parent of the added category does not exist"));
+            }
+            if (category.getLevel() >= 2) {
+                throw new PurchaseNotAllowedException(this.messages.getMessage("CategoryManager.notAllowedSaved",
+                        "classification allows up to 3 levels, no more levels are allowed to be added"));
+            }
+            details.setLevel(category.getLevel() + 1);
         }
         Category category = details.convertTo();
         this.updateById(category);
@@ -172,7 +203,7 @@ public class CategoryDetailsService extends ServiceImpl<CategoryMapper, Category
             if (item == null) {
                 return false;
             }
-            return item.getValue().equals(category);
+            return item.getCategory().equals(category);
         });
         if (nodeTree == null) {
             return null;
@@ -181,7 +212,7 @@ public class CategoryDetailsService extends ServiceImpl<CategoryMapper, Category
     }
 
     @Override
-    public void removeCategoryById(Long id) {
+    public void removeCategoryById(Long id) throws PurchaseExistException {
         CategoryTree categoryTree = this.loadTreeById(id);
         if (CollectionUtils.isEmpty(categoryTree.getNodes())) {
             this.removeById(id);
@@ -191,10 +222,10 @@ public class CategoryDetailsService extends ServiceImpl<CategoryMapper, Category
     }
 
     @Override
-    public void removeCategoryByName(String category) {
+    public void removeCategoryByName(String category) throws PurchaseExistException {
         CategoryTree categoryTree = this.loadTreeByName(category);
         if (CollectionUtils.isEmpty(categoryTree.getNodes())) {
-            this.removeById(categoryTree.getId());
+            this.removeById(categoryTree.getKey());
         }
         throw new PurchaseExistException(this.messages.getMessage("CategoryManager.existNode",
                 "could not be removed category which has next node"));
@@ -229,12 +260,18 @@ public class CategoryDetailsService extends ServiceImpl<CategoryMapper, Category
         }
         List<CategoryTree> collect = categoryDetails.stream().map(item -> {
             CategoryTree categoryTree = new CategoryTree();
-            BeanUtils.copyProperties(item, new CategoryTree());
+            categoryTree.setKey(String.valueOf(item.getId()));
+            categoryTree.setParent(String.valueOf(item.getParentId()));
+            categoryTree.setIcon(item.getIcon());
+            categoryTree.setHeight(item.getLevel());
+            categoryTree.setDisplay(item.getDisplay());
+            categoryTree.setCategory(item.getCategory());
             return categoryTree;
         }).collect(Collectors.toList());
         CategoryTree root = new CategoryTree();
         root.setKey("0");
-        root.setParent("root");
+        root.setParent("0");
+        root.setCategory("分类");
         NodeTree<CategoryTree> categoryTreeNodeTree = NodeTree.build(collect, root);
         this.nodeTree = categoryTreeNodeTree;
         return categoryTreeNodeTree;

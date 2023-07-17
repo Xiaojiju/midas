@@ -125,7 +125,7 @@ public class NodeTree<T extends Linkable<T>> implements Tree<T>, Serializable {
             }
         }
         List<T> collection = root.getNodes();
-        if (CollectionUtils.isEmpty(collection)) {
+        if (collection == null) {
             collection = new ArrayList<>();
         }
         root.setHeight(0);
@@ -145,7 +145,7 @@ public class NodeTree<T extends Linkable<T>> implements Tree<T>, Serializable {
         for (T element : elements) {
             if (parent.equals(element.getParent())) {
                 List<T> collection = element.getNodes();
-                if (CollectionUtils.isEmpty(collection)) {
+                if (collection == null) {
                     collection = new ArrayList<>();
                 }
                 element.setHeight(height);

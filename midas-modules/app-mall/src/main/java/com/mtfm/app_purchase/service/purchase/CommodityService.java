@@ -16,37 +16,34 @@
 package com.mtfm.app_purchase.service.purchase;
 
 import com.mtfm.core.util.page.PageTemplate;
-import com.mtfm.purchase.manager.provisioning.BrandDetails;
-import com.mtfm.purchase.manager.provisioning.CategoryDetails;
-import com.mtfm.purchase.manager.service.bo.BrandPageQuery;
-
-import java.util.List;
-
+import com.mtfm.purchase.manager.provisioning.CommodityDetails;
+import com.mtfm.purchase.manager.provisioning.CommodityView;
+import com.mtfm.purchase.manager.provisioning.Spu;
+import com.mtfm.purchase.manager.service.bo.CommodityPageQuery;
 /**
  * @author 一块小饼干
  * @since 1.0.0
- * 品牌业务类
+ * 商品业务
  */
-public interface BrandService {
+public interface CommodityService {
     /**
-     * 获取品牌详情
-     * @param id 品牌id
-     * @return 品牌详情
+     * 获取商品的分页浏览
+     * @param query 过滤参数
+     * @return 商品简要信息
      */
-    BrandDetails getBrand(long id);
+    PageTemplate<CommodityView> loadViewPage(CommodityPageQuery query);
 
     /**
-     * 根据过滤条件查询品牌分页
-     * @param query 过滤条件
-     * @return 品牌分页
+     * 获取商品详情
+     * @param commodityId 商品id
+     * @return 规格商品详情
      */
-    PageTemplate<BrandDetails> getPage(BrandPageQuery query);
+    CommodityDetails loadDetails(long commodityId);
 
     /**
-     * 获取品牌的分类
-     * @param brand 品牌id
-     * @return 分类详情
+     * 获取商品spu信息
+     * @param spuId 商品spuId
+     * @return spu详情
      */
-    List<CategoryDetails> getCategories(long brand);
-
+    Spu.SpuDetails loadSpuDetails(long spuId);
 }

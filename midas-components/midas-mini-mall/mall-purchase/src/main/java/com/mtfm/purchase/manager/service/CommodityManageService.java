@@ -15,14 +15,19 @@
  */
 package com.mtfm.purchase.manager.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mtfm.core.util.page.PageTemplate;
+import com.mtfm.purchase.PurchaseMessageSource;
 import com.mtfm.purchase.entity.Commodity;
 import com.mtfm.purchase.entity.CommodityAttribute;
 import com.mtfm.purchase.entity.CommodityImage;
 import com.mtfm.purchase.exceptions.PurchaseNotFoundException;
-import com.mtfm.purchase.manager.*;
+import com.mtfm.purchase.manager.AttributeManager;
+import com.mtfm.purchase.manager.CommodityManager;
+import com.mtfm.purchase.manager.CommoditySkuRelationManager;
+import com.mtfm.purchase.manager.ImageManager;
 import com.mtfm.purchase.manager.mapper.CommodityMapper;
 import com.mtfm.purchase.manager.provisioning.CommodityDetails;
 import com.mtfm.purchase.manager.provisioning.CommoditySplitDetails;
@@ -30,17 +35,21 @@ import com.mtfm.purchase.manager.provisioning.CommodityView;
 import com.mtfm.purchase.manager.provisioning.Spu;
 import com.mtfm.purchase.manager.service.bo.CommodityPageQuery;
 import com.mtfm.purchase.manager.service.bo.SplitPageQuery;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * @author 一块小饼干
  * @since 1.0.0
- *
+ * 商品管理实现
  */
-public class CommodityManageService extends ServiceImpl<CommodityMapper, Commodity> implements CommodityManager {
+public class CommodityManageService extends ServiceImpl<CommodityMapper, Commodity> implements CommodityManager, MessageSourceAware {
 
     private AttributeManager<CommodityAttribute> attributeManager;
 
@@ -48,7 +57,10 @@ public class CommodityManageService extends ServiceImpl<CommodityMapper, Commodi
 
     private CommoditySkuRelationManager commoditySkuRelationManager;
 
-    public CommodityManageService(AttributeManager<CommodityAttribute> attributeManager, ImageManager<CommodityImage> imageManager,
+    private MessageSourceAccessor messages = PurchaseMessageSource.getAccessor();
+
+    public CommodityManageService(AttributeManager<CommodityAttribute> attributeManager,
+                                  ImageManager<CommodityImage> imageManager,
                                   CommoditySkuRelationManager commoditySkuRelationManager) {
         this.attributeManager = attributeManager;
         this.imageManager = imageManager;
@@ -56,10 +68,11 @@ public class CommodityManageService extends ServiceImpl<CommodityMapper, Commodi
     }
 
     @Override
-    public long createCommodity(CommodityDetails details) {
+    public long createCommodity(CommodityDetails details) throws PurchaseNotFoundException {
         Long spuId = details.getSpuId();
         if (spuId == null) {
-            throw new PurchaseNotFoundException("");
+            throw new PurchaseNotFoundException(this.messages.getMessage("SpuDetailsService.notFound",
+                    "Unable to find the specified product."));
         }
         Commodity commodity = Commodity.uncreatedBuilder(details.getSpuId())
                 .setName(details.getCommodityName())
@@ -81,10 +94,11 @@ public class CommodityManageService extends ServiceImpl<CommodityMapper, Commodi
     }
 
     @Override
-    public void updateCommodity(CommodityDetails details) {
+    public void updateCommodity(CommodityDetails details) throws PurchaseNotFoundException {
         Commodity commodity = this.getById(details.getId());
         if (commodity == null) {
-            throw new PurchaseNotFoundException("没有找到对应规格商品");
+            throw new PurchaseNotFoundException(this.messages.getMessage("CommodityManageService.notFound",
+                    "could not found commodity, maybe not exist."));
         }
         Commodity prepare = Commodity.createdBuilder(commodity.getId(), commodity.getSpuId())
                 .setName(details.getCommodityName())
@@ -110,6 +124,13 @@ public class CommodityManageService extends ServiceImpl<CommodityMapper, Commodi
     }
 
     @Override
+    public void deleteBySpuId(long id) {
+        QueryWrapper<Commodity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Commodity::getSpuId, id);
+        this.remove(queryWrapper);
+    }
+
+    @Override
     public PageTemplate<CommoditySplitDetails> loadPage(SplitPageQuery query) {
         long current = query.getCurrent();
         query.setCurrent((current - 1) * query.getSize());
@@ -120,7 +141,11 @@ public class CommodityManageService extends ServiceImpl<CommodityMapper, Commodi
 
     @Override
     public List<CommodityDetails> loadCommodities(long spuId) {
-        return this.baseMapper.selectCommodityDetails(spuId);
+        List<CommodityDetails> commodityDetails = this.baseMapper.selectCommodityDetails(spuId);
+        if (CollectionUtils.isEmpty(commodityDetails)) {
+            return new ArrayList<>();
+        }
+        return commodityDetails;
     }
 
     @Override
@@ -133,6 +158,11 @@ public class CommodityManageService extends ServiceImpl<CommodityMapper, Commodi
     @Override
     public CommodityDetails loadCommodityById(long commodityId) {
         return this.baseMapper.selectCommodityById(commodityId);
+    }
+
+    @Override
+    public void setMessageSource(MessageSource messageSource) {
+        this.messages = new MessageSourceAccessor(messageSource);
     }
 
     protected AttributeManager<CommodityAttribute> getAttributeManager() {

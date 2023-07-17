@@ -24,44 +24,58 @@ import com.mtfm.tools.enums.Judge;
  * @since 1.0.0
  * 分类详情
  */
-public class CategoryDetails extends Sample implements BeanConverter<Category> {
+public class CategoryDetails implements BeanConverter<Category> {
+
+    private Long id;
+
+    private String category;
 
     private Long parentId;
 
     private Integer level;
 
-    private Judge show;
+    private Judge display;
 
     private String icon;
 
     public CategoryDetails() {
     }
 
-    public CategoryDetails(Long parentId, Integer level, Judge show, String icon) {
+    public CategoryDetails(Long id, String category, Long parentId, Integer level, Judge display, String icon) {
+        this.id = id;
+        this.category = category;
         this.parentId = parentId;
         this.level = level;
-        this.show = show;
-        this.icon = icon;
-    }
-
-    public CategoryDetails(Long id, String value, Long parentId, Integer level, Judge show, String icon) {
-        super(id, value);
-        this.parentId = parentId;
-        this.level = level;
-        this.show = show;
+        this.display = display;
         this.icon = icon;
     }
 
     @Override
     public Category convertTo() {
         Category bean = new Category();
-        bean.setId(getId());
-        bean.setCategory(getValue());
+        bean.setId(this.id);
+        bean.setCategory(this.category);
         bean.setParentId(this.parentId);
         bean.setLevel(this.level);
-        bean.setShow(this.show);
+        bean.setDisplay(this.display);
         bean.setIcon(this.icon);
         return bean;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public Long getParentId() {
@@ -80,12 +94,12 @@ public class CategoryDetails extends Sample implements BeanConverter<Category> {
         this.level = level;
     }
 
-    public Judge getShow() {
-        return show;
+    public Judge getDisplay() {
+        return display;
     }
 
-    public void setShow(Judge show) {
-        this.show = show;
+    public void setDisplay(Judge display) {
+        this.display = display;
     }
 
     public String getIcon() {

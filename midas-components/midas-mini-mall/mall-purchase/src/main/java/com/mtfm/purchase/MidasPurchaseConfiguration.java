@@ -15,6 +15,9 @@
  */
 package com.mtfm.purchase;
 
+import com.mtfm.purchase.manager.*;
+import com.mtfm.purchase.manager.service.*;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
@@ -32,5 +35,60 @@ public class MidasPurchaseConfiguration {
         // 添加国际化文件
         messageSource.addBasenames("i18n/purchase_messages");
     }
+
+    @Bean
+    public SpuAttributeManageService spuAttributeManageService() {
+        return new SpuAttributeManageService();
+    }
+
+    @Bean
+    public CommodityAttributeManageService commodityAttributeManageService() {
+        return new CommodityAttributeManageService();
+    }
+
+    @Bean
+    public CategoryManager categoryManager() {
+        return new CategoryDetailsService();
+    }
+
+    @Bean
+    public SpuImageService spuImageService() {
+        return new SpuImageService();
+    }
+
+    @Bean
+    public CommodityImageService commodityImageService() {
+        return new CommodityImageService();
+    }
+
+    @Bean
+    public SkuItemValueManager skuItemValueManager() {
+        return new SkuItemValueService();
+    }
+
+    @Bean
+    public SkuManager skuManager(SkuItemValueManager skuItemValueManager) {
+        return new SkuManageService(skuItemValueManager);
+    }
+
+    @Bean
+    public SpuManager spuManager(SpuImageService spuImageService,
+                                 SpuAttributeManageService spuAttributeManageService,
+                                 SkuManager skuManager) {
+        return new SpuDetailsService(spuImageService, spuAttributeManageService, skuManager);
+    }
+
+    @Bean
+    public CommoditySkuRelationManager commoditySkuRelationManager(SkuManager skuManager) {
+        return new CommoditySkuRelationService(skuManager);
+    }
+
+    @Bean
+    public CommodityManager commodityManager(CommodityAttributeManageService commodityAttributeManageService,
+                                             CommodityImageService commodityImageService,
+                                             CommoditySkuRelationManager commoditySkuRelationManager) {
+        return new CommodityManageService(commodityAttributeManageService, commodityImageService, commoditySkuRelationManager);
+    }
+
 
 }

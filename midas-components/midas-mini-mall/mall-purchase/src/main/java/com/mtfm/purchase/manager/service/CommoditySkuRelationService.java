@@ -17,6 +17,7 @@ package com.mtfm.purchase.manager.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mtfm.purchase.PurchaseMessageSource;
 import com.mtfm.purchase.entity.CommoditySkuRelation;
 import com.mtfm.purchase.exceptions.PurchaseNotFoundException;
 import com.mtfm.purchase.manager.CommoditySkuRelationManager;
@@ -25,6 +26,9 @@ import com.mtfm.purchase.manager.mapper.CommoditySkuRelationMapper;
 import com.mtfm.purchase.manager.provisioning.Spu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -39,11 +43,13 @@ import java.util.List;
  */
 @Transactional(rollbackFor = Exception.class)
 public class CommoditySkuRelationService extends ServiceImpl<CommoditySkuRelationMapper, CommoditySkuRelation>
-        implements CommoditySkuRelationManager {
+        implements CommoditySkuRelationManager, MessageSourceAware {
 
     private static final Logger logger = LoggerFactory.getLogger(CommoditySkuRelationService.class);
 
     private SkuManager skuManager;
+
+    private MessageSourceAccessor messages = PurchaseMessageSource.getAccessor();
 
     public CommoditySkuRelationService(SkuManager skuManager) {
         this.skuManager = skuManager;
@@ -63,7 +69,8 @@ public class CommoditySkuRelationService extends ServiceImpl<CommoditySkuRelatio
         }
         int settingNum = items.size();
         if (CollectionUtils.isEmpty(items) || settingNum != skuItemGroups.size()) {
-            throw new PurchaseNotFoundException("商品属性不对");
+            throw new PurchaseNotFoundException(this.messages.getMessage("CommoditySkuRelationService.wrongSkuItem",
+                    "the product specifications do not match the preset specifications."));
         }
 
         for (Spu.SkuItemGroup group : skuItemGroups) {
@@ -78,7 +85,8 @@ public class CommoditySkuRelationService extends ServiceImpl<CommoditySkuRelatio
             }
         }
         if (settingNum != 0) {
-            throw new PurchaseNotFoundException("商品属性不对");
+            throw new PurchaseNotFoundException(this.messages.getMessage("CommoditySkuRelationService.wrongSkuItem",
+                    "the product specifications do not match the preset specifications."));
         }
         boolean remove = this.remove(
                 new QueryWrapper<CommoditySkuRelation>()
@@ -98,6 +106,11 @@ public class CommoditySkuRelationService extends ServiceImpl<CommoditySkuRelatio
         if (logger.isDebugEnabled()) {
             logger.debug("commodity remove sku item fail so that could not add new sku item");
         }
+    }
+
+    @Override
+    public void setMessageSource(MessageSource messageSource) {
+        this.messages = new MessageSourceAccessor(messageSource);
     }
 
     protected SkuManager getSkuManager() {

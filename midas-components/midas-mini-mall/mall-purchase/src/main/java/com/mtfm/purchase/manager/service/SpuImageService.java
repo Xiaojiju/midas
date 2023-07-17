@@ -50,9 +50,6 @@ public class SpuImageService extends ServiceImpl<SpuImageMapper, SpuImage> imple
 
     @Override
     public void setImages(long spu, List<SpuImage> images) {
-        if (CollectionUtils.isEmpty(images)) {
-            return ;
-        }
         // 删除spu下的图片
         this.removeImages(spu, null);
         boolean primary = false;

@@ -82,7 +82,7 @@ public class SpuDetailsService extends ServiceImpl<SpuMapper, StandardProductUni
     }
 
     @Override
-    public void grounding(long spuId, Judge grounding) {
+    public void listing(long spuId, Judge grounding) throws PurchaseNotFoundException {
         StandardProductUnit spu = this.getById(spuId);
         if (spu == null) {
             throw new PurchaseNotFoundException(this.messages.getMessage("SpuDetailsService.notFound",
@@ -134,7 +134,7 @@ public class SpuDetailsService extends ServiceImpl<SpuMapper, StandardProductUni
     }
 
     @Override
-    public Spu.SpuDetails loadSpuDetailsById(long spuId) {
+    public Spu.SpuDetails loadSpuDetailsById(long spuId) throws PurchaseNotFoundException {
         Spu spu = this.baseMapper.selectSpuById(spuId);
         if (spu == null) {
             throw new PurchaseNotFoundException(this.messages.getMessage("SpuDetailsService.notFound",
@@ -159,6 +159,14 @@ public class SpuDetailsService extends ServiceImpl<SpuMapper, StandardProductUni
     }
 
     @Override
+    public long loadCount(long categoryId) {
+        QueryWrapper<StandardProductUnit> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(StandardProductUnit::getCategoryId, categoryId)
+                .eq(StandardProductUnit::getDeleted, Judge.NO);
+        return this.count(queryWrapper);
+    }
+
+    @Override
     public void setMessageSource(MessageSource messageSource) {
         this.messages = new MessageSourceAccessor(messageSource);
     }
@@ -171,19 +179,19 @@ public class SpuDetailsService extends ServiceImpl<SpuMapper, StandardProductUni
         this.messages = messages;
     }
 
-    protected ImageManager getSpuImageManager() {
+    protected ImageManager<SpuImage> getSpuImageManager() {
         return spuImageManager;
     }
 
-    public void setSpuImageManager(ImageManager spuImageManager) {
+    public void setSpuImageManager(ImageManager<SpuImage> spuImageManager) {
         this.spuImageManager = spuImageManager;
     }
 
-    protected AttributeManager getAttributeManager() {
+    protected AttributeManager<SpuAttribute> getAttributeManager() {
         return attributeValueManager;
     }
 
-    public void setAttributeManager(AttributeManager attributeValueManager) {
+    public void setAttributeManager(AttributeManager<SpuAttribute> attributeValueManager) {
         this.attributeValueManager = attributeValueManager;
     }
 

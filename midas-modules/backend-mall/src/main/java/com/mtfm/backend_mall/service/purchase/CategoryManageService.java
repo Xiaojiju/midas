@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.app_purchase.service.purchase;
+package com.mtfm.backend_mall.service.purchase;
 
+import com.mtfm.purchase.manager.provisioning.CategoryDetails;
 import com.mtfm.purchase.manager.provisioning.CategoryTree;
 
 import java.util.List;
@@ -22,15 +23,37 @@ import java.util.List;
 /**
  * @author 一块小饼干
  * @since 1.0.0
- * 分类定义
+ * 分类管理业务
  */
-public interface CategoryService {
+public interface CategoryManageService {
     /**
      * 获取分类树
-     * @return 分类树
+     * @return 树
      */
     List<CategoryTree> getTree();
 
-    CategoryTree getTree(String category);
+    /**
+     * 创建分类
+     * @param categoryDetails 分类详情
+     */
+    void createCategory(CategoryDetails categoryDetails);
 
+    /**
+     * 更新分类
+     * @param categoryDetails 分类详情
+     */
+    void updateCategory(CategoryDetails categoryDetails);
+
+    /**
+     * 删除分裂
+     * @param categoryId 分类id
+     */
+    void removeCategory(long categoryId);
+
+    /**
+     * 获取分类详情
+     * @param categoryId 分类id
+     * @return 分类详情
+     */
+    CategoryDetails getDetails(long categoryId);
 }

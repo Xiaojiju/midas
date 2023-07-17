@@ -16,6 +16,7 @@
 package com.mtfm.purchase.manager;
 
 import com.mtfm.core.util.page.PageTemplate;
+import com.mtfm.purchase.exceptions.PurchaseNotFoundException;
 import com.mtfm.purchase.manager.provisioning.CommodityDetails;
 import com.mtfm.purchase.manager.provisioning.CommoditySplitDetails;
 import com.mtfm.purchase.manager.provisioning.CommodityView;
@@ -33,19 +34,25 @@ public interface CommodityManager {
      * 创建商品
      * @param details 商品详情
      */
-    long createCommodity(CommodityDetails details);
+    long createCommodity(CommodityDetails details) throws PurchaseNotFoundException;
 
     /**
      * 更新商品
      * @param details 商品详情
      */
-    void updateCommodity(CommodityDetails details);
+    void updateCommodity(CommodityDetails details) throws PurchaseNotFoundException;
 
     /**
      * 删除商品
      * @param id 商品id
      */
     void deleteByCommodityId(long id);
+
+    /**
+     * 删除商品
+     * @param id 商品id
+     */
+    void deleteBySpuId(long id);
 
     /**
      * 系列列表
@@ -74,4 +81,5 @@ public interface CommodityManager {
      * @return 商品详情
      */
     CommodityDetails loadCommodityById(long commodityId);
+
 }

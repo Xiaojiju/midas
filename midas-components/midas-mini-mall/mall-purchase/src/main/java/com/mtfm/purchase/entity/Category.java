@@ -48,12 +48,13 @@ public class Category extends BaseModel<Category> {
     /**
      * 级别 默认为0
      */
+    @TableField("current_level")
     private Integer level;
     /**
      * 是否展示
      */
-    @TableField(value = "show", jdbcType = JdbcType.INTEGER, typeHandler = CommonEnumTypeHandler.class)
-    private Judge show;
+    @TableField(value = "display", jdbcType = JdbcType.INTEGER, typeHandler = CommonEnumTypeHandler.class)
+    private Judge display;
     /**
      * 图标
      */
@@ -91,12 +92,12 @@ public class Category extends BaseModel<Category> {
         this.level = level;
     }
 
-    public Judge getShow() {
-        return show;
+    public Judge getDisplay() {
+        return display;
     }
 
-    public void setShow(Judge show) {
-        this.show = show;
+    public void setDisplay(Judge display) {
+        this.display = display;
     }
 
     public String getIcon() {

@@ -15,6 +15,7 @@
  */
 package com.mtfm.purchase.manager;
 
+import com.mtfm.purchase.exceptions.PurchaseNotFoundException;
 import com.mtfm.purchase.manager.provisioning.Spu;
 import com.mtfm.tools.enums.Judge;
 
@@ -31,7 +32,7 @@ public interface SpuManager {
      * 上架
      * @param grounding {@link Judge#YES} 上架 {@link Judge#NO} 下架
      */
-    void grounding(long spuId, Judge grounding);
+    void listing(long spuId, Judge grounding) throws PurchaseNotFoundException;
     /**
      * 创建spu
      * @param spuDetails spu详情
@@ -49,7 +50,7 @@ public interface SpuManager {
      * @param spuId spu id
      * @return spu详情
      */
-    Spu.SpuDetails loadSpuDetailsById(long spuId);
+    Spu.SpuDetails loadSpuDetailsById(long spuId) throws PurchaseNotFoundException;
 
     /**
      * 删除spu
@@ -57,4 +58,10 @@ public interface SpuManager {
      */
     void removeSpuById(long spuId);
 
+    /**
+     * 获取分类下的商品系列
+     * @param categoryId 分类id
+     * @return 总数
+     */
+    long loadCount(long categoryId);
 }

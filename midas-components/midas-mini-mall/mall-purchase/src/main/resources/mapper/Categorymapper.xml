@@ -18,22 +18,22 @@
 <mapper namespace="com.mtfm.purchase.manager.mapper.CategoryMapper">
     <!-- CategoryDetails {@link com.mtfm.purchase.manager.provisioning.CategoryDetails} -->
     <resultMap id="category_details_map" type="com.mtfm.purchase.manager.provisioning.CategoryDetails">
-        <id property="target" column="id" jdbcType="BIGINT" javaType="long"/>
+        <id property="id" column="id" jdbcType="BIGINT" javaType="long"/>
         <result property="category" column="category" jdbcType="VARCHAR" javaType="string"/>
         <result property="parentId" column="parent_id" jdbcType="BIGINT" javaType="long"/>
-        <result property="level" column="level" jdbcType="INTEGER" javaType="int"/>
-        <result property="show" column="show" jdbcType="INTEGER" javaType="com.mtfm.tools.enums.Judge"
+        <result property="level" column="current_level" jdbcType="INTEGER" javaType="int"/>
+        <result property="display" column="display" jdbcType="INTEGER" javaType="com.mtfm.tools.enums.Judge"
                 typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
         <result property="icon" column="icon" jdbcType="VARCHAR" javaType="string"/>
     </resultMap>
     <!-- 通过id或分类名查询分类 -->
     <select id="selectCategory" resultMap="category_details_map">
         SELECT
-            `pc`.`id` `target`,
+            `pc`.`id`,
             `pc`.`category`,
             `pc`.`parent_id`,
-            `pc`.`level`,
-            `pc`.`show`,
+            `pc`.`current_level`,
+            `pc`.`display`,
             `pc`.`icon`
         FROM
             `purchase_category` `pc`

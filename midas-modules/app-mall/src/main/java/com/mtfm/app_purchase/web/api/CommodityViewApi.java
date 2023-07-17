@@ -15,17 +15,67 @@
  */
 package com.mtfm.app_purchase.web.api;
 
+import com.mtfm.app_purchase.service.purchase.CommodityService;
+import com.mtfm.core.context.response.RestResult;
+import com.mtfm.core.util.page.PageTemplate;
+import com.mtfm.purchase.manager.provisioning.CommodityDetails;
+import com.mtfm.purchase.manager.provisioning.CommodityView;
+import com.mtfm.purchase.manager.provisioning.Spu;
+import com.mtfm.purchase.manager.service.bo.CommodityPageQuery;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author 一块小饼干
  * @since 1.0.0
- * spu信息api
+ * 商品信息api
  */
 @RestController
 @RequestMapping("/solar/api/v1")
 public class CommodityViewApi {
 
+    private CommodityService commodityService;
 
+    public CommodityViewApi(CommodityService commodityService) {
+        this.commodityService = commodityService;
+    }
+
+    /**
+     * 分类展示商品，主要集中在逛一逛和特选
+     * @param query 查询参数
+     * @return 商品简要信息
+     */
+    @GetMapping("/view/commodities")
+    public RestResult<PageTemplate<CommodityView>> getViews(CommodityPageQuery query) {
+        return RestResult.success(this.commodityService.loadViewPage(query));
+    }
+
+    /**
+     * 规格商品信息
+     * @param commodityId 商品id
+     * @return 商品详情
+     */
+    @GetMapping("/view/commodity")
+    public RestResult<CommodityDetails> getCommodityDetails(long commodityId) {
+        return RestResult.success(this.commodityService.loadDetails(commodityId));
+    }
+
+    /**
+     * 商品spu信息
+     * @param spuId 商品spuId
+     * @return spu详情
+     */
+    @GetMapping("/view/goods")
+    public RestResult<Spu.SpuDetails> getSpuDetails(long spuId) {
+        return RestResult.success(this.commodityService.loadSpuDetails(spuId));
+    }
+
+    protected CommodityService getCommodityService() {
+        return commodityService;
+    }
+
+    public void setCommodityService(CommodityService commodityService) {
+        this.commodityService = commodityService;
+    }
 }
