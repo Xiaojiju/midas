@@ -20,9 +20,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mtfm.purchase.entity.SpuAttribute;
 import com.mtfm.purchase.manager.AttributeManager;
 import com.mtfm.purchase.manager.mapper.SpuAttributeMapper;
+import com.mtfm.tools.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,14 +39,37 @@ import java.util.List;
 public class SpuAttributeManageService extends ServiceImpl<SpuAttributeMapper, SpuAttribute>
         implements AttributeManager<SpuAttribute> {
 
+    private static final Logger logger = LoggerFactory.getLogger(SpuAttributeManageService.class);
+
     @Override
     public void setAttributes(long id, List<SpuAttribute> attributeGroupValues) {
+        if (CollectionUtils.isEmpty(attributeGroupValues)) {
+            // 删除所有属性
+            this.removeAttributes(id, null);
+            return ;
+        }
+        List<SpuAttribute> passed = new ArrayList<>();
+        for (SpuAttribute attribute : attributeGroupValues) {
+            if (attribute == null) {
+                continue;
+            }
+            if (StringUtils.hasText(attribute.getAttrName()) && StringUtils.hasText(attribute.getAttrValue())) {
+                attribute.setSpuId(id);
+                passed.add(attribute);
+            }
+        }
+
+        if (CollectionUtils.isEmpty(passed)) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("spu id: {}, the attributes is passed validation is empty", id);
+            }
+            return ;
+        }
+
         // 删除所有属性
         this.removeAttributes(id, null);
-        for (SpuAttribute attribute : attributeGroupValues) {
-            attribute.setSpuId(id);
-        }
-        this.saveBatch(attributeGroupValues);
+
+        this.saveBatch(passed);
     }
 
     @Override

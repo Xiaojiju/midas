@@ -16,7 +16,7 @@
 package com.mtfm.purchase.manager;
 
 import com.mtfm.purchase.entity.SkuItem;
-import com.mtfm.purchase.manager.provisioning.Spu;
+import com.mtfm.purchase.manager.provisioning.SpuDetails;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public interface SkuManager {
      * @param spu spuId
      * @param skuItems 规格，包含规格对应的所有可选值
      */
-    void setSkuItems(long spu, long category, List<Spu.SkuItemGroup> skuItems);
+    void setSkuItems(long spu, List<SpuDetails.SkuItemGroup> skuItems);
 
     /**
      * 移除spu的规格
@@ -46,12 +46,12 @@ public interface SkuManager {
      * @param spu spu id
      * @return 规格组
      */
-    List<Spu.SkuItemGroup> loadSpuSkuItems(long spu);
+    List<SpuDetails.SkuItemGroup> loadSpuSkuItems(long spu);
 
     /**
      * 通过分类名获取规格
      * @param category 分类id
      * @return 规格
      */
-    List<SkuItem> loadItemsByCategory(long category, String itemName);
+    List<SkuItem> loadItemsByCategory(String itemName);
 }

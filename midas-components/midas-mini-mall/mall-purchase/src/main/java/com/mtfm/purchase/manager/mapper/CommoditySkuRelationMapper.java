@@ -17,7 +17,7 @@ package com.mtfm.purchase.manager.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mtfm.purchase.entity.CommoditySkuRelation;
-import com.mtfm.purchase.manager.provisioning.Spu;
+import com.mtfm.purchase.manager.provisioning.SpuDetails;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -35,5 +35,5 @@ public interface CommoditySkuRelationMapper extends BaseMapper<CommoditySkuRelat
      * @param commodity 商品id
      * @return 规格值
      */
-    List<Spu.SkuVal> selectSkuValues(long commodity);
+    List<SpuDetails.SkuVal> selectSkuValues(long commodity);
 }

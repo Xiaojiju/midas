@@ -15,11 +15,14 @@
  */
 package com.mtfm.core;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mtfm.core.convert.LocalDateConverter;
 import com.mtfm.core.convert.LocalDateTimeConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 
@@ -41,5 +44,14 @@ public class CoreAutoConfiguration {
         resourceBundleMessageSource.setDefaultEncoding("UTF-8");
         resourceBundleMessageSource.setBasename("i18n/core_messages");
         return resourceBundleMessageSource;
+    }
+
+    @Bean
+    @Primary
+    public ObjectMapper objectMapper(){
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
+        objectMapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL,true);
+        return objectMapper;
     }
 }

@@ -42,38 +42,57 @@ import java.util.List;
  * spu图片管理业务实现
  */
 @Transactional(rollbackFor = Exception.class)
-public class SpuImageService extends ServiceImpl<SpuImageMapper, SpuImage> implements ImageManager<SpuImage>, MessageSourceAware {
+public class SpuImageService extends ServiceImpl<SpuImageMapper, SpuImage> implements ImageManager<SpuImage> {
 
     private static final Logger logger = LoggerFactory.getLogger(SpuDetailsService.class);
 
-    private MessageSourceAccessor messages = PurchaseMessageSource.getAccessor();
-
     @Override
     public void setImages(long spu, List<SpuImage> images) {
-        // 删除spu下的图片
-        this.removeImages(spu, null);
+        if (CollectionUtils.isEmpty(images)) {
+            // 删除spu下的图片
+            this.removeImages(spu, null);
+            return ;
+        }
         boolean primary = false;
         List<SpuImage> passed = new ArrayList<>();
         for (SpuImage spuImage : images) {
+            // 如果图片没有设置图片地址，则不进行设置
             if (!StringUtils.hasText(spuImage.getImageUrl())) {
                 continue;
             }
             boolean setPrimary = spuImage.getIndexImage() == Judge.YES;
             if (primary && setPrimary) {
-                throw new PurchaseExistException(this.messages.getMessage("SpuImageService.primaryExist",
-                        "cannot set multiple images as the primary image"));
+                // 如果已经设置了主图，则后面所有设置了主图的图片不进行设置
+                spuImage.setIndexImage(Judge.NO);
+
+                if (logger.isDebugEnabled()) {
+                    logger.debug("spu id: {}, could not set multiple images as the primary image, if so, default set " +
+                            "first image as the primary image", spu);
+                }
+
             }
             primary = setPrimary;
             spuImage.setSpuId(spu);
             spuImage.setId(null);
             passed.add(spuImage);
         }
+
         if (CollectionUtils.isEmpty(passed)) {
             if (logger.isDebugEnabled()) {
                 logger.debug("spu image array is empty, maybe element contain empty value in source data");
             }
             return ;
         }
+
+        // 如果没有主图，则默认第一张为主图
+        if (!primary) {
+            SpuImage spuImage = passed.get(0);
+            spuImage.setIndexImage(Judge.YES);
+            passed.set(0, spuImage);
+        }
+        // 删除spu下的图片
+        this.removeImages(spu, null);
+
         this.saveBatch(passed);
     }
 
@@ -94,10 +113,5 @@ public class SpuImageService extends ServiceImpl<SpuImageMapper, SpuImage> imple
             return new ArrayList<>();
         }
         return spuImages;
-    }
-
-    @Override
-    public void setMessageSource(MessageSource messageSource) {
-        this.messages = new MessageSourceAccessor(messageSource);
     }
 }

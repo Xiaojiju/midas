@@ -20,10 +20,12 @@ import com.mtfm.backend_mall.web.IdTemplate;
 import com.mtfm.core.context.response.RestResult;
 import com.mtfm.core.util.Target;
 import com.mtfm.core.util.page.PageTemplate;
+import com.mtfm.core.util.validator.ValidateGroup;
 import com.mtfm.purchase.manager.provisioning.CommodityDetails;
 import com.mtfm.purchase.manager.provisioning.CommoditySplitDetails;
-import com.mtfm.purchase.manager.provisioning.Spu;
+import com.mtfm.purchase.manager.provisioning.SpuDetails;
 import com.mtfm.purchase.manager.service.bo.SplitPageQuery;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,7 +51,7 @@ public class CommodityServiceApi {
      * @return id template
      */
     @PostMapping("/spu")
-    public RestResult<IdTemplate> createSpu(@RequestBody Spu.SpuDetails spuDetails) {
+    public RestResult<IdTemplate> createSpu(@RequestBody @Validated({ValidateGroup.Create.class}) SpuDetails spuDetails) {
         return RestResult.success(new IdTemplate(this.commodityManageService.createSpuDetails(spuDetails)));
     }
 
@@ -58,7 +60,7 @@ public class CommodityServiceApi {
      * @param spuDetails spu详情
      */
     @PutMapping("/spu")
-    public RestResult<Void> updateSpu(@RequestBody Spu.SpuDetails spuDetails) {
+    public RestResult<Void> updateSpu(@RequestBody @Validated({ValidateGroup.Update.class}) SpuDetails spuDetails) {
         this.commodityManageService.updateSpuDetails(spuDetails);
         return RestResult.success();
     }
@@ -68,7 +70,7 @@ public class CommodityServiceApi {
      * @param target spu id
      */
     @DeleteMapping("/spu")
-    public RestResult<Void> removeSpu(@RequestBody Target<Long> target) {
+    public RestResult<Void> removeSpu(@RequestBody @Validated({ValidateGroup.Delete.class}) Target<Long> target) {
         this.commodityManageService.removeSpu(target.getTarget());
         return RestResult.success();
     }
@@ -88,7 +90,7 @@ public class CommodityServiceApi {
      * @return spu详情
      */
     @GetMapping("/spu/{spuId}")
-    public RestResult<Spu.SpuDetails> pullSpuDetails(@PathVariable("spuId") long spuId) {
+    public RestResult<SpuDetails> pullSpuDetails(@PathVariable("spuId") long spuId) {
         return RestResult.success(this.commodityManageService.getSpuDetailsById(spuId));
     }
 
@@ -128,7 +130,7 @@ public class CommodityServiceApi {
      * @param target 规格商品id
      */
     @DeleteMapping("/spu/commodity")
-    public RestResult<Void> removeCommodity(@RequestBody Target<Long> target) {
+    public RestResult<Void> removeCommodity(@RequestBody @Validated({ValidateGroup.Delete.class}) Target<Long> target) {
         this.commodityManageService.removeCommodity(target.getTarget());
         return RestResult.success();
     }

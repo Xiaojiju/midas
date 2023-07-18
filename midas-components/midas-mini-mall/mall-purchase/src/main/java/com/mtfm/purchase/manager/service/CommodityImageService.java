@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mtfm.purchase.PurchaseMessageSource;
 import com.mtfm.purchase.entity.CommodityImage;
+import com.mtfm.purchase.entity.SpuImage;
 import com.mtfm.purchase.exceptions.PurchaseExistException;
 import com.mtfm.purchase.manager.ImageManager;
 import com.mtfm.purchase.manager.mapper.CommodityImageMapper;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -39,40 +41,58 @@ import java.util.List;
  * @since 1.0.0
  * 规格商品图片管理业务
  */
-public class CommodityImageService extends ServiceImpl<CommodityImageMapper, CommodityImage> implements ImageManager<CommodityImage>, MessageSourceAware {
+@Transactional(rollbackFor = Exception.class)
+public class CommodityImageService extends ServiceImpl<CommodityImageMapper, CommodityImage> implements ImageManager<CommodityImage> {
 
     private static final Logger logger = LoggerFactory.getLogger(CommodityImageService.class);
 
-    private MessageSourceAccessor messages = PurchaseMessageSource.getAccessor();
-
     @Override
     public void setImages(long id, List<CommodityImage> images) {
-        this.removeImages(id, null);
         if (CollectionUtils.isEmpty(images)) {
+            // 删除spu下的图片
+            this.removeImages(id, null);
             return ;
         }
         boolean primary = false;
         List<CommodityImage> passed = new ArrayList<>();
-        for (CommodityImage commodityImage : images) {
-            if (!StringUtils.hasText(commodityImage.getImageUrl())) {
+        for (CommodityImage spuImage : images) {
+            // 如果图片没有设置图片地址，则不进行设置
+            if (!StringUtils.hasText(spuImage.getImageUrl())) {
                 continue;
             }
-            boolean setPrimary = commodityImage.getIndexImage() == Judge.YES;
+            boolean setPrimary = spuImage.getIndexImage() == Judge.YES;
             if (primary && setPrimary) {
-                throw new PurchaseExistException(this.messages.getMessage("SpuImageService.primaryExist",
-                        "cannot set multiple images as the primary image"));
+                // 如果已经设置了主图，则后面所有设置了主图的图片不进行设置
+                spuImage.setIndexImage(Judge.NO);
+
+                if (logger.isDebugEnabled()) {
+                    logger.debug("commodity id: {}, could not set multiple images as the primary image, if so, default set " +
+                            "first image as the primary image", id);
+                }
+
             }
             primary = setPrimary;
-            commodityImage.setCommodityId(id);
-            commodityImage.setId(null);
-            passed.add(commodityImage);
+            spuImage.setCommodityId(id);
+            spuImage.setId(null);
+            passed.add(spuImage);
         }
+
         if (CollectionUtils.isEmpty(passed)) {
             if (logger.isDebugEnabled()) {
                 logger.debug("commodity image array is empty, maybe element contain empty value in source data");
             }
             return ;
         }
+
+        // 如果没有主图，则默认第一张为主图
+        if (!primary) {
+            CommodityImage commodityImage = passed.get(0);
+            commodityImage.setIndexImage(Judge.YES);
+            passed.set(0, commodityImage);
+        }
+        // 删除spu下的图片
+        this.removeImages(id, null);
+
         this.saveBatch(passed);
     }
 
@@ -95,8 +115,4 @@ public class CommodityImageService extends ServiceImpl<CommodityImageMapper, Com
         return spuImages;
     }
 
-    @Override
-    public void setMessageSource(MessageSource messageSource) {
-        this.messages = new MessageSourceAccessor(messageSource);
-    }
 }

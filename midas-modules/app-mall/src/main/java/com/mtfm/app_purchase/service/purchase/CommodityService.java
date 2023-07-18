@@ -18,7 +18,7 @@ package com.mtfm.app_purchase.service.purchase;
 import com.mtfm.core.util.page.PageTemplate;
 import com.mtfm.purchase.manager.provisioning.CommodityDetails;
 import com.mtfm.purchase.manager.provisioning.CommodityView;
-import com.mtfm.purchase.manager.provisioning.Spu;
+import com.mtfm.purchase.manager.provisioning.SpuDetails;
 import com.mtfm.purchase.manager.service.bo.CommodityPageQuery;
 /**
  * @author 一块小饼干
@@ -45,5 +45,5 @@ public interface CommodityService {
      * @param spuId 商品spuId
      * @return spu详情
      */
-    Spu.SpuDetails loadSpuDetails(long spuId);
+    SpuDetails loadSpuDetails(long spuId);
 }

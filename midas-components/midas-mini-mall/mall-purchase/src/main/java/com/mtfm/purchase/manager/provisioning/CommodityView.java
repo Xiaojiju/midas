@@ -10,7 +10,7 @@ public class CommodityView implements Serializable {
 
     private Long id;
 
-    private Long spuId;
+    private Long commodityId;
 
     private String product;
 
@@ -36,12 +36,12 @@ public class CommodityView implements Serializable {
         this.id = id;
     }
 
-    public Long getSpuId() {
-        return spuId;
+    public Long getCommodityId() {
+        return commodityId;
     }
 
-    public void setSpuId(Long spuId) {
-        this.spuId = spuId;
+    public void setCommodityId(Long commodityId) {
+        this.commodityId = commodityId;
     }
 
     public String getProduct() {

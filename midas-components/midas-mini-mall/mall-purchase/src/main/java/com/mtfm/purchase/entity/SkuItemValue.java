@@ -40,7 +40,7 @@ public class SkuItemValue implements Serializable {
     @TableField("item_image")
     private String itemImage;
 
-    @TableField("item_value")
+    @TableField("item_val")
     private String itemValue;
 
     public SkuItemValue() {

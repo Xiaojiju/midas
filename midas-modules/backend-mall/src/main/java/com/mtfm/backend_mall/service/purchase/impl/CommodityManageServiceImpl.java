@@ -20,11 +20,12 @@ import com.mtfm.backend_mall.service.purchase.MallCommodityManageService;
 import com.mtfm.core.context.exceptions.ServiceException;
 import com.mtfm.core.util.page.PageTemplate;
 import com.mtfm.purchase.exceptions.PurchaseNotFoundException;
+import com.mtfm.purchase.exceptions.PurchaseRelationException;
 import com.mtfm.purchase.manager.CommodityManager;
 import com.mtfm.purchase.manager.SpuManager;
 import com.mtfm.purchase.manager.provisioning.CommodityDetails;
 import com.mtfm.purchase.manager.provisioning.CommoditySplitDetails;
-import com.mtfm.purchase.manager.provisioning.Spu;
+import com.mtfm.purchase.manager.provisioning.SpuDetails;
 import com.mtfm.purchase.manager.service.bo.SplitPageQuery;
 import com.mtfm.tools.enums.Judge;
 
@@ -47,26 +48,30 @@ public class CommodityManageServiceImpl implements MallCommodityManageService {
     }
 
     @Override
-    public long createSpuDetails(Spu.SpuDetails spuDetails) {
+    public long createSpuDetails(SpuDetails spuDetails) {
         return this.spuManager.createSpu(spuDetails);
     }
 
     @Override
-    public void updateSpuDetails(Spu.SpuDetails spuDetails) {
+    public void updateSpuDetails(SpuDetails spuDetails) {
         this.spuManager.updateSpu(spuDetails);
     }
 
     @Override
     public void removeSpu(long spuId) {
-        this.spuManager.removeSpuById(spuId);
+        try {
+            this.spuManager.removeSpuById(spuId);
+        } catch (PurchaseNotFoundException notFound) {
+            throw new ServiceException(notFound.getMessage(), MallCode.SPU_NOT_FOUND.getCode());
+        }
     }
 
     @Override
-    public Spu.SpuDetails getSpuDetailsById(long spuId) {
+    public SpuDetails getSpuDetailsById(long spuId) {
         try {
             return this.spuManager.loadSpuDetailsById(spuId);
-        } catch (PurchaseNotFoundException e) {
-            throw new ServiceException(e.getMessage(), MallCode.SPU_NOT_FOUND.getCode());
+        } catch (PurchaseNotFoundException notFound) {
+            throw new ServiceException(notFound.getMessage(), MallCode.SPU_NOT_FOUND.getCode());
         }
     }
 
@@ -97,8 +102,10 @@ public class CommodityManageServiceImpl implements MallCommodityManageService {
     public long createCommodityDetails(CommodityDetails commodityDetails) {
         try {
             return this.commodityManager.createCommodity(commodityDetails);
-        } catch (PurchaseNotFoundException e) {
-            throw new ServiceException(e.getMessage(), MallCode.SPU_NOT_FOUND.getCode());
+        } catch (PurchaseNotFoundException notFound) {
+            throw new ServiceException(notFound.getMessage(), MallCode.SPU_NOT_FOUND.getCode());
+        } catch (PurchaseRelationException relation) {
+            throw new ServiceException(relation.getMessage(), MallCode.COMMODITY_SKU_NOT_MATCH.getCode());
         }
     }
 
@@ -108,12 +115,18 @@ public class CommodityManageServiceImpl implements MallCommodityManageService {
             this.commodityManager.updateCommodity(commodityDetails);
         } catch (PurchaseNotFoundException e) {
             throw new ServiceException(e.getMessage(), MallCode.SPU_NOT_FOUND.getCode());
+        } catch (PurchaseRelationException relation) {
+            throw new ServiceException(relation.getMessage(), MallCode.COMMODITY_SKU_NOT_MATCH.getCode());
         }
     }
 
     @Override
     public void removeCommodity(long commodityId) {
-        this.commodityManager.deleteByCommodityId(commodityId);
+        try {
+            this.commodityManager.deleteByCommodityId(commodityId);
+        } catch (PurchaseNotFoundException notFound) {
+            throw new ServiceException(notFound.getMessage(), MallCode.COMMODITY_NOT_FOUND.getCode());
+        }
     }
 
     protected SpuManager getSpuManager() {

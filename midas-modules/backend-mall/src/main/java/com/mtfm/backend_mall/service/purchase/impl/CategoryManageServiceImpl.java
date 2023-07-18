@@ -68,7 +68,15 @@ public class CategoryManageServiceImpl implements CategoryManageService, Message
 
     @Override
     public void updateCategory(CategoryDetails categoryDetails) {
-        this.categoryManager.updateCategory(categoryDetails);
+        try {
+            this.categoryManager.updateCategory(categoryDetails);
+        } catch (PurchaseExistException exist) {
+            throw new ServiceException(exist.getMessage(), MallCode.CATEGORY_NAME_EXIST.getCode());
+        } catch (PurchaseNotFoundException notFound) {
+            throw new ServiceException(notFound.getMessage(), MallCode.CATEGORY_PARENT_NOT_FOUND.getCode());
+        } catch (PurchaseNotAllowedException notAllowed) {
+            throw new ServiceException(notAllowed.getMessage(), MallCode.CATEGORY_NOT_ALLOWED_LEVEL.getCode());
+        }
     }
 
     @Override

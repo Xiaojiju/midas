@@ -50,7 +50,7 @@ public class CommodityDetails implements Serializable {
     /**
      * 对应选择的规则
      */
-    private List<Spu.SkuVal> skuVals;
+    private List<SpuDetails.SkuVal> skuVals;
 
     /**
      * 商品独有属性，即对应规格下的商品属性
@@ -133,11 +133,11 @@ public class CommodityDetails implements Serializable {
         this.stocks = stocks;
     }
 
-    public List<Spu.SkuVal> getSkuVals() {
+    public List<SpuDetails.SkuVal> getSkuVals() {
         return skuVals;
     }
 
-    public void setSkuVals(List<Spu.SkuVal> skuVals) {
+    public void setSkuVals(List<SpuDetails.SkuVal> skuVals) {
         this.skuVals = skuVals;
     }
 

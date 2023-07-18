@@ -74,8 +74,9 @@ public class MidasPurchaseConfiguration {
     @Bean
     public SpuManager spuManager(SpuImageService spuImageService,
                                  SpuAttributeManageService spuAttributeManageService,
-                                 SkuManager skuManager) {
-        return new SpuDetailsService(spuImageService, spuAttributeManageService, skuManager);
+                                 SkuManager skuManager,
+                                 CommodityManager commodityManager) {
+        return new SpuDetailsService(spuImageService, spuAttributeManageService, skuManager, commodityManager);
     }
 
     @Bean

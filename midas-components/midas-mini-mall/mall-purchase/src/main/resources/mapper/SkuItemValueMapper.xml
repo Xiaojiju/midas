@@ -17,7 +17,7 @@
 -->
 <mapper namespace="com.mtfm.purchase.manager.mapper.SkuItemValueMapper">
     <!-- sku value map -->
-    <resultMap id="sku_val_map" type="com.mtfm.purchase.manager.provisioning.Spu$SkuVal">
+    <resultMap id="sku_val_map" type="com.mtfm.purchase.manager.provisioning.SpuDetails$SkuVal">
         <id property="id" column="val_id" jdbcType="BIGINT" javaType="long"/>
         <result property="itemName" column="item_name" jdbcType="VARCHAR" javaType="string"/>
         <result property="itemImage" column="item_image" jdbcType="VARCHAR" javaType="string"/>

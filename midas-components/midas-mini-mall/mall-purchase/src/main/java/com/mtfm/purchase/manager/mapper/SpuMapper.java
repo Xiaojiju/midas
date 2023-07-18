@@ -17,7 +17,7 @@ package com.mtfm.purchase.manager.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mtfm.purchase.entity.StandardProductUnit;
-import com.mtfm.purchase.manager.provisioning.Spu;
+import com.mtfm.purchase.manager.provisioning.SpuDetails;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -32,5 +32,12 @@ public interface SpuMapper extends BaseMapper<StandardProductUnit> {
      * @param spuId spu id
      * @return spu基本信息
      */
-    Spu selectSpuById(long spuId);
+    SpuDetails selectSpuById(long spuId);
+
+    /**
+     * 查询Spu下的所有商品
+     * @param spuId spu id
+     * @return 商品总数
+     */
+    long selectCommodityCount(long spuId);
 }

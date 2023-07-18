@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>mall-vip</module>
+        <module>mall-banner</module>
     </modules>
 
     <properties>

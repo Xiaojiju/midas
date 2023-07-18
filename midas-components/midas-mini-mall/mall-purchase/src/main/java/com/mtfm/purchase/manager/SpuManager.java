@@ -16,7 +16,7 @@
 package com.mtfm.purchase.manager;
 
 import com.mtfm.purchase.exceptions.PurchaseNotFoundException;
-import com.mtfm.purchase.manager.provisioning.Spu;
+import com.mtfm.purchase.manager.provisioning.SpuDetails;
 import com.mtfm.tools.enums.Judge;
 
 /**
@@ -37,20 +37,20 @@ public interface SpuManager {
      * 创建spu
      * @param spuDetails spu详情
      */
-    long createSpu(Spu.SpuDetails spuDetails);
+    long createSpu(SpuDetails spuDetails);
 
     /**
      * 修改spu
      * @param spuDetails spu详情
      */
-    void updateSpu(Spu.SpuDetails spuDetails);
+    void updateSpu(SpuDetails spuDetails);
 
     /**
      * 通过spuId加载详情
      * @param spuId spu id
      * @return spu详情
      */
-    Spu.SpuDetails loadSpuDetailsById(long spuId) throws PurchaseNotFoundException;
+    SpuDetails loadSpuDetailsById(long spuId) throws PurchaseNotFoundException;
 
     /**
      * 删除spu

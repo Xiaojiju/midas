@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mtfm.purchase.entity.SkuItemValue;
 import com.mtfm.purchase.manager.SkuItemValueManager;
 import com.mtfm.purchase.manager.mapper.SkuItemValueMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ import java.util.List;
  * @since 1.0.0
  * 规格值管理
  */
+@Transactional(rollbackFor = Exception.class)
 public class SkuItemValueService extends ServiceImpl<SkuItemValueMapper, SkuItemValue> implements SkuItemValueManager {
 
     @Override

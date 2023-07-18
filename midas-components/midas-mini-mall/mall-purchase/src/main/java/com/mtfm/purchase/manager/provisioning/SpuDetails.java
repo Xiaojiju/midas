@@ -15,10 +15,13 @@
  */
 package com.mtfm.purchase.manager.provisioning;
 
+import com.mtfm.core.util.validator.ValidateGroup;
 import com.mtfm.purchase.entity.SpuAttribute;
 import com.mtfm.purchase.entity.SpuImage;
 import com.mtfm.tools.enums.Judge;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -28,24 +31,24 @@ import java.util.List;
  * 商品spu基本信息
  * 该对象为创建商品的第一步的组合实体
  */
-public class Spu implements Serializable {
+public class SpuDetails implements Serializable {
 
+    @NotNull(groups = ValidateGroup.Update.class, message = "SpuDetails.IdNonNull")
     private Long id;
     /**
      * 产品名称
      */
+    @NotBlank(groups = ValidateGroup.Create.class, message = "SpuDetails.productNotBlank")
     private String product;
-    /**
-     * 所属分类
-     */
-    private Sample category;
-    /**
-     * 所属品牌
-     */
-    private Sample brand;
+
+    @NotBlank(groups = ValidateGroup.Create.class, message = "SpuDetails.categoryNonNull")
+    private Long categoryId;
+
+    private Long brandId;
     /**
      * 单位
      */
+    @NotBlank(groups = ValidateGroup.Create.class, message = "SpuDetails.unitNotBlank")
     private String unit;
     /**
      * 是否上架
@@ -55,6 +58,47 @@ public class Spu implements Serializable {
      * 简要说明
      */
     private String brief;
+
+    /**
+     * 图片
+     */
+    private List<SpuImage> images;
+    /**
+     * 属性值
+     */
+    private List<SpuAttribute> spuAttributes;
+    /**
+     * 包含规格
+     */
+    private List<SkuItemGroup> groups;
+    /**
+     * 库存
+     */
+    private List<Sku> skus;
+    /**
+     * 所属分类
+     */
+    private Sample category;
+    /**
+     * 所属品牌
+     */
+    private Sample brand;
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public Long getBrandId() {
+        return brandId;
+    }
+
+    public void setBrandId(Long brandId) {
+        this.brandId = brandId;
+    }
 
     public Long getId() {
         return id;
@@ -112,70 +156,36 @@ public class Spu implements Serializable {
         this.brief = brief;
     }
 
-    /**
-     * spu详细信息
-     */
-    public static class SpuDetails extends Spu {
+    public List<SpuImage> getImages() {
+        return images;
+    }
 
-        /**
-         * 图片
-         */
-        private List<SpuImage> images;
-        /**
-         * 属性值
-         */
-        private List<SpuAttribute> spuAttributes;
-        /**
-         * 包含规格
-         */
-        private List<SkuItemGroup> groups;
+    public void setImages(List<SpuImage> images) {
+        this.images = images;
+    }
 
-        public SpuDetails() {
-            this(null);
-        }
+    public List<SpuAttribute> getSpuAttributes() {
+        return spuAttributes;
+    }
 
-        public SpuDetails(Spu spu) {
-            this(spu, null, null, null);
-        }
+    public void setSpuAttributes(List<SpuAttribute> spuAttributes) {
+        this.spuAttributes = spuAttributes;
+    }
 
-        public SpuDetails(Spu spu, List<SpuImage> images, List<SpuAttribute> spuAttributes, List<SkuItemGroup> groups) {
-            if (spu != null) {
-                super.setId(spu.id);
-                super.setBrand(spu.brand);
-                super.setCategory(spu.category);
-                super.setProduct(spu.product);
-                super.setUnit(spu.unit);
-                super.setListing(spu.listing);
-                super.setBrief(spu.brief);
-            }
-            this.images = images;
-            this.spuAttributes = spuAttributes;
-            this.groups = groups;
-        }
+    public List<SkuItemGroup> getGroups() {
+        return groups;
+    }
 
-        public List<SpuImage> getImages() {
-            return images;
-        }
+    public void setGroups(List<SkuItemGroup> groups) {
+        this.groups = groups;
+    }
 
-        public void setImages(List<SpuImage> images) {
-            this.images = images;
-        }
+    public List<Sku> getSkus() {
+        return skus;
+    }
 
-        public List<SpuAttribute> getSpuAttributes() {
-            return spuAttributes;
-        }
-
-        public void setSpuAttributes(List<SpuAttribute> spuAttributes) {
-            this.spuAttributes = spuAttributes;
-        }
-
-        public List<SkuItemGroup> getGroups() {
-            return groups;
-        }
-
-        public void setGroups(List<SkuItemGroup> groups) {
-            this.groups = groups;
-        }
+    public void setSkus(List<Sku> skus) {
+        this.skus = skus;
     }
 
     /**

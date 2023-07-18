@@ -17,7 +17,7 @@
 -->
 <mapper namespace="com.mtfm.purchase.manager.mapper.SkuItemMapper">
     <!-- 规格分组map -->
-    <resultMap id="sku_item_group_map" type="com.mtfm.purchase.manager.provisioning.Spu$SkuItemGroup">
+    <resultMap id="sku_item_group_map" type="com.mtfm.purchase.manager.provisioning.SpuDetails$SkuItemGroup">
         <id property="skuId" column="sku_id" jdbcType="BIGINT" javaType="long"/>
         <result property="itemName" column="item_name" jdbcType="VARCHAR" javaType="string"/>
         <result property="icon" column="icon" jdbcType="VARCHAR" javaType="string"/>
@@ -32,13 +32,10 @@
             `psiv`.`id` `val_id`,
             `psiv`.`item_image`,
             `psiv`.`item_val`
-        FROM (
-            SELECT
-                `psiv`.*
-            FROM
-                `purchase_sku_item_value` `psiv`
-            WHERE `psiv` = #{ spu }
-        ) `item_val`
-        LEFT JOIN `purchase_sku` `ps` ON `item_val`.`item_id` = `item_val`.`id`
+        FROM
+            `purchase_sku_item_value` `psiv`
+            LEFT JOIN `purchase_sku_item` `ps` ON `psiv`.`item_id` = `ps`.`id`
+        WHERE
+            `psiv`.`spu_id` = #{ spu }
     </select>
 </mapper>

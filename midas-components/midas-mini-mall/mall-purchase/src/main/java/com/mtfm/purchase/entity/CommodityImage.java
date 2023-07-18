@@ -19,7 +19,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.mtfm.datasource.handler.CommonEnumTypeHandler;
 import com.mtfm.tools.enums.Judge;
+import org.apache.ibatis.type.JdbcType;
 
 import java.io.Serializable;
 
@@ -52,7 +54,7 @@ public class CommodityImage implements Serializable {
     /**
      * 默认图片
      */
-    @TableField("index_image")
+    @TableField(value = "index_image", jdbcType = JdbcType.INTEGER, typeHandler = CommonEnumTypeHandler.class)
     private Judge indexImage;
 
     public Long getId() {

@@ -6,6 +6,7 @@ import com.mtfm.purchase.entity.Commodity;
 import com.mtfm.purchase.manager.provisioning.CommodityDetails;
 import com.mtfm.purchase.manager.provisioning.CommoditySplitDetails;
 import com.mtfm.purchase.manager.provisioning.CommodityView;
+import com.mtfm.purchase.manager.provisioning.Sku;
 import com.mtfm.purchase.manager.service.bo.CommodityPageQuery;
 import com.mtfm.purchase.manager.service.bo.SplitPageQuery;
 import org.apache.ibatis.annotations.Mapper;
@@ -20,6 +21,12 @@ import java.util.List;
  */
 @Mapper
 public interface CommodityMapper extends BaseMapper<Commodity> {
+    /**
+     * 查询规格库存
+     * @param spuId 商品id
+     * @return 库存
+     */
+    List<Sku> selectStocks(long spuId);
     /**
      *
      * 商品系列列表

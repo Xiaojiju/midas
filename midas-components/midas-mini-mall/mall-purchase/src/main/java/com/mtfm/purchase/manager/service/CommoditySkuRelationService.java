@@ -20,10 +20,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mtfm.purchase.PurchaseMessageSource;
 import com.mtfm.purchase.entity.CommoditySkuRelation;
 import com.mtfm.purchase.exceptions.PurchaseNotFoundException;
+import com.mtfm.purchase.exceptions.PurchaseRelationException;
 import com.mtfm.purchase.manager.CommoditySkuRelationManager;
 import com.mtfm.purchase.manager.SkuManager;
 import com.mtfm.purchase.manager.mapper.CommoditySkuRelationMapper;
-import com.mtfm.purchase.manager.provisioning.Spu;
+import com.mtfm.purchase.manager.provisioning.SpuDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -35,6 +36,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author 一块小饼干
@@ -56,56 +58,54 @@ public class CommoditySkuRelationService extends ServiceImpl<CommoditySkuRelatio
     }
 
     @Override
-    public List<Spu.SkuVal> loadCommoditySkuItems(long commodity) {
+    public List<SpuDetails.SkuVal> loadCommoditySkuItems(long commodity) {
         return this.baseMapper.selectSkuValues(commodity);
     }
 
     @Override
     public void withSku(long spuId, long commodity, Collection<Long> items) {
-        List<Spu.SkuItemGroup> skuItemGroups = this.skuManager.loadSpuSkuItems(spuId);
+        List<SpuDetails.SkuItemGroup> skuItemGroups = this.skuManager.loadSpuSkuItems(spuId);
         // 获取商品设定的销售规格,如果为空，则不需要操作
         if (CollectionUtils.isEmpty(skuItemGroups)) {
             return ;
         }
         int settingNum = items.size();
         if (CollectionUtils.isEmpty(items) || settingNum != skuItemGroups.size()) {
-            throw new PurchaseNotFoundException(this.messages.getMessage("CommoditySkuRelationService.wrongSkuItem",
+            throw new PurchaseRelationException(this.messages.getMessage("CommoditySkuRelationService.wrongSkuItem",
                     "the product specifications do not match the preset specifications."));
         }
 
-        for (Spu.SkuItemGroup group : skuItemGroups) {
-            List<Spu.SkuVal> skuValues = group.getSkuValues();
-            val:for (Spu.SkuVal val : skuValues) {
-                for (long item : items) {
-                    if (val.getId() == item) {
+        for (SpuDetails.SkuItemGroup group : skuItemGroups) {
+            List<SpuDetails.SkuVal> skuValues = group.getSkuValues();
+            val:for (SpuDetails.SkuVal val : skuValues) {
+                for (Long item : items) {
+                    if (Objects.equals(val.getId(), item)) {
                         settingNum--;
                         break val;
                     }
                 }
             }
         }
+
         if (settingNum != 0) {
-            throw new PurchaseNotFoundException(this.messages.getMessage("CommoditySkuRelationService.wrongSkuItem",
+            throw new PurchaseRelationException(this.messages.getMessage("CommoditySkuRelationService.wrongSkuItem",
                     "the product specifications do not match the preset specifications."));
         }
-        boolean remove = this.remove(
+
+        this.remove(
                 new QueryWrapper<CommoditySkuRelation>()
                         .lambda()
                         .eq(CommoditySkuRelation::getCommodityId, commodity)
         );
-        if (remove) {
-            List<CommoditySkuRelation> relations = new ArrayList<>();
-            items.forEach(item -> {
-                CommoditySkuRelation relation = new CommoditySkuRelation();
-                relation.setCommodityId(commodity);
-                relation.setSkuId(item);
-                relations.add(relation);
-            });
-            this.saveBatch(relations);
-        }
-        if (logger.isDebugEnabled()) {
-            logger.debug("commodity remove sku item fail so that could not add new sku item");
-        }
+
+        List<CommoditySkuRelation> relations = new ArrayList<>();
+        items.forEach(item -> {
+            CommoditySkuRelation relation = new CommoditySkuRelation();
+            relation.setCommodityId(commodity);
+            relation.setSkuId(item);
+            relations.add(relation);
+        });
+        this.saveBatch(relations);
     }
 
     @Override

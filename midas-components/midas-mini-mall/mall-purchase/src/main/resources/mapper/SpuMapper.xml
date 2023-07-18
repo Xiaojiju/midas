@@ -17,13 +17,15 @@
 -->
 <mapper namespace="com.mtfm.purchase.manager.mapper.SpuMapper">
     <!-- spu基础信息Mapping -->
-    <resultMap id="spu_details_map" type="com.mtfm.purchase.manager.provisioning.Spu">
+    <resultMap id="spu_details_map" type="com.mtfm.purchase.manager.provisioning.SpuDetails">
         <id property="id" column="spu_id" jdbcType="BIGINT" javaType="long"/>
         <result property="product" column="product" jdbcType="VARCHAR" javaType="string"/>
         <result property="unit" column="unit" jdbcType="VARCHAR" javaType="string"/>
-        <result property="grounding" column="grounding" jdbcType="INTEGER" javaType="com.mtfm.tools.enums.Judge"
+        <result property="listing" column="listing" jdbcType="INTEGER" javaType="com.mtfm.tools.enums.Judge"
                 typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
         <result property="brief" column="brief" jdbcType="VARCHAR" javaType="string"/>
+        <result property="categoryId" column="category_id" jdbcType="BIGINT" javaType="long"/>
+        <result property="brandId" column="brand_id" jdbcType="BIGINT" javaType="long"/>
         <association property="category">
             <id property="id" column="category_id" jdbcType="BIGINT" javaType="long"/>
             <result property="value" column="category" jdbcType="VARCHAR" javaType="string"/>
@@ -39,7 +41,7 @@
             `ps`.`id` AS `spu_id`,
             `ps`.`product`,
             `ps`.`unit`,
-            `ps`.`grounding`,
+            `ps`.`listing`,
             `ps`.`brief`,
             `pc`.`id` AS `category_id`,
             `pc`.`category`,
@@ -52,5 +54,14 @@
         WHERE
             `ps`.`id` = #{ spuId }
             AND `ps`.`deleted` = 0
+    </select>
+
+    <select id="selectCommodityCount" resultType="long">
+        SELECT
+            COUNT(`ps`.`id`)
+        FROM
+            `purchase_commodity` `pc`
+        WHERE
+            `pc`.`spu_id` = #{ spuId }
     </select>
 </mapper>

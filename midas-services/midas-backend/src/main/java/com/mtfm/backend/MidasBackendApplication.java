@@ -7,7 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 
 
 @SpringBootApplication
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 @MapperScan(basePackages = {"com.mtfm.backend_support.service.mapper", "com.mtfm.purchase.manager.mapper"})
 public class MidasBackendApplication {
 

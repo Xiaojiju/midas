@@ -34,9 +34,6 @@ public class SkuItem implements Serializable {
      */
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
-
-    @TableField("category_id")
-    private Long categoryId;
     /**
      * 规格名称
      */
@@ -48,9 +45,8 @@ public class SkuItem implements Serializable {
     public SkuItem() {
     }
 
-    public SkuItem(Long id, Long categoryId, String itemName, String icon) {
+    public SkuItem(Long id, String itemName, String icon) {
         this.id = id;
-        this.categoryId = categoryId;
         this.itemName = itemName;
         this.icon = icon;
     }
@@ -61,14 +57,6 @@ public class SkuItem implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
     }
 
     public String getItemName() {

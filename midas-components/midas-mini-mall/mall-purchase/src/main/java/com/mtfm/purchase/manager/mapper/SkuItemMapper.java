@@ -17,7 +17,7 @@ package com.mtfm.purchase.manager.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mtfm.purchase.entity.SkuItem;
-import com.mtfm.purchase.manager.provisioning.Spu;
+import com.mtfm.purchase.manager.provisioning.SpuDetails;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -35,5 +35,5 @@ public interface SkuItemMapper extends BaseMapper<SkuItem> {
      * @param spu spu id
      * @return 规格分组
      */
-    List<Spu.SkuItemGroup> selectSkuGroupsBySpu(long spu);
+    List<SpuDetails.SkuItemGroup> selectSkuGroupsBySpu(long spu);
 }

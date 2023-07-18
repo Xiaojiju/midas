@@ -1,6 +1,6 @@
 package com.mtfm.purchase.manager;
 
-import com.mtfm.purchase.manager.provisioning.Spu;
+import com.mtfm.purchase.manager.provisioning.SpuDetails;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,7 +12,7 @@ public interface CommoditySkuRelationManager {
      * @param commodity 商品id
      * @return 商品关联的规格
      */
-    List<Spu.SkuVal> loadCommoditySkuItems(long commodity);
+    List<SpuDetails.SkuVal> loadCommoditySkuItems(long commodity);
 
     /**
      * 设置具体商品规格

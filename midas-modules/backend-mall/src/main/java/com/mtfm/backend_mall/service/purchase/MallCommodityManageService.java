@@ -18,7 +18,7 @@ package com.mtfm.backend_mall.service.purchase;
 import com.mtfm.core.util.page.PageTemplate;
 import com.mtfm.purchase.manager.provisioning.CommodityDetails;
 import com.mtfm.purchase.manager.provisioning.CommoditySplitDetails;
-import com.mtfm.purchase.manager.provisioning.Spu;
+import com.mtfm.purchase.manager.provisioning.SpuDetails;
 import com.mtfm.purchase.manager.service.bo.SplitPageQuery;
 
 import java.util.List;
@@ -34,13 +34,13 @@ public interface MallCommodityManageService {
      * @param spuDetails spu详情
      * @return id
      */
-    long createSpuDetails(Spu.SpuDetails spuDetails);
+    long createSpuDetails(SpuDetails spuDetails);
 
     /**
      * 修改spu
      * @param spuDetails spu详情
      */
-    void updateSpuDetails(Spu.SpuDetails spuDetails);
+    void updateSpuDetails(SpuDetails spuDetails);
 
     /**
      * 删除spu
@@ -53,7 +53,7 @@ public interface MallCommodityManageService {
      * @param spuId 系列id
      * @return 系列详情
      */
-    Spu.SpuDetails getSpuDetailsById(long spuId);
+    SpuDetails getSpuDetailsById(long spuId);
 
     /**
      * 上架

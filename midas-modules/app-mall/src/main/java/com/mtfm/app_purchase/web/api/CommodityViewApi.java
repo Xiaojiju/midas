@@ -20,9 +20,10 @@ import com.mtfm.core.context.response.RestResult;
 import com.mtfm.core.util.page.PageTemplate;
 import com.mtfm.purchase.manager.provisioning.CommodityDetails;
 import com.mtfm.purchase.manager.provisioning.CommodityView;
-import com.mtfm.purchase.manager.provisioning.Spu;
+import com.mtfm.purchase.manager.provisioning.SpuDetails;
 import com.mtfm.purchase.manager.service.bo.CommodityPageQuery;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -56,8 +57,8 @@ public class CommodityViewApi {
      * @param commodityId 商品id
      * @return 商品详情
      */
-    @GetMapping("/view/commodity")
-    public RestResult<CommodityDetails> getCommodityDetails(long commodityId) {
+    @GetMapping("/view/commodity/{commodityId}")
+    public RestResult<CommodityDetails> getCommodityDetails(@PathVariable("commodityId") long commodityId) {
         return RestResult.success(this.commodityService.loadDetails(commodityId));
     }
 
@@ -66,8 +67,8 @@ public class CommodityViewApi {
      * @param spuId 商品spuId
      * @return spu详情
      */
-    @GetMapping("/view/goods")
-    public RestResult<Spu.SpuDetails> getSpuDetails(long spuId) {
+    @GetMapping("/view/goods/{spuId}")
+    public RestResult<SpuDetails> getSpuDetails(@PathVariable("spuId") long spuId) {
         return RestResult.success(this.commodityService.loadSpuDetails(spuId));
     }
 

@@ -23,8 +23,10 @@ import com.mtfm.purchase.manager.SkuItemValueManager;
 import com.mtfm.purchase.manager.SkuManager;
 import com.mtfm.purchase.manager.mapper.SkuItemMapper;
 import com.mtfm.purchase.manager.provisioning.Sample;
-import com.mtfm.purchase.manager.provisioning.Spu;
+import com.mtfm.purchase.manager.provisioning.SpuDetails;
 import com.mtfm.tools.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -40,6 +42,8 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 public class SkuManageService extends ServiceImpl<SkuItemMapper, SkuItem> implements SkuManager {
 
+    private static final Logger logger = LoggerFactory.getLogger(SkuManageService.class);
+
     private SkuItemValueManager skuItemValueManager;
 
     public SkuManageService(SkuItemValueManager skuItemValueManager) {
@@ -47,17 +51,18 @@ public class SkuManageService extends ServiceImpl<SkuItemMapper, SkuItem> implem
     }
 
     @Override
-    public void setSkuItems(long spu, long category, List<Spu.SkuItemGroup> skuItems) {
+    public void setSkuItems(long spu, List<SpuDetails.SkuItemGroup> skuItems) {
         if (CollectionUtils.isEmpty(skuItems)) {
+            this.skuItemValueManager.removeBySpuId(spu, null);
             return ;
         }
 
         // 排除已经存在的规格
-        List<SkuItem> items = this.saveOrUpdateSkuItems(category, skuItems);
+        List<SkuItem> items = this.saveOrUpdateSkuItems(skuItems);
 
         // 编排规格值
         List<SkuItemValue> values = new ArrayList<>();
-        for (Spu.SkuItemGroup group : skuItems) {
+        for (SpuDetails.SkuItemGroup group : skuItems) {
             String itemName = group.getItemName();
             for (SkuItem item : items) {
                 if (item.getItemName().equals(itemName)) {
@@ -68,13 +73,29 @@ public class SkuManageService extends ServiceImpl<SkuItemMapper, SkuItem> implem
             if (group.getSkuId() == null) {
                 continue;
             }
-            List<Spu.SkuVal> skuValues = group.getSkuValues();
-            for (Spu.SkuVal val : skuValues) {
-                values.add(new SkuItemValue(null, spu, group.getSkuId(), group.getItemName(), val.getItemImage(), val.getItemValue()));
+            List<SpuDetails.SkuVal> skuValues = group.getSkuValues();
+            for (SpuDetails.SkuVal val : skuValues) {
+                if (StringUtils.hasText(val.getItemValue())) {
+                    values.add(new SkuItemValue(
+                            null, spu, group.getSkuId(), group.getItemName(), val.getItemImage(), val.getItemValue()
+                            )
+                    );
+                }
             }
         }
-        // 删除原先的规格，这里使用较为暴力的方式，如果数据量加大，需要优化，先查询出已经存在的规格，然后比对现有的规格，然后差量更新，减少sql执行
+
+        //如果组装验证后的sku items为空，则不进行操作
+        if (CollectionUtils.isEmpty(values)) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("spu id: {}, the array of sku item that is passed by validation is empty", spu);
+            }
+            return ;
+        }
+
+        // 删除原先的规格，这里使用较为暴力的方式，如果数据量加大，需要优化，先查询出已经存在的规格，
+        // 然后比对现有的规格，然后差量更新，减少sql执行
         this.skuItemValueManager.removeBySpuId(spu, null);
+
         this.skuItemValueManager.setSkuValues(values);
     }
 
@@ -84,37 +105,36 @@ public class SkuManageService extends ServiceImpl<SkuItemMapper, SkuItem> implem
     }
 
     @Override
-    public List<Spu.SkuItemGroup> loadSpuSkuItems(long spu) {
+    public List<SpuDetails.SkuItemGroup> loadSpuSkuItems(long spu) {
         return this.baseMapper.selectSkuGroupsBySpu(spu);
     }
 
     @Override
-    public List<SkuItem> loadItemsByCategory(long category, String itemName) {
+    public List<SkuItem> loadItemsByCategory(String itemName) {
         QueryWrapper<SkuItem> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(SkuItem::getCategoryId, category)
-                .like(StringUtils.hasText(itemName), SkuItem::getItemName, itemName);
+        queryWrapper.lambda().like(StringUtils.hasText(itemName), SkuItem::getItemName, itemName);
         return this.list(queryWrapper);
     }
 
-    private List<SkuItem> saveOrUpdateSkuItems(long category, List<Spu.SkuItemGroup> skuItems) {
-        List<Sample> filter = this.filter(category,
-                skuItems.stream().map(Spu.SkuItemGroup::getItemName).collect(Collectors.toList()));
+    private List<SkuItem> saveOrUpdateSkuItems(List<SpuDetails.SkuItemGroup> skuItems) {
+        List<Sample> filter = this.filter(
+                skuItems.stream().map(SpuDetails.SkuItemGroup::getItemName).collect(Collectors.toList()));
         List<SkuItem> items = new ArrayList<>();
         boolean exist = false;
-        for (Spu.SkuItemGroup group : skuItems) {
+        for (SpuDetails.SkuItemGroup group : skuItems) {
             String itemName = group.getItemName();
             if (!StringUtils.hasText(itemName)) {
                 continue;
             }
             for (Sample sample : filter) {
                 if (sample.getValue().equals(itemName)) {
-                    items.add(new SkuItem(sample.getId(), category, sample.getValue(), group.getIcon()));
+                    items.add(new SkuItem(sample.getId(), sample.getValue(), group.getIcon()));
                     exist = true;
                     break;
                 }
             }
             if (!exist) {
-                items.add(new SkuItem(null, category, group.getItemName(), group.getIcon()));
+                items.add(new SkuItem(null, group.getItemName(), group.getIcon()));
             }
             exist = false;
         }
@@ -122,14 +142,14 @@ public class SkuManageService extends ServiceImpl<SkuItemMapper, SkuItem> implem
         return items;
     }
 
-    private List<Sample> filter(long category, List<String> itemNames) {
+    private List<Sample> filter(List<String> itemNames) {
         QueryWrapper<SkuItem> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(SkuItem::getCategoryId, category)
-                .in(SkuItem::getItemName, itemNames);
-        return this.listObjs(queryWrapper, (result) -> {
-            SkuItem skuItem = (SkuItem) result;
-            return new Sample(skuItem.getId(), skuItem.getItemName());
-        });
+        queryWrapper.lambda().in(SkuItem::getItemName, itemNames);
+        List<SkuItem> list = this.list(queryWrapper);
+        if (CollectionUtils.isEmpty(list)) {
+            return new ArrayList<>();
+        }
+        return list.stream().map(item -> new Sample(item.getId(), item.getItemName())).collect(Collectors.toList());
     }
 
     protected SkuItemValueManager getSkuItemValueManager() {

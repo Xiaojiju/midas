@@ -19,6 +19,7 @@ import com.mtfm.core.context.exceptions.ServiceException;
 import com.mtfm.core.context.response.RestResult;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
@@ -99,7 +100,11 @@ public class GlobalExceptionHandler implements MessageSourceAware {
         if (error.contains(PREFIX_LOCALE)) {
             return messageSource.getMessage(error.substring(1));
         }
-        return null;
+        try {
+            return this.messageSource.getMessage(error);
+        } catch (NoSuchMessageException e) {
+            return null;
+        }
     }
 
     @Override

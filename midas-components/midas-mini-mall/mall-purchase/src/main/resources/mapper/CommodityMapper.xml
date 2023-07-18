@@ -16,6 +16,14 @@
   limitations under the License.
 -->
 <mapper namespace="com.mtfm.purchase.manager.mapper.CommodityMapper">
+    <!-- sku stocks -->
+    <resultMap id="sku_stocks_map" type="com.mtfm.purchase.manager.provisioning.Sku">
+        <id property="commodityId" column="commodity_id" jdbcType="BIGINT" javaType="long"/>
+        <result property="commodityName" column="commodity_name" jdbcType="VARCHAR" javaType="string"/>
+        <result property="sku" column="sku" jdbcType="VARCHAR" javaType="string"/>
+        <result property="stocks" column="stocks" jdbcType="INTEGER" javaType="int"/>
+        <result property="price" column="price" jdbcType="DECIMAL" javaType="string"/>
+    </resultMap>
     <!-- CommoditySplitDetails Map -->
     <resultMap id="split_commodity_map" type="com.mtfm.purchase.manager.provisioning.CommoditySplitDetails">
         <id property="id" column="spu_id" jdbcType="BIGINT" javaType="long"/>
@@ -25,13 +33,7 @@
         <result property="unit" column="unit" jdbcType="VARCHAR" javaType="string"/>
         <result property="listing" column="listing" jdbcType="INTEGER" javaType="com.mtfm.tools.enums.Judge"
                 typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
-        <collection property="items" ofType="com.mtfm.purchase.manager.provisioning.Sku">
-            <id property="commodityId" column="commodity_id" jdbcType="BIGINT" javaType="long"/>
-            <result property="commodityName" column="commodity_name" jdbcType="VARCHAR" javaType="string"/>
-            <result property="sku" column="sku" jdbcType="VARCHAR" javaType="string"/>
-            <result property="stocks" column="stocks" jdbcType="INTEGER" javaType="int"/>
-            <result property="price" column="price" jdbcType="DECIMAL" javaType="string"/>
-        </collection>
+        <collection property="items" resultMap="sku_stocks_map"/>
     </resultMap>
     <!-- CommodityDetails Map -->
     <resultMap id="commodity_details_map" type="com.mtfm.purchase.manager.provisioning.CommodityDetails">
@@ -44,7 +46,7 @@
         <result property="price" column="price" jdbcType="DECIMAL" javaType="string"/>
         <result property="sale" column="sale" jdbcType="INTEGER" javaType="int"/>
         <result property="stocks" column="stocks" jdbcType="INTEGER" javaType="int"/>
-        <collection property="skuVals" ofType="com.mtfm.purchase.manager.provisioning.Spu$SkuVal">
+        <collection property="skuVals" ofType="com.mtfm.purchase.manager.provisioning.SpuDetails$SkuVal">
             <id property="id" column="sku_id" jdbcType="BIGINT" javaType="long"/>
             <result property="itemName" column="item_name" jdbcType="VARCHAR" javaType="string"/>
             <result property="itemValue" column="item_val" jdbcType="VARCHAR" javaType="string"/>
@@ -69,7 +71,7 @@
     <!-- CommodityView Map -->
     <resultMap id="commodity_view_map" type="com.mtfm.purchase.manager.provisioning.CommodityView">
         <id property="id" column="id" jdbcType="BIGINT" javaType="long"/>
-        <result property="spuId" column="spu_id" jdbcType="BIGINT" javaType="long"/>
+        <result property="commodityId" column="commodity_id" jdbcType="BIGINT" javaType="long"/>
         <result property="product" column="product" jdbcType="VARCHAR" javaType="string"/>
         <result property="commodityName" column="commodity_name" jdbcType="VARCHAR" javaType="string"/>
         <result property="title" column="title" jdbcType="VARCHAR" javaType="string"/>
@@ -79,28 +81,45 @@
         <result property="stocks" column="stocks" jdbcType="INTEGER" javaType="int"/>
         <result property="indexImage" column="index_image" jdbcType="VARCHAR" javaType="string"/>
     </resultMap>
-    <!-- 商品系列列表 -->
-    <select id="selectCommodities" resultMap="split_commodity_map">
+    <!-- 查询规格库存 -->
+    <select id="selectStocks" resultMap="sku_stocks_map">
         SELECT
-            `spu`.*,
             `commodity`.`id` `commodity_id`,
             `commodity`.`commodity_name`,
             `commodity`.`stocks`,
             `commodity`.`price`,
-            GROUP_CONCAT(`psiv`.`item_val`) `sku`
+            GROUP_CONCAT(`psiv`.`item_val` SEPARATOR ',') `sku`
+        FROM
+            `purchase_commodity` `commodity`
+            LEFT JOIN `purchase_commodity_sku_relation` `pcsr` ON `commodity`.`id` = `pcsr`.`commodity_id`
+            LEFT JOIN `purchase_sku_item_value` `psiv` ON `pcsr`.`sku_id` = `psiv`.`id`
+        WHERE
+            `commodity`.`deleted` = 0
+            AND `commodity`.`spu_id` = #{ spuId }
+        GROUP BY `commodity`.`id`
+    </select>
+    <!-- 商品系列列表 -->
+    <select id="selectCommodities" resultMap="split_commodity_map">
+        SELECT
+            `spu`.*,
+            `pc`.`category`,
+            `pb`.`brand`,
+            `commodity`.`id` `commodity_id`,
+            `commodity`.`commodity_name`,
+            `commodity`.`stocks`,
+            `commodity`.`price`,
+            GROUP_CONCAT(`psiv`.`item_val` SEPARATOR ',') `sku`
         FROM (
             SELECT
                 `ps`.`id` `spu_id`,
                 `ps`.`product`,
-                `pc`.`category`,
-                `pb`.`brand`,
+                `ps`.`category_id`,
+                `ps`.`brand_id`,
                 `ps`.`unit`,
                 `ps`.`listing`
             FROM
                 `purchase_spu` `ps`
-                LEFT JOIN `purchase_category` `pc` ON `ps`.`category_id` = `pc`.`id`
-                LEFT JOIN `purchase_brand` `pb` ON `ps`.`brand_id` = `pb`.`id`
-            <where>
+            WHERE
                 `ps`.`deleted` = 0
                 <if test="query.product != null and query.product != ''">
                     AND `ps`.`product` LIKE CONCAT('%', #{ query.product }, '%')
@@ -120,18 +139,19 @@
                 <if test="query.greaterDateTime != null">
                     AND `ps`.`create_time` &gt; #{ query.greaterDateTime }
                 </if>
-            </where>
-            <if test="query.sort = 'asc'">
+            <if test="query.order == 'asc'">
                 ORDER BY `ps`.`create_time` ASC
             </if>
-            <if test="query.sort = 'desc'">
+            <if test="query.order == 'desc'">
                 ORDER BY `ps`.`create_time` DESC
             </if>
             LIMIT #{ query.current }, #{ query.size }
         ) `spu`
+            LEFT JOIN `purchase_category` `pc` ON `spu`.`category_id` = `pc`.`id`
+            LEFT JOIN `purchase_brand` `pb` ON `spu`.`brand_id` = `pb`.`id`
             LEFT JOIN `purchase_commodity` `commodity` ON `spu`.`spu_id` = `commodity`.`spu_id`
             LEFT JOIN `purchase_commodity_sku_relation` `pcsr` ON `commodity`.`id` = `pcsr`.`commodity_id`
-            LEFT JOIN `purchase_sku_item_value` `psiv` ON `pcsr`.`sku_id` = `psiv`.`item_id`
+            LEFT JOIN `purchase_sku_item_value` `psiv` ON `pcsr`.`sku_id` = `psiv`.`id`
         GROUP BY `spu`.`spu_id`, `commodity`.`id`
     </select>
     <!-- 查询spu过滤总数 -->
@@ -176,23 +196,23 @@
             `pc`.`price`,
             `pc`.`sale`,
             `pc`.`stocks`,
-            `psiv`.`id` `attr_id`,
+            `psiv`.`id` `sku_id`,
             `psiv`.`item_name`,
             `psiv`.`item_image`,
             `psiv`.`item_val`,
             `pcav`.`id` `attr_id`,
             `pcav`.`attr_name`,
-            `pcar`.`attr_val`,
-            `pcar`.`sort` `attr_sort`,
+            `pcav`.`attr_val`,
+            `pcav`.`sort` `attr_sort`,
             `pci`.`id` `image_id`,
             `pci`.`image_url`,
             `pci`.`sort` `image_sort`,
             `pci`.`index_image`
         FROM
             `purchase_commodity` `pc`
-            LEFT JOIN `purchase_commodity_sku_relation` `pcsr` ON `commodity`.`id` = `pcsr`.`commodity_id`
-            LEFT JOIN `purchase_sku_item_value` `psiv` ON `pcsr`.`sku_id` = `psiv`.`item_id`
-            LEFT JOIN `purchase_commodity_attr_val` `pcav` ON `pc`.`id` = `pcar`.`commodity_id`
+            LEFT JOIN `purchase_commodity_sku_relation` `pcsr` ON `pc`.`id` = `pcsr`.`commodity_id`
+            LEFT JOIN `purchase_sku_item_value` `psiv` ON `pcsr`.`sku_id` = `psiv`.`id`
+            LEFT JOIN `purchase_commodity_attr_val` `pcav` ON `pc`.`id` = `pcav`.`commodity_id`
             LEFT JOIN `purchase_commodity_image` `pci` ON `pc`.`id` = `pci`.`commodity_id`
         WHERE
             `pc`.`spu_id` = #{ spuId }
@@ -209,73 +229,86 @@
             `pc`.`price`,
             `pc`.`sale`,
             `pc`.`stocks`,
-            `psiv`.`id` `attr_id`,
+            `psiv`.`id` `sku_id`,
             `psiv`.`item_name`,
             `psiv`.`item_image`,
             `psiv`.`item_val`,
             `pcav`.`id` `attr_id`,
             `pcav`.`attr_name`,
-            `pcar`.`attr_val`,
-            `pcar`.`sort` `attr_sort`,
+            `pcav`.`attr_val`,
+            `pcav`.`sort` `attr_sort`,
             `pci`.`id` `image_id`,
             `pci`.`image_url`,
             `pci`.`sort` `image_sort`,
             `pci`.`index_image`
         FROM
             `purchase_commodity` `pc`
-            LEFT JOIN `purchase_commodity_sku_relation` `pcsr` ON `commodity`.`id` = `pcsr`.`commodity_id`
-            LEFT JOIN `purchase_sku_item_value` `psiv` ON `pcsr`.`sku_id` = `psiv`.`item_id`
-            LEFT JOIN `purchase_commodity_attr_val` `pcav` ON `pc`.`id` = `pcar`.`commodity_id`
+            LEFT JOIN `purchase_commodity_sku_relation` `pcsr` ON `pc`.`id` = `pcsr`.`commodity_id`
+            LEFT JOIN `purchase_sku_item_value` `psiv` ON `pcsr`.`sku_id` = `psiv`.`id`
+            LEFT JOIN `purchase_commodity_attr_val` `pcav` ON `pc`.`id` = `pcav`.`commodity_id`
             LEFT JOIN `purchase_commodity_image` `pci` ON `pc`.`id` = `pci`.`commodity_id`
         WHERE
-        `pc`.`id` = #{ commodityId } AND `pc`.`deleted` = 0
+            `pc`.`id` = #{ commodityId }
+            AND `pc`.`deleted` = 0
     </select>
     <!-- 查询规格商品的简要信息 -->
     <select id="selectViews" resultMap="commodity_view_map">
         SELECT
-            `commodity`.`id`,
-            `commodity`.`spu_id`,
-            `spu`.`product`,
-            `commodity`.`commodity_name`,
-            `commodity`.`title`,
-            `commodity`.`subtitle`,
-            `commodity`.`price`,
-            `commodity`.`stocks`,
-            `commodity`.`sale`,
-            `pci`.`image_url` `index_image`
-        FROM
-            `purchase_commodity` `commodity`
-            LEFT JOIN `purchase_spu` `spu` ON `commodity`.`spu_id` = `spu`.`id`
-            LEFT JOIN `purchase_category` `category` ON `spu`.`category_id` = `category`.`id`
-            LEFT JOIN `purchase_commodity_image` `pci` ON `commodity`.`id` = `pci`.`commodity_id`
-        <where>
-            `commodity`.`deleted` = 0
-            AND `pci`.`index_image` = 1
-            <if test="query.product != null and query.product != ''">
-                AND `spu`.`product` LIKE CONCAT('%', #{ query.product}, '%')
-            </if>
-            <if test="query.category != null">
-                AND `category`.`id` = #{ query.category }
-            </if>
-            <if test="query.categoryName != null and query.categoryName != ''">
-                AND `category`.`category` = #{ query.categoryName }
-            </if>
-        </where>
+            `result`.*,
+            `psi`.`image_url` `index_image`
+        FROM (
+            SELECT
+                `spu`.`id` id,
+                `spu`.`product`,
+                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`id` ORDER BY `commodity`.`price` ASC), ",", 1) `commodity_id`,
+                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`commodity_name` ORDER BY `commodity`.`price` ASC), ",", 1) `commodity_name`,
+                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`title` ORDER BY `commodity`.`price` ASC), ",", 1) `title`,
+                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`subtitle` ORDER BY `commodity`.`price` ASC), ",", 1) `subtitle`,
+                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`price` ORDER BY `commodity`.`price` ASC), ",", 1) `price`,
+                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`stocks` ORDER BY `commodity`.`price` ASC), ",", 1) `stocks`,
+                SUM(`commodity`.`sale`) `sale`
+            FROM
+                `purchase_spu` `spu`
+                LEFT JOIN `purchase_commodity` `commodity` ON `commodity`.`spu_id` = `spu`.`id`
+                LEFT JOIN `purchase_category` `category` ON `spu`.`category_id` = `category`.`id`
+            <where>
+                `commodity`.`deleted` = 0
+                <if test="query.product != null and query.product != ''">
+                    AND `spu`.`product` LIKE CONCAT('%', #{ query.product}, '%')
+                </if>
+                <if test="query.category != null">
+                    AND `category`.`id` = #{ query.category }
+                </if>
+                <if test="query.categoryName != null and query.categoryName != ''">
+                    AND `category`.`category` = #{ query.categoryName }
+                </if>
+                <if test="query.lessPrice != null and query.lessPrice != ''">
+                    AND `commodity`.`price` &lt;= #{ query.lessPrice }
+                </if>
+                <if test="query.greaterPrice != null and query.greaterPrice != ''">
+                    AND `commodity`.`price` &gt;= #{ query.greaterPrice }
+                </if>
+            </where>
+            GROUP BY `spu`.`id`
+        ) `result`
+        LEFT JOIN `purchase_spu_image` `psi` ON `result`.`id` = `psi`.`spu_id`
+        WHERE
+            `psi`.`index_image` = 1
         <if test="(query.sortBySale != null and query.sortBySale != '') or (query.sortByPrice != null and query.sortByprice != '')">
             ORDER BY
-            <if test="query.sortBySale = 'asc'">
+            <if test="query.sortBySale == 'asc'">
                 `commodity`.`sale` ASC
             </if>
-            <if test="query.sortBySale = 'desc'">
+            <if test="query.sortBySale == 'desc'">
                 `commodity`.`sale` DESC
             </if>
             <if test="query.sortBySale != null and query.sortBySale != ''">
                 ,
             </if>
-            <if test="query.sortByPrice = 'asc'">
+            <if test="query.sortByPrice == 'asc'">
                 `commodity`.`price` ASC
             </if>
-            <if test="query.sortByPrice = 'desc'">
+            <if test="query.sortByPrice == 'desc'">
                 `commodity`.`price` DESC
             </if>
         </if>

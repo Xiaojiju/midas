@@ -21,13 +21,11 @@ import com.mtfm.purchase.PurchaseMessageSource;
 import com.mtfm.purchase.entity.SpuAttribute;
 import com.mtfm.purchase.entity.SpuImage;
 import com.mtfm.purchase.entity.StandardProductUnit;
+import com.mtfm.purchase.exceptions.PurchaseNotAllowedListingException;
 import com.mtfm.purchase.exceptions.PurchaseNotFoundException;
-import com.mtfm.purchase.manager.AttributeManager;
-import com.mtfm.purchase.manager.ImageManager;
-import com.mtfm.purchase.manager.SkuManager;
-import com.mtfm.purchase.manager.SpuManager;
+import com.mtfm.purchase.manager.*;
 import com.mtfm.purchase.manager.mapper.SpuMapper;
-import com.mtfm.purchase.manager.provisioning.Spu;
+import com.mtfm.purchase.manager.provisioning.SpuDetails;
 import com.mtfm.tools.StringUtils;
 import com.mtfm.tools.enums.Judge;
 import org.slf4j.Logger;
@@ -64,10 +62,16 @@ public class SpuDetailsService extends ServiceImpl<SpuMapper, StandardProductUni
 
     private SkuManager skuManager;
 
-    public SpuDetailsService(ImageManager<SpuImage> spuImageManager, AttributeManager<SpuAttribute> attributeValueManager, SkuManager skuManager) {
+    private CommodityManager commodityManager;
+
+    public SpuDetailsService(ImageManager<SpuImage> spuImageManager,
+                             AttributeManager<SpuAttribute> attributeValueManager,
+                             SkuManager skuManager,
+                             CommodityManager commodityManager) {
         this.spuImageManager = spuImageManager;
         this.attributeValueManager = attributeValueManager;
         this.skuManager = skuManager;
+        this.commodityManager = commodityManager;
     }
 
     @Override
@@ -88,17 +92,21 @@ public class SpuDetailsService extends ServiceImpl<SpuMapper, StandardProductUni
             throw new PurchaseNotFoundException(this.messages.getMessage("SpuDetailsService.notFound",
                     "unable to find the specified product"));
         }
+        if (this.baseMapper.selectCommodityCount(spuId) <= 0L) {
+            throw new PurchaseNotAllowedListingException(this.messages.getMessage("SpuDetailsService.notFound",
+                    "unable to find the specified product"));
+        }
         spu.setListing(grounding);
         this.updateById(spu);
     }
 
     @Override
-    public long createSpu(Spu.SpuDetails spuDetails) {
+    public long createSpu(SpuDetails spuDetails) {
         // 添加spu基本信息
         StandardProductUnit.SpuBuilder builder = StandardProductUnit.uncreated();
         StandardProductUnit spu = builder.withProductName(spuDetails.getProduct())
-                .withCategoryId(spuDetails.getCategory().getId())
-                .withBrandId(spuDetails.getBrand().getId())
+                .withCategoryId(spuDetails.getCategoryId())
+                .withBrandId(1L)
                 .withUnit(spuDetails.getUnit())
                 .writeBrief(spuDetails.getBrief())
                 .listing(spuDetails.getListing())
@@ -109,17 +117,17 @@ public class SpuDetailsService extends ServiceImpl<SpuMapper, StandardProductUni
         // 设置主要属性
         this.attributeValueManager.setAttributes(spu.getId(), spuDetails.getSpuAttributes());
         // 设置商品销售规格
-        this.skuManager.setSkuItems(spu.getId(), spu.getCategoryId(), spuDetails.getGroups());
+        this.skuManager.setSkuItems(spu.getId(), spuDetails.getGroups());
         return spu.getId();
     }
 
     @Override
-    public void updateSpu(Spu.SpuDetails spuDetails) {
+    public void updateSpu(SpuDetails spuDetails) {
         // 更新spu基本信息
         StandardProductUnit.SpuBuilder builder = StandardProductUnit.created(spuDetails.getId());
         StandardProductUnit spu = builder.withProductName(spuDetails.getProduct())
-                .withCategoryId(spuDetails.getCategory().getId())
-                .withBrandId(spuDetails.getBrand().getId())
+                .withCategoryId(spuDetails.getCategoryId())
+                .withBrandId(1L)
                 .withUnit(spuDetails.getUnit())
                 .writeBrief(spuDetails.getBrief())
                 .listing(spuDetails.getListing())
@@ -130,28 +138,29 @@ public class SpuDetailsService extends ServiceImpl<SpuMapper, StandardProductUni
         // 设置主要属性
         this.attributeValueManager.setAttributes(spu.getId(), spuDetails.getSpuAttributes());
         // 设置规格
-        this.skuManager.setSkuItems(spu.getId(), spu.getCategoryId(), spuDetails.getGroups());
+        this.skuManager.setSkuItems(spu.getId(), spuDetails.getGroups());
     }
 
     @Override
-    public Spu.SpuDetails loadSpuDetailsById(long spuId) throws PurchaseNotFoundException {
-        Spu spu = this.baseMapper.selectSpuById(spuId);
+    public SpuDetails loadSpuDetailsById(long spuId) throws PurchaseNotFoundException {
+        SpuDetails spu = this.baseMapper.selectSpuById(spuId);
         if (spu == null) {
             throw new PurchaseNotFoundException(this.messages.getMessage("SpuDetailsService.notFound",
                     "Unable to find the specified product"));
         }
-        Spu.SpuDetails details = new Spu.SpuDetails(spu);
-        details.setSpuAttributes(this.attributeValueManager.loadAttributesById(spuId));
-        details.setGroups(this.skuManager.loadSpuSkuItems(spuId));
-        details.setImages(this.spuImageManager.loadImages(spuId));
-        return details;
+        spu.setSpuAttributes(this.attributeValueManager.loadAttributesById(spuId));
+        spu.setGroups(this.skuManager.loadSpuSkuItems(spuId));
+        spu.setImages(this.spuImageManager.loadImages(spuId));
+        spu.setSkus(this.commodityManager.loadEachStocks(spuId));
+        return spu;
     }
 
     @Override
     public void removeSpuById(long spuId) {
         StandardProductUnit spu = this.getById(spuId);
         if (spu == null) {
-            return ;
+            throw new PurchaseNotFoundException(this.messages.getMessage("SpuDetailsService.notFound",
+                    "Unable to find the specified product"));
         }
         spu.setListing(Judge.NO);
         spu.setDeleted(Judge.YES.getCode());
@@ -201,5 +210,21 @@ public class SpuDetailsService extends ServiceImpl<SpuMapper, StandardProductUni
 
     public void setSkuManager(SkuManager skuManager) {
         this.skuManager = skuManager;
+    }
+
+    protected AttributeManager<SpuAttribute> getAttributeValueManager() {
+        return attributeValueManager;
+    }
+
+    public void setAttributeValueManager(AttributeManager<SpuAttribute> attributeValueManager) {
+        this.attributeValueManager = attributeValueManager;
+    }
+
+    protected CommodityManager getCommodityManager() {
+        return commodityManager;
+    }
+
+    public void setCommodityManager(CommodityManager commodityManager) {
+        this.commodityManager = commodityManager;
     }
 }

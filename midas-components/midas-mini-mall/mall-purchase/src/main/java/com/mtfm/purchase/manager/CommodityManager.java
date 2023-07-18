@@ -20,6 +20,7 @@ import com.mtfm.purchase.exceptions.PurchaseNotFoundException;
 import com.mtfm.purchase.manager.provisioning.CommodityDetails;
 import com.mtfm.purchase.manager.provisioning.CommoditySplitDetails;
 import com.mtfm.purchase.manager.provisioning.CommodityView;
+import com.mtfm.purchase.manager.provisioning.Sku;
 import com.mtfm.purchase.manager.service.bo.CommodityPageQuery;
 import com.mtfm.purchase.manager.service.bo.SplitPageQuery;
 
@@ -81,5 +82,12 @@ public interface CommodityManager {
      * @return 商品详情
      */
     CommodityDetails loadCommodityById(long commodityId);
+
+    /**
+     * 获取库存
+     * @param spuId 商品系列id
+     * @return 库存
+     */
+    List<Sku> loadEachStocks(long spuId);
 
 }

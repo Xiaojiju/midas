@@ -210,12 +210,6 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
         }
 
         public StandardProductUnit build() {
-            Assert.isTrue(StringUtils.hasText(this.product), "product name could not be null");
-            Assert.notNull(this.categoryId, "spu should be related by category");
-            Assert.notNull(this.brandId, "spu should be related by brand");
-            if (this.listing == null) {
-                this.listing = Judge.YES;
-            }
             return new StandardProductUnit(this.id, this.product, this.categoryId, this.brandId, this.unit,
                     this.listing, this.brief);
         }

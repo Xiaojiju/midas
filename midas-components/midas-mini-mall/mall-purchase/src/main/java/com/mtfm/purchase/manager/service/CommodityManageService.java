@@ -29,15 +29,14 @@ import com.mtfm.purchase.manager.CommodityManager;
 import com.mtfm.purchase.manager.CommoditySkuRelationManager;
 import com.mtfm.purchase.manager.ImageManager;
 import com.mtfm.purchase.manager.mapper.CommodityMapper;
-import com.mtfm.purchase.manager.provisioning.CommodityDetails;
-import com.mtfm.purchase.manager.provisioning.CommoditySplitDetails;
-import com.mtfm.purchase.manager.provisioning.CommodityView;
-import com.mtfm.purchase.manager.provisioning.Spu;
+import com.mtfm.purchase.manager.provisioning.*;
 import com.mtfm.purchase.manager.service.bo.CommodityPageQuery;
 import com.mtfm.purchase.manager.service.bo.SplitPageQuery;
+import com.mtfm.tools.enums.Judge;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -49,6 +48,7 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  * 商品管理实现
  */
+@Transactional(rollbackFor = Exception.class)
 public class CommodityManageService extends ServiceImpl<CommodityMapper, Commodity> implements CommodityManager, MessageSourceAware {
 
     private AttributeManager<CommodityAttribute> attributeManager;
@@ -87,7 +87,7 @@ public class CommodityManageService extends ServiceImpl<CommodityMapper, Commodi
         this.imageManager.setImages(commodity.getId(), details.getSkuImages());
         List<Long> skuItems = null;
         if (!CollectionUtils.isEmpty(details.getSkuVals())) {
-            skuItems = details.getSkuVals().stream().map(Spu.SkuVal::getId).collect(Collectors.toList());
+            skuItems = details.getSkuVals().stream().map(SpuDetails.SkuVal::getId).collect(Collectors.toList());
         }
         this.commoditySkuRelationManager.withSku(details.getSpuId(), commodity.getId(), skuItems);
         return commodity.getId();
@@ -113,14 +113,17 @@ public class CommodityManageService extends ServiceImpl<CommodityMapper, Commodi
         this.imageManager.setImages(commodity.getId(), details.getSkuImages());
         List<Long> skuItems = null;
         if (!CollectionUtils.isEmpty(details.getSkuVals())) {
-            skuItems = details.getSkuVals().stream().map(Spu.SkuVal::getId).collect(Collectors.toList());
+            skuItems = details.getSkuVals().stream().map(SpuDetails.SkuVal::getId).collect(Collectors.toList());
         }
         this.commoditySkuRelationManager.withSku(details.getSpuId(), commodity.getId(), skuItems);
     }
 
     @Override
     public void deleteByCommodityId(long id) {
-        this.removeById(id);
+        if (!this.removeById(id)) {
+            throw new PurchaseNotFoundException(this.messages.getMessage("CommodityManageService.notFound",
+                    "could not found commodity, maybe not exist."));
+        }
     }
 
     @Override
@@ -158,6 +161,11 @@ public class CommodityManageService extends ServiceImpl<CommodityMapper, Commodi
     @Override
     public CommodityDetails loadCommodityById(long commodityId) {
         return this.baseMapper.selectCommodityById(commodityId);
+    }
+
+    @Override
+    public List<Sku> loadEachStocks(long spuId) {
+        return this.baseMapper.selectStocks(spuId);
     }
 
     @Override
