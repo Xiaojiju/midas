@@ -22,6 +22,10 @@ public class CommodityView implements Serializable {
 
     private String price;
 
+    private String currentPrice;
+
+    private String vipPrice;
+
     private Integer stocks;
 
     private Integer sale;
@@ -106,5 +110,21 @@ public class CommodityView implements Serializable {
 
     public void setIndexImage(String indexImage) {
         this.indexImage = indexImage;
+    }
+
+    public String getCurrentPrice() {
+        return currentPrice;
+    }
+
+    public void setCurrentPrice(String currentPrice) {
+        this.currentPrice = currentPrice;
+    }
+
+    public String getVipPrice() {
+        return vipPrice;
+    }
+
+    public void setVipPrice(String vipPrice) {
+        this.vipPrice = vipPrice;
     }
 }

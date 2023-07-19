@@ -49,9 +49,10 @@ public abstract class AbstractTokenResolutionProcessingFilter extends GenericFil
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
             try {
-                if (checkSession((HttpServletRequest) servletRequest)) {
-                    throw new AccountExpiredException(this.messages.getMessage("UserAuthentication.tokenExpired",
-                            "token had been expired"));
+                if (!checkSession((HttpServletRequest) servletRequest)) {
+//                    throw new AccountExpiredException(this.messages.getMessage("UserAuthentication.tokenExpired",
+//                            "token had been expired"));
+                    filterChain.doFilter(servletRequest, servletResponse);
                 }
                 success((HttpServletRequest) servletRequest,(HttpServletResponse) servletResponse, filterChain);
             } catch (AccountExpiredException e) {
@@ -65,7 +66,6 @@ public abstract class AbstractTokenResolutionProcessingFilter extends GenericFil
     }
 
     protected boolean preResolve(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        System.out.println(request.getRequestURI());
         if (CollectionUtils.isEmpty(this.requestMatchers)) {
             return false;
         }

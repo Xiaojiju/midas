@@ -24,8 +24,11 @@ import java.io.Serializable;
 public class PhoneInfo implements Serializable {
 
     private String phoneNumber;
+
     private String purePhoneNumber;
+
     private String countryCode;
+
     private WaterMark waterMark;
 
     public String getPhoneNumber() {

@@ -25,7 +25,9 @@ import java.io.Serializable;
 public class AccessTemplate implements Serializable {
 
     private String appid;
+
     private String secret;
+
     private String grant_type;
 
     public AccessTemplate() {

@@ -40,7 +40,9 @@ import org.springframework.util.Assert;
 public class AppUserInfoDetailsService implements UserDetailsManager, MessageSourceAware {
 
     private AppUserManageService appUserManageService;
+
     private AppUserBaseInfoService appUserBaseInfoService;
+
     private MessageSourceAccessor messages;
 
     public AppUserInfoDetailsService(AppUserManageService appUserManageService, AppUserBaseInfoService appUserBaseInfoService) {
@@ -67,7 +69,7 @@ public class AppUserInfoDetailsService implements UserDetailsManager, MessageSou
                 .withGender(appUserBaseInfo.getGender())
                 .withNickname(appUserBaseInfo.getNickname())
                 .build();
-        this.appUserBaseInfoService.save(build);
+        this.appUserBaseInfoService.createAppUser(build);
     }
 
     @Override
@@ -84,7 +86,7 @@ public class AppUserInfoDetailsService implements UserDetailsManager, MessageSou
                 .withGender(appUserBaseInfo.getGender())
                 .withNickname(appUserBaseInfo.getNickname())
                 .build();
-        this.appUserBaseInfoService.updateById(build);
+        this.appUserBaseInfoService.updateAppUser(build);
     }
 
     @Override

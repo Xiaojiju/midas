@@ -41,7 +41,9 @@ import java.util.Map;
 public class PhoneInfoService {
 
     private static final Logger logger = LoggerFactory.getLogger(PhoneInfoService.class);
+
     private final AccessTokenService accessTokenService;
+
     private final RestTemplate restTemplate;
 
     public PhoneInfoService(AccessTokenService accessTokenService, RestTemplate restTemplate) {

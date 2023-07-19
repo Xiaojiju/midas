@@ -24,6 +24,7 @@ import java.io.Serializable;
 public class CompanyToken implements Serializable {
 
     private String corpid;
+
     private String corpsecret;
 
     public CompanyToken() {

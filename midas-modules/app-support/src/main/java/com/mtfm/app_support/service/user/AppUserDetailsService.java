@@ -74,7 +74,7 @@ public class AppUserDetailsService implements UserDetailsService, MessageSourceA
         this.messages = new MessageSourceAccessor(messageSource);
     }
 
-    public AppUserMapper getAppUserMapper() {
+    protected AppUserMapper getAppUserMapper() {
         return appUserMapper;
     }
 
@@ -86,7 +86,7 @@ public class AppUserDetailsService implements UserDetailsService, MessageSourceA
         return messages;
     }
 
-    protected void setMessages(MessageSourceAccessor messages) {
+    private void setMessages(MessageSourceAccessor messages) {
         this.messages = messages;
     }
 
@@ -94,7 +94,7 @@ public class AppUserDetailsService implements UserDetailsService, MessageSourceA
         return enablePermissions;
     }
 
-    protected void setEnablePermissions(boolean enablePermissions) {
+    private void setEnablePermissions(boolean enablePermissions) {
         this.enablePermissions = enablePermissions;
     }
 }

@@ -22,7 +22,9 @@ package com.mtfm.weixin.qy;
 public class SessionResultData extends ResultData {
 
     private String corpid;
+
     private String userid;
+
     private String session_key;
 
     public String getCorpid() {

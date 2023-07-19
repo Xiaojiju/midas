@@ -15,7 +15,6 @@
  */
 package com.mtfm.app_support.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.mtfm.app_support.entity.AppUserReference;
 
 import javax.validation.constraints.NotNull;
@@ -25,9 +24,31 @@ import javax.validation.constraints.NotNull;
  * @since 1.0.0
  * 用户用户名管理
  */
-public interface AppUserReferenceService extends IService<AppUserReference> {
+public interface AppUserReferenceService {
+    /**
+     * 创建用户用户名关系
+     * @param appUserReference 用户名信息
+     */
+    void createAppUserUsername(AppUserReference appUserReference);
 
+    /**
+     * 修改用户名信息
+     * @param appUserReference 用户名信息
+     */
+    void updateAppUserUsername(AppUserReference appUserReference);
+
+    /**
+     * 根据用户名获取用户名详细信息
+     * @param username 用户名
+     * @return 用户名信息
+     */
     AppUserReference getOneByUsername(@NotNull String username);
 
+    /**
+     * 获取对应的认证方式的用户名信息
+     * @param userId 用户id
+     * @param identifier 用户认证方式
+     * @return 用户名信息
+     */
     AppUserReference getOneByUserIdentifier(@NotNull String userId,@NotNull String identifier);
 }

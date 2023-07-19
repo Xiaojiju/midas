@@ -18,7 +18,6 @@ package com.mtfm.purchase.manager.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mtfm.purchase.entity.CommodityAttribute;
-import com.mtfm.purchase.entity.SpuAttribute;
 import com.mtfm.purchase.manager.AttributeManager;
 import com.mtfm.purchase.manager.mapper.CommodityAttributeMapper;
 import com.mtfm.tools.StringUtils;

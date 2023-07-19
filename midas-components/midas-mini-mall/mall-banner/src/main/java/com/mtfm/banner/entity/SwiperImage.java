@@ -19,11 +19,14 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.mtfm.core.util.validator.ValidateGroup;
 import com.mtfm.datasource.BaseModel;
 import com.mtfm.datasource.handler.CommonEnumTypeHandler;
 import com.mtfm.tools.enums.Judge;
 import org.apache.ibatis.type.JdbcType;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -31,11 +34,12 @@ import java.io.Serializable;
  * @since 1.0.0
  * 轮播图
  */
-@TableName(value = "banner_swiper_index", autoResultMap = true)
+@TableName(value = "banner_swiper_image", autoResultMap = true)
 public class SwiperImage extends BaseModel<SwiperImage> implements Serializable {
     /**
      * 主键
      */
+    @NotNull(groups = ValidateGroup.Update.class, message = "Service.nullId")
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
     /**
@@ -46,11 +50,14 @@ public class SwiperImage extends BaseModel<SwiperImage> implements Serializable 
     /**
      * 图片地址
      */
+    @NotBlank(groups = ValidateGroup.Create.class, message = "SwiperImage.blankImageUrl")
     @TableField("image_url")
     private String imageUrl;
 
+    @NotNull(groups = ValidateGroup.Create.class, message = "SwiperImage.width")
     private Integer width;
 
+    @NotNull(groups = ValidateGroup.Create.class, message = "SwiperImage.height")
     private Integer height;
 
     @TableField("image_size")
@@ -63,6 +70,7 @@ public class SwiperImage extends BaseModel<SwiperImage> implements Serializable 
     /**
      * 排序
      */
+    @NotNull(groups = ValidateGroup.Create.class, message = "SwiperImage.sort")
     private Integer sort;
     /**
      * 是否锁定

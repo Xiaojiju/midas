@@ -33,11 +33,15 @@ import org.springframework.web.client.RestTemplate;
 public class CompanyWechatSessionService {
 
     private final static String ACCESS_TOKEN ="https://qyapi.weixin.qq.com/cgi-bin/gettoken";
+
     private final static String CODE2SESSION = "https://qyapi.weixin.qq.com/cgi-bin/miniprogram/jscode2session";
+
     private final static String GRANT_TYPE = "authorization_code";
 
     private RedisTemplate<String, String> redisTemplate;
+
     private CompanyWechatConfiguration companyWechatConfiguration;
+
     private RestTemplate restTemplate;
 
     public CompanyWechatSessionService(RedisTemplate<String, String> redisTemplate,

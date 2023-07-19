@@ -15,17 +15,14 @@
  */
 package com.mtfm.banner.manager.service;
 
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.mtfm.banner.BannerMessageSource;
 import com.mtfm.banner.entity.SwiperImage;
 import com.mtfm.banner.manager.SwiperImageManager;
 import com.mtfm.banner.manager.provisioning.Swiper;
 import com.mtfm.banner.mapper.SwiperImageMapper;
 import com.mtfm.core.util.page.Page;
 import com.mtfm.core.util.page.PageTemplate;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
-import org.springframework.context.support.MessageSourceAccessor;
 
 import java.util.List;
 /**
@@ -33,9 +30,7 @@ import java.util.List;
  * @since 1.0.0
  * 轮播图管理
  */
-public class SwiperManageService extends ServiceImpl<SwiperImageMapper, SwiperImage> implements SwiperImageManager, MessageSourceAware {
-
-    private MessageSourceAccessor messages = BannerMessageSource.getAccessor();
+public class SwiperManageService extends ServiceImpl<SwiperImageMapper, SwiperImage> implements SwiperImageManager {
 
     @Override
     public long createSwiperImage(SwiperImage swiperImage) {
@@ -60,16 +55,18 @@ public class SwiperManageService extends ServiceImpl<SwiperImageMapper, SwiperIm
 
     @Override
     public PageTemplate<Swiper> loadSwiperPage(Page page) {
-        return null;
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<Swiper> swiperPage
+                = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>();
+        swiperPage.setCurrent(page.getCurrent())
+                .setSize(page.getSize())
+                .addOrder(OrderItem.desc("create_time"));
+        swiperPage = this.baseMapper.selectSwiperPage(swiperPage);
+        return new PageTemplate<>(swiperPage.getCurrent(), swiperPage.getSize(), swiperPage.getTotal(), swiperPage.getRecords());
     }
 
     @Override
     public List<Swiper> loadSwiper() {
-        return null;
+        return this.baseMapper.selectSwiper();
     }
 
-    @Override
-    public void setMessageSource(MessageSource messageSource) {
-        this.messages = new MessageSourceAccessor(messageSource);
-    }
 }

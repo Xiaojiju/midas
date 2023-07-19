@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mtfm.app_support.entity.AppUserBaseInfo;
 import com.mtfm.app_support.mapper.AppUserBaseInfoMapper;
 import com.mtfm.app_support.service.AppUserBaseInfoService;
+import com.mtfm.security.SecurityHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,5 +37,19 @@ public class AppUserBaseInfoServiceImpl extends ServiceImpl<AppUserBaseInfoMappe
     public AppUserBaseInfo getByUserId(String userId) {
         return this.getOne(new QueryWrapper<AppUserBaseInfo>().lambda()
                 .eq(AppUserBaseInfo::getUserId, userId));
+    }
+
+    @Override
+    public void createAppUser(AppUserBaseInfo appUserBaseInfo) {
+        this.save(appUserBaseInfo);
+    }
+
+    @Override
+    public void updateAppUser(AppUserBaseInfo appUserBaseInfo) {
+        String userId = (String) SecurityHolder.getPrincipal();
+        AppUserBaseInfo baseInfo = this.getByUserId(userId);
+        appUserBaseInfo.setId(baseInfo.getId());
+        appUserBaseInfo.setUserId(baseInfo.getUserId());
+        this.updateById(appUserBaseInfo);
     }
 }

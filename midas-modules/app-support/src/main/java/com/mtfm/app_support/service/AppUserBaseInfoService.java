@@ -15,7 +15,6 @@
  */
 package com.mtfm.app_support.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.mtfm.app_support.entity.AppUserBaseInfo;
 
 /**
@@ -23,7 +22,23 @@ import com.mtfm.app_support.entity.AppUserBaseInfo;
  * @since 1.0.0
  * 用户基本信息管理
  */
-public interface AppUserBaseInfoService extends IService<AppUserBaseInfo> {
+public interface AppUserBaseInfoService {
+    /**
+     * 获取用户基本信息
+     * @return 用户基本信息
+     */
+    AppUserBaseInfo getByUserId(String id);
 
-    AppUserBaseInfo getByUserId(String userId);
+    /**
+     * 创建用户基本信息
+     * @param appUserBaseInfo 用户基本信息
+     */
+    void createAppUser(AppUserBaseInfo appUserBaseInfo);
+
+    /**
+     * 修改用户基本信息
+     * @param appUserBaseInfo 用户基本信息
+     */
+    void updateAppUser(AppUserBaseInfo appUserBaseInfo);
+
 }

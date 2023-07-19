@@ -23,6 +23,8 @@
         <result property="sku" column="sku" jdbcType="VARCHAR" javaType="string"/>
         <result property="stocks" column="stocks" jdbcType="INTEGER" javaType="int"/>
         <result property="price" column="price" jdbcType="DECIMAL" javaType="string"/>
+        <result property="currentPrice" column="current_price" jdbcType="DECIMAL" javaType="string"/>
+        <result property="vipPrice" column="vip_price" jdbcType="DECIMAL" javaType="string"/>
     </resultMap>
     <!-- CommoditySplitDetails Map -->
     <resultMap id="split_commodity_map" type="com.mtfm.purchase.manager.provisioning.CommoditySplitDetails">
@@ -44,6 +46,8 @@
         <result property="title" column="title" jdbcType="VARCHAR" javaType="string"/>
         <result property="subtitle" column="subtitle" jdbcType="VARCHAR" javaType="string"/>
         <result property="price" column="price" jdbcType="DECIMAL" javaType="string"/>
+        <result property="currentPrice" column="current_price" jdbcType="DECIMAL" javaType="string"/>
+        <result property="vipPrice" column="vip_price" jdbcType="DECIMAL" javaType="string"/>
         <result property="sale" column="sale" jdbcType="INTEGER" javaType="int"/>
         <result property="stocks" column="stocks" jdbcType="INTEGER" javaType="int"/>
         <collection property="skuVals" ofType="com.mtfm.purchase.manager.provisioning.SpuDetails$SkuVal">
@@ -77,6 +81,8 @@
         <result property="title" column="title" jdbcType="VARCHAR" javaType="string"/>
         <result property="subtitle" column="subtitle" jdbcType="VARCHAR" javaType="string"/>
         <result property="price" column="price" jdbcType="DECIMAL" javaType="string"/>
+        <result property="currentPrice" column="current_price" jdbcType="DECIMAL" javaType="string"/>
+        <result property="vipPrice" column="vip_price" jdbcType="DECIMAL" javaType="string"/>
         <result property="sale" column="sale" jdbcType="INTEGER" javaType="int"/>
         <result property="stocks" column="stocks" jdbcType="INTEGER" javaType="int"/>
         <result property="indexImage" column="index_image" jdbcType="VARCHAR" javaType="string"/>
@@ -88,6 +94,8 @@
             `commodity`.`commodity_name`,
             `commodity`.`stocks`,
             `commodity`.`price`,
+            `commodity`.`current_price`,
+            `commodity`.`vip_price`,
             GROUP_CONCAT(`psiv`.`item_val` SEPARATOR ',') `sku`
         FROM
             `purchase_commodity` `commodity`
@@ -108,6 +116,8 @@
             `commodity`.`commodity_name`,
             `commodity`.`stocks`,
             `commodity`.`price`,
+            `commodity`.`current_price`,
+            `commodity`.`vip_price`,
             GROUP_CONCAT(`psiv`.`item_val` SEPARATOR ',') `sku`
         FROM (
             SELECT
@@ -194,6 +204,8 @@
             `pc`.`title`,
             `pc`.`subtitle`,
             `pc`.`price`,
+            `pc`.`current_price`,
+            `pc`.`vip_price`,
             `pc`.`sale`,
             `pc`.`stocks`,
             `psiv`.`id` `sku_id`,
@@ -227,6 +239,8 @@
             `pc`.`title`,
             `pc`.`subtitle`,
             `pc`.`price`,
+            `pc`.`current_price`,
+            `pc`.`vip_price`,
             `pc`.`sale`,
             `pc`.`stocks`,
             `psiv`.`id` `sku_id`,
@@ -260,12 +274,14 @@
             SELECT
                 `spu`.`id` id,
                 `spu`.`product`,
-                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`id` ORDER BY `commodity`.`price` ASC), ",", 1) `commodity_id`,
-                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`commodity_name` ORDER BY `commodity`.`price` ASC), ",", 1) `commodity_name`,
-                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`title` ORDER BY `commodity`.`price` ASC), ",", 1) `title`,
-                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`subtitle` ORDER BY `commodity`.`price` ASC), ",", 1) `subtitle`,
-                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`price` ORDER BY `commodity`.`price` ASC), ",", 1) `price`,
-                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`stocks` ORDER BY `commodity`.`price` ASC), ",", 1) `stocks`,
+                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`id` ORDER BY `commodity`.`current_price` ASC), ",", 1) `commodity_id`,
+                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`commodity_name` ORDER BY `commodity`.`current_price` ASC), ",", 1) `commodity_name`,
+                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`title` ORDER BY `commodity`.`current_price` ASC), ",", 1) `title`,
+                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`subtitle` ORDER BY `commodity`.`current_price` ASC), ",", 1) `subtitle`,
+                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`price` ORDER BY `commodity`.`current_price` ASC), ",", 1) `price`,
+                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`current_price` ORDER BY `commodity`.`current_price` ASC), ",", 1) `current_price`,
+                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`vip_price` ORDER BY `commodity`.`current_price` ASC), ",", 1) `vip_price`,
+                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`stocks` ORDER BY `commodity`.`current_price` ASC), ",", 1) `stocks`,
                 SUM(`commodity`.`sale`) `sale`
             FROM
                 `purchase_spu` `spu`
@@ -283,10 +299,10 @@
                     AND `category`.`category` = #{ query.categoryName }
                 </if>
                 <if test="query.lessPrice != null and query.lessPrice != ''">
-                    AND `commodity`.`price` &lt;= #{ query.lessPrice }
+                    AND `commodity`.`current_price` &lt;= #{ query.lessPrice }
                 </if>
                 <if test="query.greaterPrice != null and query.greaterPrice != ''">
-                    AND `commodity`.`price` &gt;= #{ query.greaterPrice }
+                    AND `commodity`.`current_price` &gt;= #{ query.greaterPrice }
                 </if>
             </where>
             GROUP BY `spu`.`id`
@@ -306,10 +322,10 @@
                 ,
             </if>
             <if test="query.sortByPrice == 'asc'">
-                `commodity`.`price` ASC
+                `commodity`.`current_price` ASC
             </if>
             <if test="query.sortByPrice == 'desc'">
-                `commodity`.`price` DESC
+                `commodity`.`current_price` DESC
             </if>
         </if>
     </select>

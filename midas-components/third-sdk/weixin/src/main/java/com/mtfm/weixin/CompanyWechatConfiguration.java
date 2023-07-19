@@ -31,6 +31,7 @@ import org.springframework.web.client.RestTemplate;
 public class CompanyWechatConfiguration {
 
     private String companyId;
+
     private String secret;
 
     @Bean

@@ -28,6 +28,7 @@ import java.io.Serializable;
 public class ErrorMsg implements Serializable {
 
     private String errcode;
+
     private String errmsg;
 
     public boolean success() {

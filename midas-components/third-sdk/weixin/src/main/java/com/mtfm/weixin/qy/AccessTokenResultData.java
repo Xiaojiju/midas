@@ -22,6 +22,7 @@ package com.mtfm.weixin.qy;
 public class AccessTokenResultData extends ResultData {
 
     private String access_token;
+
     private String expires_in;
 
     public String getAccess_token() {

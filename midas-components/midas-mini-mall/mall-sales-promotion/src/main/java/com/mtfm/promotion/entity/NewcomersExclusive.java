@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.wechat_mp;
+package com.mtfm.promotion.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.mtfm.datasource.BaseModel;
 /**
  * @author 一块小饼干
  * @since 1.0.0
- * 小程序配置
+ * 新人专享活动关联商品
  */
-public class MiniProgramSecurityConfiguration {
-
+@TableName(value = "promotion_newcomers_exclusive", autoResultMap = true)
+public class NewcomersExclusive extends BaseModel<NewcomersExclusive> {
 
 
 }
-
-

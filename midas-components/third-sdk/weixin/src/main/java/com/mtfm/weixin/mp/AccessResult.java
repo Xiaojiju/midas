@@ -23,6 +23,7 @@ package com.mtfm.weixin.mp;
 public class AccessResult extends ErrorMsg {
 
     private String access_token;
+
     private String expires_in;
 
     public String getAccess_token() {

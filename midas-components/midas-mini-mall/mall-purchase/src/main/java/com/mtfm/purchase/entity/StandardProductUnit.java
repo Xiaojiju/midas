@@ -21,10 +21,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.mtfm.datasource.BaseModel;
 import com.mtfm.datasource.handler.CommonEnumTypeHandler;
-import com.mtfm.tools.StringUtils;
 import com.mtfm.tools.enums.Judge;
 import org.apache.ibatis.type.JdbcType;
-import org.springframework.util.Assert;
 
 /**
  * @author 一块小饼干

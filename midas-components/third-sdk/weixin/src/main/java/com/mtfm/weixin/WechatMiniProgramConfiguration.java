@@ -34,10 +34,15 @@ public class WechatMiniProgramConfiguration {
      * auth code to session
      */
     public static final String OAUTH_CODE_TO_SESSION = "https://api.weixin.qq.com/sns/jscode2session";
+
     public static final String ACCESS_TOKEN = "https://api.weixin.qq.com/cgi-bin/token";
+
     public static final String PHONE = "https://api.weixin.qq.com/wxa/business/getuserphonenumber";
+
     public static final String AUTHORIZATION_CODE = "authorization_code";
+
     public static final String CLIENT_CREDENTIAL = "client_credential";
+
     public static final String ACCESS_TOKEN_VARIABLE = "access_token";
 
     private String secretKey;

@@ -31,3 +31,7 @@ management:
   info:
     env:
       enabled: true
+wechat:
+  mini-program:
+    secret-key: 867bc491cc06f43db0ee11408dfa862a
+    app-id: wxb105c377fce347bc

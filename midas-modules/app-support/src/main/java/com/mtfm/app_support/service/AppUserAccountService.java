@@ -15,13 +15,10 @@
  */
 package com.mtfm.app_support.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.mtfm.app_support.entity.AppAccount;
-
 /**
  * @author 一块小饼干
  * @since 1.0.0
  * 用户账号管理
  */
-public interface AppUserAccountService extends IService<AppAccount> {
+public interface AppUserAccountService {
 }

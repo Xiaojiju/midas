@@ -23,7 +23,7 @@ import com.mtfm.app_support.service.provisioning.AppUserDetails;
 import com.mtfm.core.context.exceptions.ServiceException;
 import com.mtfm.security.AppUser;
 import com.mtfm.security.SecurityCode;
-import com.mtfm.wechat_mp.authentication.CreateUser;
+import com.mtfm.wechat_mp.authentication.MpUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,16 +44,16 @@ public class MiniProgramUserProxyAdapter extends AppUserInfoDetailsService {
 
     @Override
     public void createUser(UserDetails user) {
-        Assert.isInstanceOf(CreateUser.class, user, "only supports CreateUser.class");
+        Assert.isInstanceOf(MpUserDetails.class, user, "only supports Registry.class");
         // 将小程序用户转为项目的用户
-        CreateUser createUser = (CreateUser) user;
+        MpUserDetails registry = (MpUserDetails) user;
         AppUserBaseInfo appUserBaseInfo = AppUserBaseInfo.uncreated()
-                .whereFrom(createUser.getCountry(), createUser.getProvince(), createUser.getCity())
-                .withAvatar(createUser.getAvatar())
-                .withGender(createUser.getGender())
-                .withNickname(createUser.getNickname())
+                .whereFrom(registry.getCountry(), registry.getProvince(), registry.getCity())
+                .withAvatar(registry.getAvatar())
+                .withGender(registry.getGender())
+                .withNickname(registry.getNickname())
                 .build();
-        AppUser appUser = AppUser.builder(createUser.getUsername(), AppSupportIdentifier.MINI_PROGRAM)
+        AppUser appUser = AppUser.builder(registry.getUsername(), AppSupportIdentifier.PHONE)
                 .usedSecret(false)
                 .thirdPart(true)
                 .build();
@@ -63,9 +63,9 @@ public class MiniProgramUserProxyAdapter extends AppUserInfoDetailsService {
 
     @Override
     public void updateUser(UserDetails user) {
-        Assert.isInstanceOf(CreateUser.class, user, "only supports CreateUser.class");
+        Assert.isInstanceOf(MpUserDetails.class, user, "only supports Registry.class");
         // 将小程序用户转为项目的用户
-        CreateUser createUser = (CreateUser) user;
+        MpUserDetails createUser = (MpUserDetails) user;
         AppUserReference oneByUsername = this.getAppUserManageService().getAppUserReferenceService().getOneByUsername(createUser.getUsername());
         if (oneByUsername == null) {
             throw new ServiceException(this.getMessages().getMessage("AppUserDetailsService.userNotFound"), SecurityCode.USER_NOT_FOUND.getCode());
@@ -77,7 +77,7 @@ public class MiniProgramUserProxyAdapter extends AppUserInfoDetailsService {
                 .withGender(createUser.getGender())
                 .withNickname(createUser.getNickname())
                 .build();
-        AppUser appUser = AppUser.builder(createUser.getUsername(), AppSupportIdentifier.MINI_PROGRAM)
+        AppUser appUser = AppUser.builder(createUser.getUsername(), AppSupportIdentifier.PHONE)
                 .usedSecret(false)
                 .thirdPart(true)
                 .build();

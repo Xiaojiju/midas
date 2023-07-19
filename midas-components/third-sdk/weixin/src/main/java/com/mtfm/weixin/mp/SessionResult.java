@@ -24,7 +24,9 @@ import java.io.Serializable;
 public class SessionResult extends ErrorMsg implements Serializable {
 
     private String openid;
+
     private String session_key;
+
     private String unionid;
 
     public String getOpenid() {

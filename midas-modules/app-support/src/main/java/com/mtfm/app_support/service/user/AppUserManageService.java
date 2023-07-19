@@ -43,6 +43,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
+
 /**
  * @author 一块小饼干
  * @since 1.0.0
@@ -94,7 +96,7 @@ public class AppUserManageService extends AppUserDetailsService implements UserD
                 .isThirdPart(appUser.getThirdPart() == Judge.YES).validate(appUser.getValidated() == Judge.YES)
                 .expiredAt(appUser.getUsernameExpiredTime())
                 .withAdditionalKey(appUser.getAdditionalKey()).build();
-        appUserReferenceService.save(userReference);
+        appUserReferenceService.createAppUserUsername(userReference);
 
         // 最后创建密码，如果密码不存在，又为第三方认证，则不进行创建密码
         String password = appUser.getPassword();
@@ -110,7 +112,7 @@ public class AppUserManageService extends AppUserDetailsService implements UserD
         AppUserSecret userSecret = AppUserSecret.builder(userId)
                 .makeItSecret(appUser.getPassword(), "", passwordEncoder)
                 .build();
-        this.appUserSecretService.save(userSecret);
+        this.appUserSecretService.createSecret(userSecret);
     }
 
     /**
@@ -146,7 +148,7 @@ public class AppUserManageService extends AppUserDetailsService implements UserD
         if (appUser.getValidated() == Judge.YES) {
             builder.validate(true);
         }
-        this.appUserReferenceService.updateById(builder.build());
+        this.appUserReferenceService.updateAppUserUsername(builder.build());
     }
 
     /**
@@ -168,8 +170,31 @@ public class AppUserManageService extends AppUserDetailsService implements UserD
      */
     @Override
     public void changePassword(String oldPassword, String newPassword) {
-        String userId = (String) SecurityHolder.getAuthentication().getPrincipal();
-
+        if (!StringUtils.hasText(newPassword)) {
+            throw new ServiceException(this.messages.getMessage("ReturnResponseAuthenticationFailHandler.bad_credential",
+                    "bad credential"),
+                    SecurityCode.BAD_CREDENTIAL.getCode());
+        }
+        AppUserSecret appUserSecret = this.appUserSecretService.getByUserId();
+        if (appUserSecret == null) {
+            // 新加密码
+            appUserSecret = new AppUserSecret();
+            String userId = (String) SecurityHolder.getPrincipal();
+            appUserSecret.setSecret(newPassword);
+            appUserSecret.setUserId(userId);
+            appUserSecret.setExpiredTime(LocalDateTime.now().plusDays(90));
+            this.appUserSecretService.createSecret(appUserSecret);
+            return ;
+        }
+        // 匹配密码
+        if (this.passwordEncoder.matches(oldPassword, appUserSecret.getSecret())) {
+            appUserSecret.setSecret(this.passwordEncoder.encode(newPassword));
+            this.appUserSecretService.updateSecret(appUserSecret);
+            return ;
+        }
+        throw new ServiceException(this.messages.getMessage("ReturnResponseAuthenticationFailHandler.bad_credential",
+                "bad credential"),
+                SecurityCode.BAD_CREDENTIAL.getCode());
     }
 
     @Override
@@ -194,7 +219,7 @@ public class AppUserManageService extends AppUserDetailsService implements UserD
         super.setMessageSource(messageSource);
     }
 
-    public PasswordEncoder getPasswordEncoder() {
+    protected PasswordEncoder getPasswordEncoder() {
         return passwordEncoder;
     }
 
@@ -202,7 +227,7 @@ public class AppUserManageService extends AppUserDetailsService implements UserD
         this.passwordEncoder = passwordEncoder;
     }
 
-    public AppUserReferenceService getAppUserReferenceService() {
+    protected AppUserReferenceService getAppUserReferenceService() {
         return appUserReferenceService;
     }
 
@@ -210,7 +235,7 @@ public class AppUserManageService extends AppUserDetailsService implements UserD
         this.appUserReferenceService = appUserReferenceService;
     }
 
-    public AppUserSecretService getAppUserSecretService() {
+    protected AppUserSecretService getAppUserSecretService() {
         return appUserSecretService;
     }
 

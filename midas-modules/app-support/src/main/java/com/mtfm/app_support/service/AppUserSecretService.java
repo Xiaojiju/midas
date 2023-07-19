@@ -15,7 +15,6 @@
  */
 package com.mtfm.app_support.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.mtfm.app_support.entity.AppUserSecret;
 
 /**
@@ -23,10 +22,22 @@ import com.mtfm.app_support.entity.AppUserSecret;
  * @since 1.0.0
  * 用户密钥管理
  */
-public interface AppUserSecretService extends IService<AppUserSecret> {
+public interface AppUserSecretService {
     /**
      * 获取当前用户的账号密码
      * @return 密码
      */
     AppUserSecret getByUserId();
+
+    /**
+     * 创建密钥
+     * @param appUserSecret 密钥
+     */
+    void createSecret(AppUserSecret appUserSecret);
+
+    /**
+     * 修改密钥
+     * @param appUserSecret 密钥
+     */
+    void updateSecret(AppUserSecret appUserSecret);
 }

@@ -24,7 +24,17 @@ import com.mtfm.core.CodeExpression;
  */
 public enum AppSupportCode implements CodeExpression {
 
-    NONE_PASSWORD(500200, "none password");
+    NONE_PASSWORD(500200, "none password"),
+
+    CREATE_USERNAME_HAD_EXIST(500201, "the user already has a username with the same authentication " +
+            "method and cannot be added again"),
+
+    USERNAME_NAME_EXIST(500202, "username had exist"),
+
+    UPDATE_USERNAME_EXIST_FOR_OTHER_AUTHENTICATION_METHOD(500203, "The same username already exists for " +
+            "other authentication methods and cannot be added again"),
+
+    USER_SECRET_EXIST(500204, "user password had exist");
 
     private final int code;
 

@@ -3,3 +3,4 @@ com.mtfm.app_purchase.service.purchase.impl.CategoryServiceImpl
 com.mtfm.app_purchase.service.purchase.impl.CommodityServiceImpl
 com.mtfm.app_purchase.web.api.CategoryViewApi
 com.mtfm.app_purchase.web.api.CommodityViewApi
+com.mtfm.app_purchase.web.api.SwiperApi

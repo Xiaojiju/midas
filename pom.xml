@@ -21,9 +21,11 @@
 		<module>midas-common/datasource</module>
 		<module>midas-services</module>
 		<module>midas-tools</module>
-		<module>midas-components/midas-actuator</module>
 		<module>midas-components/midas-file-loader</module>
         <module>midas-components/midas-mini-mall/mall-purchase</module>
+		<module>midas-components/midas-mini-mall/mall-banner</module>
+		<module>midas-components/midas-mini-mall/mall-vip</module>
+		<module>midas-components/midas-mini-mall/mall-sales-promotion</module>
 		<module>midas-common</module>
 		<module>midas-modules</module>
 		<module>midas-modules/backend-support</module>

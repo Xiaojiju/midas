@@ -45,7 +45,9 @@ public class Swiper implements Serializable {
      * 排序
      */
     private Integer sort;
-
+    /**
+     * 是否锁定
+     */
     private Judge locked;
 
     public Long getId() {

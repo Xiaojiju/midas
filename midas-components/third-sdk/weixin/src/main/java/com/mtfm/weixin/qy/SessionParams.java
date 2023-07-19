@@ -24,7 +24,9 @@ import java.io.Serializable;
 public class SessionParams implements Serializable {
 
     private String access_token;
+
     private String js_code;
+
     private String grant_type;
 
     public SessionParams() {

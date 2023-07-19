@@ -13,8 +13,8 @@
     <artifactId>backend-mall</artifactId>
 
     <properties>
-        <maven.compiler.source>15</maven.compiler.source>
-        <maven.compiler.target>15</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -22,6 +22,11 @@
         <dependency>
             <groupId>com.mtfm</groupId>
             <artifactId>mall-purchase</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mtfm</groupId>
+            <artifactId>mall-banner</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>

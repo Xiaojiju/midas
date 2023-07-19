@@ -33,7 +33,7 @@ import java.util.List;
  */
 public class SpuDetails implements Serializable {
 
-    @NotNull(groups = ValidateGroup.Update.class, message = "SpuDetails.IdNonNull")
+    @NotNull(groups = ValidateGroup.Update.class, message = "Service.nullId")
     private Long id;
     /**
      * 产品名称

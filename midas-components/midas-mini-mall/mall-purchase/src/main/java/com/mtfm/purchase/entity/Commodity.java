@@ -62,6 +62,14 @@ public class Commodity extends BaseModel<StandardProductUnit> {
      */
     private String price;
     /**
+     * 市场价
+     */
+    private String currentPrice;
+    /**
+     * 会员价
+     */
+    private String vipPrice;
+    /**
      * 销量
      * 注意：
      *   1. 尽量采用缓存的方式，定时进行或其他策略来更新，频繁的更新该字段，会增加数据库压力；
@@ -80,8 +88,8 @@ public class Commodity extends BaseModel<StandardProductUnit> {
     public Commodity() {
     }
 
-    public Commodity(Long id, Long spuId, String commodityName, String weight,  String title,
-                     String subtitle, String price, Integer sale, Integer stocks) {
+    public Commodity(Long id, Long spuId, String commodityName, String weight, String title, String subtitle,
+                     String price, String currentPrice, String vipPrice, Integer sale, Integer stocks) {
         this.id = id;
         this.spuId = spuId;
         this.commodityName = commodityName;
@@ -89,6 +97,8 @@ public class Commodity extends BaseModel<StandardProductUnit> {
         this.title = title;
         this.subtitle = subtitle;
         this.price = price;
+        this.currentPrice = currentPrice;
+        this.vipPrice = vipPrice;
         this.sale = sale;
         this.stocks = stocks;
     }
@@ -153,6 +163,22 @@ public class Commodity extends BaseModel<StandardProductUnit> {
         this.price = price;
     }
 
+    public String getCurrentPrice() {
+        return currentPrice;
+    }
+
+    public void setCurrentPrice(String currentPrice) {
+        this.currentPrice = currentPrice;
+    }
+
+    public String getVipPrice() {
+        return vipPrice;
+    }
+
+    public void setVipPrice(String vipPrice) {
+        this.vipPrice = vipPrice;
+    }
+
     public Integer getSale() {
         return sale;
     }
@@ -193,6 +219,10 @@ public class Commodity extends BaseModel<StandardProductUnit> {
 
         private String price;
 
+        private String currentPrice;
+
+        private String vipPrice;
+
         private Integer sale;
 
         private Integer stocks;
@@ -216,6 +246,8 @@ public class Commodity extends BaseModel<StandardProductUnit> {
             this.price = commodity.price;
             this.sale = commodity.sale;
             this.stocks = commodity.stocks;
+            this.currentPrice = commodity.currentPrice;
+            this.vipPrice = commodity.vipPrice;
         }
 
         public CommodityBuilder setName(String commodityName) {
@@ -234,8 +266,10 @@ public class Commodity extends BaseModel<StandardProductUnit> {
             return this;
         }
 
-        public CommodityBuilder setPrice(String price) {
+        public CommodityBuilder setPrice(String price, String currentPrice, String vipPrice) {
             this.price = price;
+            this.currentPrice = currentPrice;
+            this.vipPrice = vipPrice;
             return this;
         }
 
@@ -250,7 +284,8 @@ public class Commodity extends BaseModel<StandardProductUnit> {
         }
 
         public Commodity build() {
-            return new Commodity(this.id, this.spuId, this.commodityName, this.weight, this.title, this.subtitle, this.price, this.sale, this.stocks);
+            return new Commodity(this.id, this.spuId, this.commodityName, this.weight, this.title, this.subtitle,
+                    this.price, this.currentPrice, this.vipPrice, this.sale, this.stocks);
         }
     }
 }

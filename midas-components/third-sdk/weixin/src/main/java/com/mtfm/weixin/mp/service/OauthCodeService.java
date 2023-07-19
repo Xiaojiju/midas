@@ -36,7 +36,9 @@ import javax.validation.constraints.NotNull;
 public class OauthCodeService {
 
     private static final Logger logger = LoggerFactory.getLogger(OauthCodeService.class);
+
     private final WechatMiniProgramConfiguration property;
+
     private final RestTemplate restTemplate;
 
     public OauthCodeService(WechatMiniProgramConfiguration property, RestTemplate restTemplate) {
@@ -53,7 +55,8 @@ public class OauthCodeService {
     }
 
     public SessionResult codeToSession(@NotNull AuthCode authCode) throws IllegalAccessException {
-        ResponseEntity<String> forEntity = restTemplate.getForEntity(HttpHelper.getRequestUrl(WechatMiniProgramConfiguration.OAUTH_CODE_TO_SESSION, authCode), String.class);
+        ResponseEntity<String> forEntity = restTemplate.getForEntity(
+                HttpHelper.getRequestUrl(WechatMiniProgramConfiguration.OAUTH_CODE_TO_SESSION, authCode), String.class);
         SessionResult from = JSONUtils.from(forEntity.getBody(), SessionResult.class);
         if (from.success()) {
             return from;

@@ -24,6 +24,7 @@ import java.io.Serializable;
 public class ResultData implements Serializable {
 
     private Integer errCode;
+
     private String errMsg;
 
     public Integer getErrCode() {

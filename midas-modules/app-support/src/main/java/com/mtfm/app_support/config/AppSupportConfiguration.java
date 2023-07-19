@@ -16,6 +16,7 @@
 package com.mtfm.app_support.config;
 
 import com.mtfm.security.filter.RequestBodyLogoutFilter;
+import com.mtfm.wechat_mp.filter.MiniProgramAuthenticationProcessingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -44,8 +45,8 @@ public class AppSupportConfiguration {
                 .csrf().disable()
                 .addFilterBefore(importAppFilter.requestBodyLogoutFilter(), LogoutFilter.class)
                 .addFilterBefore(importAppFilter.miniProgramAuthenticationProcessingFilter(), RequestBodyLogoutFilter.class)
-//                .addFilterBefore(importAppFilter.tokenResolutionProcessingFilter(),
-//                        MiniProgramAuthenticationProcessingFilter.class)
+                .addFilterBefore(importAppFilter.tokenResolutionProcessingFilter(),
+                        MiniProgramAuthenticationProcessingFilter.class)
                 .sessionManagement().disable();
         return security.build();
     }

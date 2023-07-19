@@ -33,7 +33,9 @@ import org.springframework.web.client.RestTemplate;
 public class AccessTokenService {
 
     private static final Logger logger = LoggerFactory.getLogger(AccessTokenService.class);
+
     private final RestTemplate restTemplate;
+
     private final WechatMiniProgramConfiguration property;
 
     public AccessTokenService(RestTemplate restTemplate, WechatMiniProgramConfiguration property) {

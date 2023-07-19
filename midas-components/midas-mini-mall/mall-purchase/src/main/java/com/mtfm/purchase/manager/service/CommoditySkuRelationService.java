@@ -19,7 +19,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mtfm.purchase.PurchaseMessageSource;
 import com.mtfm.purchase.entity.CommoditySkuRelation;
-import com.mtfm.purchase.exceptions.PurchaseNotFoundException;
 import com.mtfm.purchase.exceptions.PurchaseRelationException;
 import com.mtfm.purchase.manager.CommoditySkuRelationManager;
 import com.mtfm.purchase.manager.SkuManager;

@@ -18,8 +18,10 @@ package com.mtfm.wechat_mp.authentication;
 
 import com.mtfm.security.authentication.AppUserPreAuthenticationChecks;
 import com.mtfm.wechat_mp.MiniProgramMessageSource;
-import com.mtfm.weixin.mp.SessionResult;
+import com.mtfm.weixin.mp.PhoneResult;
+import com.mtfm.weixin.mp.service.AccessTokenService;
 import com.mtfm.weixin.mp.service.OauthCodeService;
+import com.mtfm.weixin.mp.service.PhoneInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -27,6 +29,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,10 +46,19 @@ import org.springframework.util.Assert;
 public class MiniProgramUserDetailsAuthenticationProvider implements AuthenticationProvider, InitializingBean, MessageSourceAware {
 
     private static final Logger logger = LoggerFactory.getLogger(MiniProgramUserDetailsAuthenticationProvider.class);
+
     private MessageSourceAccessor messages = MiniProgramMessageSource.getAccessor();
+
     private final OauthCodeService oauthCodeService;
+
+    private PhoneInfoService phoneInfoService;
+
+    private AccessTokenService accessTokenService;
+
     private UserDetailsChecker postCheck = new AppUserPreAuthenticationChecks();
+
     private final UserDetailsManager userDetailsManager;
+
     private static final String NONE_CODE = "NODE_CODE";
 
     public MiniProgramUserDetailsAuthenticationProvider(OauthCodeService oauthCodeService,
@@ -71,30 +83,28 @@ public class MiniProgramUserDetailsAuthenticationProvider implements Authenticat
                 () -> this.messages.getMessage("MiniProgramUserDetailsAuthenticationProvider.onlySupports",
                         "Only MiniProgramAuthenticationToken is supported"));
         String jsCode = determineJsCode(authentication);
-        SessionResult sessionResult;
-//        try {
-//            // 远程调用微信服务器获取session
-//            sessionResult = oauthCodeService.codeToSession(jsCode);
-//            storeSession(sessionResult.getOpenid(), sessionResult.getSession_key());
-//        } catch (IllegalAccessException e) {
-//            throw new BadCredentialsException(this.messages
-//                    .getMessage("MiniProgramUserDetailsAuthenticationProvider.badCredentials",
-//                            "wrong jsCode, no authorized user found for the mini program"));
-//        }
-        sessionResult = new SessionResult();
-        sessionResult.setOpenid("123456");
-        sessionResult.setUnionid("123456");
+        String phoneNumber;
         try {
-            return loadUser(sessionResult.getOpenid(), authentication);
+            PhoneResult phoneResult = phoneInfoService.getPhone(jsCode);
+            phoneNumber = phoneResult.getPhone_info().getPhoneNumber();
+//            storeSession(sessionResult.getOpenid(), sessionResult.getSession_key());
+        } catch (IllegalAccessException e) {
+            throw new BadCredentialsException(this.messages
+                    .getMessage("MiniProgramUserDetailsAuthenticationProvider.badCredentials",
+                            "wrong jsCode, no authorized user found for the mini program"));
+        }
+
+        try {
+            return loadUser(phoneNumber, authentication);
         } catch (UsernameNotFoundException ex) {
             if (logger.isDebugEnabled()) {
                 logger.debug("first time try to load user failed, and then create User;");
             }
             MpUser mpUser = (MpUser) authentication.getDetails();
-            CreateUser createUser = new CreateUser(sessionResult.getOpenid(), sessionResult.getUnionid(), mpUser);
-            userDetailsManager.createUser(createUser);
+            MpUserDetails registry = new MpUserDetails(phoneNumber, mpUser);
+            userDetailsManager.createUser(registry);
             try {
-                return loadUser(sessionResult.getOpenid(), authentication);
+                return loadUser(phoneNumber, authentication);
             } catch (UsernameNotFoundException e) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("could not found user after retry create user, please check target class which " +

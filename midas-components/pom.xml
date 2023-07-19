@@ -14,7 +14,6 @@
     <modules>
         <module>security-plus</module>
         <module>midas-mini-mall/mall-purchase</module>
-        <module>midas-actuator</module>
         <module>midas-file-loader</module>
         <module>third-sdk</module>
         <module>midas-file-loader/file-core</module>

@@ -15,6 +15,11 @@
  */
 package com.mtfm.banner;
 
+import com.mtfm.banner.manager.SwiperImageManager;
+import com.mtfm.banner.manager.SwiperNoticeManager;
+import com.mtfm.banner.manager.service.SwiperManageService;
+import com.mtfm.banner.manager.service.SwiperNoticeManageService;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
@@ -28,5 +33,15 @@ public class MallBannerConfiguration {
 
     public MallBannerConfiguration(ResourceBundleMessageSource messageSource) {
         messageSource.addBasenames("i18n/banner_messages");
+    }
+
+    @Bean
+    public SwiperNoticeManager swiperNoticeManager() {
+        return new SwiperNoticeManageService();
+    }
+
+    @Bean
+    public SwiperImageManager swiperImageManager() {
+        return new SwiperManageService();
     }
 }

@@ -24,6 +24,7 @@ import java.io.Serializable;
 public class WaterMark implements Serializable {
 
     private String appid;
+
     private String timestamp;
 
     public String getAppid() {

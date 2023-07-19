@@ -19,11 +19,14 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.mtfm.core.util.validator.ValidateGroup;
 import com.mtfm.datasource.BaseModel;
 import com.mtfm.datasource.handler.CommonEnumTypeHandler;
 import com.mtfm.tools.enums.Judge;
 import org.apache.ibatis.type.JdbcType;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 /**
  * @author 一块小饼干
@@ -35,16 +38,23 @@ public class SwiperNotice extends BaseModel<SwiperNotice> implements Serializabl
     /**
      * 主键
      */
+    @NotNull(groups = ValidateGroup.Update.class, message = "Service.nullId")
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
     /**
      * 标题
      */
+    @NotBlank(groups = ValidateGroup.Create.class, message = "SwiperNotice.title")
     private String title;
     /**
      * 内容
      */
+    @NotBlank(groups = ValidateGroup.Create.class, message = "SwiperNotice.content")
     private String content;
+    /**
+     * 图标
+     */
+    private String icon;
     /**
      * 是否锁定
      */
@@ -73,6 +83,14 @@ public class SwiperNotice extends BaseModel<SwiperNotice> implements Serializabl
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
     public Judge getLocked() {

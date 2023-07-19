@@ -32,7 +32,6 @@ import com.mtfm.purchase.manager.mapper.CommodityMapper;
 import com.mtfm.purchase.manager.provisioning.*;
 import com.mtfm.purchase.manager.service.bo.CommodityPageQuery;
 import com.mtfm.purchase.manager.service.bo.SplitPageQuery;
-import com.mtfm.tools.enums.Judge;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
@@ -77,7 +76,7 @@ public class CommodityManageService extends ServiceImpl<CommodityMapper, Commodi
         Commodity commodity = Commodity.uncreatedBuilder(details.getSpuId())
                 .setName(details.getCommodityName())
                 .setWeight(details.getWeight())
-                .setPrice(details.getPrice())
+                .setPrice(details.getPrice(), details.getCurrentPrice(), details.getVipPrice())
                 .setTitle(details.getTitle(), details.getSubtitle())
                 .hadSale(0)
                 .listingStocks(details.getStocks())
@@ -103,7 +102,7 @@ public class CommodityManageService extends ServiceImpl<CommodityMapper, Commodi
         Commodity prepare = Commodity.createdBuilder(commodity.getId(), commodity.getSpuId())
                 .setName(details.getCommodityName())
                 .setWeight(details.getWeight())
-                .setPrice(details.getPrice())
+                .setPrice(details.getPrice(), details.getCurrentPrice(), details.getVipPrice())
                 .setTitle(details.getTitle(), details.getSubtitle())
                 .hadSale(0)
                 .listingStocks(details.getStocks())

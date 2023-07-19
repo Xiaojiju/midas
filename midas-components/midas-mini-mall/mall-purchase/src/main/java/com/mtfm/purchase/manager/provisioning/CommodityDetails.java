@@ -15,9 +15,12 @@
  */
 package com.mtfm.purchase.manager.provisioning;
 
+import com.mtfm.core.util.validator.ValidateGroup;
 import com.mtfm.purchase.entity.CommodityAttribute;
 import com.mtfm.purchase.entity.CommodityImage;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -30,22 +33,33 @@ import java.util.List;
  */
 public class CommodityDetails implements Serializable {
 
+    @NotNull(groups = ValidateGroup.Update.class, message = "Service.nullId")
     private Long id;
 
+    @NotNull(groups = ValidateGroup.Create.class, message = "CommodityDetails.spuId")
     private Long spuId;
 
+    @NotBlank(groups = ValidateGroup.Create.class, message = "CommodityDetails.commodityName")
     private String commodityName;
 
+    @NotBlank(groups = ValidateGroup.Create.class, message = "CommodityDetails.weight")
     private String weight;
 
+    @NotBlank(groups = ValidateGroup.Create.class, message = "CommodityDetails.title")
     private String title;
 
     private String subtitle;
 
     private String price;
 
+    @NotBlank(groups = ValidateGroup.Create.class, message = "CommodityDetails.currentPrice")
+    private String currentPrice;
+
+    private String vipPrice;
+
     private Integer sale;
 
+    @NotBlank(groups = ValidateGroup.Create.class, message = "CommodityDetails.stocks")
     private Integer stocks;
     /**
      * 对应选择的规则
@@ -115,6 +129,22 @@ public class CommodityDetails implements Serializable {
 
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    public String getCurrentPrice() {
+        return currentPrice;
+    }
+
+    public void setCurrentPrice(String currentPrice) {
+        this.currentPrice = currentPrice;
+    }
+
+    public String getVipPrice() {
+        return vipPrice;
+    }
+
+    public void setVipPrice(String vipPrice) {
+        this.vipPrice = vipPrice;
     }
 
     public Integer getSale() {

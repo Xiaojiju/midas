@@ -45,8 +45,11 @@ public class AuthCode extends AccessTemplate implements Serializable {
 
     public static class AuthCodeBuilder {
         private String appid;
+
         private String secret;
+
         private String js_code;
+
         private String grant_type;
 
         public AuthCode build() {

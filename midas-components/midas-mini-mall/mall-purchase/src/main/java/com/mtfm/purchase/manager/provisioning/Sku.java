@@ -45,6 +45,10 @@ public class Sku implements Serializable {
      */
     private String price;
 
+    private String currentPrice;
+
+    private String vipPrice;
+
     public Long getCommodityId() {
         return commodityId;
     }
@@ -83,5 +87,21 @@ public class Sku implements Serializable {
 
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    public String getCurrentPrice() {
+        return currentPrice;
+    }
+
+    public void setCurrentPrice(String currentPrice) {
+        this.currentPrice = currentPrice;
+    }
+
+    public String getVipPrice() {
+        return vipPrice;
+    }
+
+    public void setVipPrice(String vipPrice) {
+        this.vipPrice = vipPrice;
     }
 }

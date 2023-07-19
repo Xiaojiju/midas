@@ -110,7 +110,7 @@ public class CommodityServiceApi {
      * @return id template
      */
     @PostMapping("/spu/commodity")
-    public RestResult<IdTemplate> createCommodity(@RequestBody CommodityDetails commodityDetails) {
+    public RestResult<IdTemplate> createCommodity(@RequestBody @Validated({ValidateGroup.Create.class}) CommodityDetails commodityDetails) {
         long id = this.commodityManageService.createCommodityDetails(commodityDetails);
         return RestResult.success(new IdTemplate(id));
     }
@@ -120,7 +120,7 @@ public class CommodityServiceApi {
      * @param commodityDetails 规格商品详情
      */
     @PutMapping("/spu/commodity")
-    public RestResult<Void> updateCommodity(@RequestBody CommodityDetails commodityDetails) {
+    public RestResult<Void> updateCommodity(@RequestBody @Validated({ValidateGroup.Update.class}) CommodityDetails commodityDetails) {
         this.commodityManageService.updateCommodityDetails(commodityDetails);
         return RestResult.success();
     }
