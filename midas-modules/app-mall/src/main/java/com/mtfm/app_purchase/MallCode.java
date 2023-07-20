@@ -24,7 +24,13 @@ import com.mtfm.core.CodeExpression;
  */
 public enum MallCode implements CodeExpression {
 
-    BRAND_NAME_EXIST(500300, "brand name exist");
+    BRAND_NAME_EXIST(500300, "brand name exist"),
+
+    DELIVERY_ADDRESS_NOT_FOUND(500301, "the specified shipping address does not exist"),
+    /**
+     * 商品不存在
+     */
+    SPU_NOT_FOUND(500302, "unable to find the specified product");
 
     private final int code;
     private final String message;

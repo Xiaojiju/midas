@@ -20,6 +20,6 @@ public interface CommoditySkuRelationManager {
      * @param commodity 具体规格商品id
      * @param items 关联规格id
      */
-    void withSku(long spuId, long commodity, Collection<Long> items);
+    void withSku(long spuId, long commodity, List<Long> items);
 
 }

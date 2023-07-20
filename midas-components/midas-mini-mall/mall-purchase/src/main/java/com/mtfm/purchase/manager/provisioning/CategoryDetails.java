@@ -16,8 +16,12 @@
 package com.mtfm.purchase.manager.provisioning;
 
 import com.mtfm.core.convert.BeanConverter;
+import com.mtfm.core.util.validator.ValidateGroup;
 import com.mtfm.purchase.entity.Category;
 import com.mtfm.tools.enums.Judge;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author 一块小饼干
@@ -26,8 +30,10 @@ import com.mtfm.tools.enums.Judge;
  */
 public class CategoryDetails implements BeanConverter<Category> {
 
+    @NotNull(groups = ValidateGroup.Update.class, message = "Service.nullId")
     private Long id;
 
+    @NotBlank(groups = ValidateGroup.Create.class, message = "CategoryDetails.blankCategory")
     private String category;
 
     private Long parentId;

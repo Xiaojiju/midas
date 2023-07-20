@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.backend_mall.web.api;
+package com.mtfm.backend_mall.web;
 
 import com.mtfm.banner.entity.SwiperImage;
 import com.mtfm.banner.manager.SwiperImageManager;

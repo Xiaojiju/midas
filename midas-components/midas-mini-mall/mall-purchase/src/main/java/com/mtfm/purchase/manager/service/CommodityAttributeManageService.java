@@ -42,6 +42,9 @@ public class CommodityAttributeManageService extends ServiceImpl<CommodityAttrib
 
     @Override
     public void setAttributes(long id, List<CommodityAttribute> attributeGroupValues) {
+        if (attributeGroupValues == null) {
+            return ;
+        }
         if (CollectionUtils.isEmpty(attributeGroupValues)) {
             // 删除所有属性
             this.removeAttributes(id, null);

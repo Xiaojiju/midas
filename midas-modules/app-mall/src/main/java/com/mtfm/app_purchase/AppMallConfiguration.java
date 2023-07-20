@@ -15,7 +15,21 @@
  */
 package com.mtfm.app_purchase;
 
+import com.mtfm.app_purchase.service.purchase.CategoryService;
+import com.mtfm.app_purchase.service.purchase.CommodityService;
+import com.mtfm.app_purchase.service.express.DeliveryAddressService;
+import com.mtfm.app_purchase.service.purchase.impl.CategoryServiceImpl;
+import com.mtfm.app_purchase.service.purchase.impl.CommodityServiceImpl;
+import com.mtfm.app_purchase.service.express.impl.DeliveryAddressServiceImpl;
+import com.mtfm.express.manager.DeliveryAddressManager;
+import com.mtfm.express.manager.ExpressRelationManager;
+import com.mtfm.purchase.manager.CategoryManager;
+import com.mtfm.purchase.manager.CommodityManager;
+import com.mtfm.purchase.manager.SpuManager;
+import com.mtfm.purchase.manager.TagManager;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ResourceBundleMessageSource;
 
 /**
  * @author 一块小饼干
@@ -25,5 +39,23 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AppMallConfiguration {
 
+    public AppMallConfiguration(ResourceBundleMessageSource resourceBundleMessageSource) {
+        resourceBundleMessageSource.addBasenames("i18n/app_mall_messages");
+    }
 
+    @Bean
+    public CategoryService categoryService(CategoryManager categoryManager) {
+        return new CategoryServiceImpl(categoryManager);
+    }
+
+    @Bean
+    public CommodityService commodityService(SpuManager spuManager, CommodityManager commodityManager,
+                                             TagManager tagManager, ExpressRelationManager expressRelationManager) {
+        return new CommodityServiceImpl(commodityManager, spuManager, tagManager, expressRelationManager);
+    }
+
+    @Bean
+    public DeliveryAddressService deliveryAddressService(DeliveryAddressManager deliveryAddressManager) {
+        return new DeliveryAddressServiceImpl(deliveryAddressManager);
+    }
 }

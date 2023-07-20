@@ -40,6 +40,11 @@ public class Commodity extends BaseModel<StandardProductUnit> {
     @TableField("spu_id")
     private Long spuId;
     /**
+     * 规格编码
+     */
+    @TableField("commodity_code")
+    private String commodityCode;
+    /**
      * 名称
      */
     @TableField("commodity_name")
@@ -88,10 +93,11 @@ public class Commodity extends BaseModel<StandardProductUnit> {
     public Commodity() {
     }
 
-    public Commodity(Long id, Long spuId, String commodityName, String weight, String title, String subtitle,
+    public Commodity(Long id, Long spuId, String commodityCode, String commodityName, String weight, String title, String subtitle,
                      String price, String currentPrice, String vipPrice, Integer sale, Integer stocks) {
         this.id = id;
         this.spuId = spuId;
+        this.commodityCode = commodityCode;
         this.commodityName = commodityName;
         this.weight = weight;
         this.title = title;
@@ -129,6 +135,14 @@ public class Commodity extends BaseModel<StandardProductUnit> {
 
     public void setSpuId(Long spuId) {
         this.spuId = spuId;
+    }
+
+    public String getCommodityCode() {
+        return commodityCode;
+    }
+
+    public void setCommodityCode(String commodityCode) {
+        this.commodityCode = commodityCode;
     }
 
     public String getCommodityName() {
@@ -209,6 +223,8 @@ public class Commodity extends BaseModel<StandardProductUnit> {
 
         private final Long spuId;
 
+        private String commodityCode;
+
         private String commodityName;
 
         private String weight;
@@ -239,6 +255,7 @@ public class Commodity extends BaseModel<StandardProductUnit> {
         public CommodityBuilder(Commodity commodity) {
             this.id = commodity.id;
             this.spuId = commodity.spuId;
+            this.commodityCode = commodity.commodityCode;
             this.commodityName = commodity.commodityName;
             this.weight = commodity.weight;
             this.title = commodity.title;
@@ -248,6 +265,11 @@ public class Commodity extends BaseModel<StandardProductUnit> {
             this.stocks = commodity.stocks;
             this.currentPrice = commodity.currentPrice;
             this.vipPrice = commodity.vipPrice;
+        }
+
+        public CommodityBuilder setCode(String commodityCode) {
+            this.commodityCode = commodityCode;
+            return this;
         }
 
         public CommodityBuilder setName(String commodityName) {
@@ -284,7 +306,7 @@ public class Commodity extends BaseModel<StandardProductUnit> {
         }
 
         public Commodity build() {
-            return new Commodity(this.id, this.spuId, this.commodityName, this.weight, this.title, this.subtitle,
+            return new Commodity(this.id, this.spuId, this.commodityCode, this.commodityName, this.weight, this.title, this.subtitle,
                     this.price, this.currentPrice, this.vipPrice, this.sale, this.stocks);
         }
     }

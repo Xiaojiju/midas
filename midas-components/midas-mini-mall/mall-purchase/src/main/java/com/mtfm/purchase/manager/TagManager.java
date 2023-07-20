@@ -13,30 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.backend_mall.web;
+package com.mtfm.purchase.manager;
 
-import java.io.Serializable;
+import java.util.List;
 /**
  * @author 一块小饼干
  * @since 1.0.0
- * 创建对象的返回id实体
+ * 商品标签
  */
-public class IdTemplate implements Serializable {
+public interface TagManager {
 
-    private Long id;
+    List<String> loadTags(long spuId);
 
-    public IdTemplate() {
-    }
+    void setTags(long spuId, List<String> tags);
 
-    public IdTemplate(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }

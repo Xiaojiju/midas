@@ -1,4 +1,6 @@
 spring:
+  devtools:
+    add-properties: false
   profiles:
     active: p6spy
   redis:
@@ -29,3 +31,6 @@ management:
   info:
     env:
       enabled: true
+logging:
+  level:
+    web: DEBUG

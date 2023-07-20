@@ -36,4 +36,6 @@ public interface CommoditySkuRelationMapper extends BaseMapper<CommoditySkuRelat
      * @return 规格值
      */
     List<SpuDetails.SkuVal> selectSkuValues(long commodity);
+
+    List<String> selectWithBatchSku(long spuId);
 }

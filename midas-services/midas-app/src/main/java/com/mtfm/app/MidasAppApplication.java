@@ -7,7 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 
 @SpringBootApplication
 @EnableWebSecurity(debug = false)
-@MapperScan(basePackages = {"com.mtfm.app_support.mapper", "com.mtfm.purchase.manager.mapper", "com.mtfm.banner.mapper"})
+@MapperScan(basePackages = {"com.mtfm.app_support.mapper", "com.mtfm.purchase.manager.mapper", "com.mtfm.banner.mapper", "com.mtfm.express.mapper"})
 public class MidasAppApplication {
 
     public static void main(String[] args) {

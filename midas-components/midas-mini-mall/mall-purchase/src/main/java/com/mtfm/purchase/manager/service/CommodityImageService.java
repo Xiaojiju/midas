@@ -42,6 +42,9 @@ public class CommodityImageService extends ServiceImpl<CommodityImageMapper, Com
 
     @Override
     public void setImages(long id, List<CommodityImage> images) {
+        if (images == null) {
+            return ;
+        }
         if (CollectionUtils.isEmpty(images)) {
             // 删除spu下的图片
             this.removeImages(id, null);

@@ -15,6 +15,7 @@
  */
 package com.mtfm.app_purchase.service.purchase;
 
+import com.mtfm.app_purchase.service.provisioning.SpuView;
 import com.mtfm.core.util.page.PageTemplate;
 import com.mtfm.purchase.manager.provisioning.CommodityDetails;
 import com.mtfm.purchase.manager.provisioning.CommodityView;
@@ -45,5 +46,5 @@ public interface CommodityService {
      * @param spuId 商品spuId
      * @return spu详情
      */
-    SpuDetails loadSpuDetails(long spuId);
+    SpuView loadSpuDetails(long spuId);
 }

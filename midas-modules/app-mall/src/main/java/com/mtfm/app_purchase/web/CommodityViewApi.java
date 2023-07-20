@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.app_purchase.web.api;
+package com.mtfm.app_purchase.web;
 
+import com.mtfm.app_purchase.service.provisioning.SpuView;
 import com.mtfm.app_purchase.service.purchase.CommodityService;
 import com.mtfm.core.context.response.RestResult;
 import com.mtfm.core.util.page.PageTemplate;
@@ -68,7 +69,7 @@ public class CommodityViewApi {
      * @return spu详情
      */
     @GetMapping("/view/goods/{spuId}")
-    public RestResult<SpuDetails> getSpuDetails(@PathVariable("spuId") long spuId) {
+    public RestResult<SpuView> getSpuDetails(@PathVariable("spuId") long spuId) {
         return RestResult.success(this.commodityService.loadSpuDetails(spuId));
     }
 

@@ -91,5 +91,8 @@ public class MidasPurchaseConfiguration {
         return new CommodityManageService(commodityAttributeManageService, commodityImageService, commoditySkuRelationManager);
     }
 
-
+    @Bean
+    public TagManager tagManager() {
+        return new TagManageService();
+    }
 }

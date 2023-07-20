@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.backend_mall.web.api;
+package com.mtfm.backend_mall.web;
 
+import com.mtfm.backend_mall.service.provisioning.CommoditySetting;
 import com.mtfm.backend_mall.service.purchase.MallCommodityManageService;
-import com.mtfm.backend_mall.web.IdTemplate;
+import com.mtfm.backend_mall.web.response.IdTemplate;
 import com.mtfm.core.context.response.RestResult;
 import com.mtfm.core.util.Target;
 import com.mtfm.core.util.page.PageTemplate;
@@ -133,6 +134,26 @@ public class CommodityServiceApi {
     public RestResult<Void> removeCommodity(@RequestBody @Validated({ValidateGroup.Delete.class}) Target<Long> target) {
         this.commodityManageService.removeCommodity(target.getTarget());
         return RestResult.success();
+    }
+
+    /**
+     * 商品设置
+     * @param setting 商品设置
+     */
+    @PostMapping("/spu/setting")
+    public RestResult<Void> setting(@RequestBody @Validated({ValidateGroup.Create.class}) CommoditySetting setting) {
+        this.commodityManageService.setSetting(setting);
+        return RestResult.success();
+    }
+
+    /**
+     * 商品设定
+     * @param spuId 商品id
+     * @return 设置详情
+     */
+    @GetMapping("/spu/setting/{spuId}")
+    public RestResult<CommoditySetting> getSetting(@PathVariable("spuId") long spuId) {
+        return RestResult.success(this.commodityManageService.loadSetting(spuId));
     }
 
     protected MallCommodityManageService getCommodityManageService() {

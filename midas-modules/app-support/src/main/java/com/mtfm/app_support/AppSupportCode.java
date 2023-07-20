@@ -34,7 +34,9 @@ public enum AppSupportCode implements CodeExpression {
     UPDATE_USERNAME_EXIST_FOR_OTHER_AUTHENTICATION_METHOD(500203, "The same username already exists for " +
             "other authentication methods and cannot be added again"),
 
-    USER_SECRET_EXIST(500204, "user password had exist");
+    USER_SECRET_EXIST(500204, "user password had exist"),
+
+    USER_NOT_FOUND(500205, "could not found app user details");
 
     private final int code;
 

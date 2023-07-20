@@ -15,6 +15,7 @@
  */
 package com.mtfm.backend_mall.service.purchase;
 
+import com.mtfm.backend_mall.service.provisioning.CommoditySetting;
 import com.mtfm.core.util.page.PageTemplate;
 import com.mtfm.purchase.manager.provisioning.CommodityDetails;
 import com.mtfm.purchase.manager.provisioning.CommoditySplitDetails;
@@ -93,4 +94,17 @@ public interface MallCommodityManageService {
      * @param commodityId 商品id
      */
     void removeCommodity(long commodityId);
+
+    /**
+     * 商品设定
+     * @param setting 设置
+     */
+    void setSetting(CommoditySetting setting);
+
+    /**
+     * 获取商品的设定
+     * @param spuId 商品id
+     * @return 设定详情
+     */
+    CommoditySetting loadSetting(long spuId);
 }

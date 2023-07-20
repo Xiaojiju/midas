@@ -19,6 +19,7 @@
     <!-- sku stocks -->
     <resultMap id="sku_stocks_map" type="com.mtfm.purchase.manager.provisioning.Sku">
         <id property="commodityId" column="commodity_id" jdbcType="BIGINT" javaType="long"/>
+        <result property="commodityCode" column="commodity_code" jdbcType="VARCHAR" javaType="string"/>
         <result property="commodityName" column="commodity_name" jdbcType="VARCHAR" javaType="string"/>
         <result property="sku" column="sku" jdbcType="VARCHAR" javaType="string"/>
         <result property="stocks" column="stocks" jdbcType="INTEGER" javaType="int"/>
@@ -29,6 +30,7 @@
     <!-- CommoditySplitDetails Map -->
     <resultMap id="split_commodity_map" type="com.mtfm.purchase.manager.provisioning.CommoditySplitDetails">
         <id property="id" column="spu_id" jdbcType="BIGINT" javaType="long"/>
+        <result property="spuCode" column="spu_code" jdbcType="VARCHAR" javaType="string"/>
         <result property="product" column="product" jdbcType="VARCHAR" javaType="string"/>
         <result property="category" column="category" jdbcType="VARCHAR" javaType="string"/>
         <result property="brand" column="brand" jdbcType="VARCHAR" javaType="string"/>
@@ -41,6 +43,7 @@
     <resultMap id="commodity_details_map" type="com.mtfm.purchase.manager.provisioning.CommodityDetails">
         <id property="id" column="commodity_id" jdbcType="BIGINT" javaType="long"/>
         <result property="spuId" column="spu_id" jdbcType="BIGINT" javaType="long"/>
+        <result property="commodityCode" column="commodity_code" jdbcType="VARCHAR" javaType="string"/>
         <result property="commodityName" column="commodity_name" jdbcType="VARCHAR" javaType="string"/>
         <result property="weight" column="weight" jdbcType="DECIMAL" javaType="string"/>
         <result property="title" column="title" jdbcType="VARCHAR" javaType="string"/>
@@ -86,11 +89,17 @@
         <result property="sale" column="sale" jdbcType="INTEGER" javaType="int"/>
         <result property="stocks" column="stocks" jdbcType="INTEGER" javaType="int"/>
         <result property="indexImage" column="index_image" jdbcType="VARCHAR" javaType="string"/>
+        <collection property="tags" ofType="java.lang.String">
+            <constructor>
+                <arg column="tag_name"/>
+            </constructor>
+        </collection>
     </resultMap>
     <!-- 查询规格库存 -->
     <select id="selectStocks" resultMap="sku_stocks_map">
         SELECT
             `commodity`.`id` `commodity_id`,
+            `commodity`.`commodity_code`,
             `commodity`.`commodity_name`,
             `commodity`.`stocks`,
             `commodity`.`price`,
@@ -113,6 +122,7 @@
             `pc`.`category`,
             `pb`.`brand`,
             `commodity`.`id` `commodity_id`,
+            `commodity`.`commodity_code`,
             `commodity`.`commodity_name`,
             `commodity`.`stocks`,
             `commodity`.`price`,
@@ -122,6 +132,7 @@
         FROM (
             SELECT
                 `ps`.`id` `spu_id`,
+                `ps`.`spu_code`,
                 `ps`.`product`,
                 `ps`.`category_id`,
                 `ps`.`brand_id`,
@@ -199,6 +210,7 @@
         SELECT
             `pc`.`id` `commodity_id`,
             `pc`.`spu_id` `spu_id`,
+            `pc`.`commodity_code`,
             `pc`.`commodity_name`,
             `pc`.`weight`,
             `pc`.`title`,
@@ -234,6 +246,7 @@
         SELECT
             `pc`.`id` `commodity_id`,
             `pc`.`spu_id` `spu_id`,
+            `pc`.`commodity_code`,
             `pc`.`commodity_name`,
             `pc`.`weight`,
             `pc`.`title`,
@@ -269,10 +282,11 @@
     <select id="selectViews" resultMap="commodity_view_map">
         SELECT
             `result`.*,
-            `psi`.`image_url` `index_image`
+            `psi`.`image_url` `index_image`,
+            `pt`.`tag_name`
         FROM (
             SELECT
-                `spu`.`id` id,
+                `spu`.`id`,
                 `spu`.`product`,
                 SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`id` ORDER BY `commodity`.`current_price` ASC), ",", 1) `commodity_id`,
                 SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`commodity_name` ORDER BY `commodity`.`current_price` ASC), ",", 1) `commodity_name`,
@@ -308,6 +322,7 @@
             GROUP BY `spu`.`id`
         ) `result`
         LEFT JOIN `purchase_spu_image` `psi` ON `result`.`id` = `psi`.`spu_id`
+        LEFT JOIN `purchase_tag` `pt` ON `result`.`id` = `pt`.`spu_id`
         WHERE
             `psi`.`index_image` = 1
         <if test="(query.sortBySale != null and query.sortBySale != '') or (query.sortByPrice != null and query.sortByprice != '')">

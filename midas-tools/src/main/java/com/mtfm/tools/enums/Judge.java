@@ -6,10 +6,10 @@ public enum Judge implements BaseEnum {
 
     YES(1, "YES"), NO(0, "NO");
 
-    private int code;
+    private final int code;
 
     @JsonValue
-    private String desc;
+    private final String desc;
 
     Judge(int code, String desc) {
         this.code = code;
@@ -20,15 +20,7 @@ public enum Judge implements BaseEnum {
         return code;
     }
 
-    public void setCode(int code) {
-        this.code = code;
-    }
-
     public String getDesc() {
         return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
     }
 }

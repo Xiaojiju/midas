@@ -14,6 +14,8 @@ public class CommoditySplitDetails implements Serializable {
 
     private Long id;
 
+    private String spuCode;
+
     private String product;
     /**
      * 所属分类
@@ -42,6 +44,14 @@ public class CommoditySplitDetails implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getSpuCode() {
+        return spuCode;
+    }
+
+    public void setSpuCode(String spuCode) {
+        this.spuCode = spuCode;
     }
 
     public String getProduct() {

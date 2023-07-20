@@ -25,5 +25,33 @@ import com.mtfm.datasource.BaseModel;
 @TableName(value = "promotion_newcomers_exclusive", autoResultMap = true)
 public class NewcomersExclusive extends BaseModel<NewcomersExclusive> {
 
+    private Long id;
 
+    private Long spuId;
+
+    private Integer limitPurchase;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getSpuId() {
+        return spuId;
+    }
+
+    public void setSpuId(Long spuId) {
+        this.spuId = spuId;
+    }
+
+    public Integer getLimitPurchase() {
+        return limitPurchase;
+    }
+
+    public void setLimitPurchase(Integer limitPurchase) {
+        this.limitPurchase = limitPurchase;
+    }
 }

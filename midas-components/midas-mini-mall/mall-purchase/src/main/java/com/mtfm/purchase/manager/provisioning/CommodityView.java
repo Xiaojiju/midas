@@ -1,6 +1,8 @@
 package com.mtfm.purchase.manager.provisioning;
 
 import java.io.Serializable;
+import java.util.List;
+
 /**
  * @author 一块小饼干
  * @since 1.0.0
@@ -31,6 +33,8 @@ public class CommodityView implements Serializable {
     private Integer sale;
 
     private String indexImage;
+
+    private List<String> tags;
 
     public Long getId() {
         return id;
@@ -126,5 +130,13 @@ public class CommodityView implements Serializable {
 
     public void setVipPrice(String vipPrice) {
         this.vipPrice = vipPrice;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 }

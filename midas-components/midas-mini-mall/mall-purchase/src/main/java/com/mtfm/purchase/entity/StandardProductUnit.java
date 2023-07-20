@@ -37,6 +37,11 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
     /**
+     * spu编码
+     */
+    @TableField("spu_code")
+    private String spuCode;
+    /**
      * 产品名称
      */
     private String product;
@@ -67,8 +72,9 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
     public StandardProductUnit() {
     }
 
-    public StandardProductUnit(Long id, String product, Long categoryId, Long brandId, String unit, Judge listing, String brief) {
+    public StandardProductUnit(Long id, String spuCode, String product, Long categoryId, Long brandId, String unit, Judge listing, String brief) {
         this.id = id;
+        this.spuCode = spuCode;
         this.product = product;
         this.categoryId = categoryId;
         this.brandId = brandId;
@@ -91,6 +97,14 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getSpuCode() {
+        return spuCode;
+    }
+
+    public void setSpuCode(String spuCode) {
+        this.spuCode = spuCode;
     }
 
     public String getProduct() {
@@ -144,6 +158,8 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
     public static class SpuBuilder {
 
         private final Long id;
+
+        private String spuCode;
         /**
          * 产品名称
          */
@@ -177,6 +193,11 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
             this.id = id;
         }
 
+        public SpuBuilder setCode(String code) {
+            this.spuCode = code;
+            return this;
+        }
+
         public SpuBuilder withProductName(String product) {
             this.product = product;
             return this;
@@ -208,7 +229,7 @@ public class StandardProductUnit extends BaseModel<StandardProductUnit> {
         }
 
         public StandardProductUnit build() {
-            return new StandardProductUnit(this.id, this.product, this.categoryId, this.brandId, this.unit,
+            return new StandardProductUnit(this.id, this.spuCode, this.product, this.categoryId, this.brandId, this.unit,
                     this.listing, this.brief);
         }
     }

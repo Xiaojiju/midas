@@ -1,6 +1,8 @@
 server:
   port: 8081
 spring:
+  devtools:
+    add-properties: false
   profiles:
     active: p6spy
   redis:
@@ -31,6 +33,9 @@ management:
   info:
     env:
       enabled: true
+logging:
+  level:
+    web: DEBUG
 wechat:
   mini-program:
     secret-key: 867bc491cc06f43db0ee11408dfa862a

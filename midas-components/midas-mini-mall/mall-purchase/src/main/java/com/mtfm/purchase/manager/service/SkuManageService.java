@@ -52,6 +52,9 @@ public class SkuManageService extends ServiceImpl<SkuItemMapper, SkuItem> implem
 
     @Override
     public void setSkuItems(long spu, List<SpuDetails.SkuItemGroup> skuItems) {
+        if (skuItems == null) {
+            return ;
+        }
         if (CollectionUtils.isEmpty(skuItems)) {
             this.skuItemValueManager.removeBySpuId(spu, null);
             return ;

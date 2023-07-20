@@ -15,6 +15,7 @@
         <module>mall-vip</module>
         <module>mall-banner</module>
         <module>mall-sales-promotion</module>
+        <module>mall-express-delivery</module>
     </modules>
 
     <properties>

@@ -52,7 +52,6 @@ public abstract class AbstractTokenResolutionProcessingFilter extends GenericFil
                 if (!checkSession((HttpServletRequest) servletRequest)) {
 //                    throw new AccountExpiredException(this.messages.getMessage("UserAuthentication.tokenExpired",
 //                            "token had been expired"));
-                    filterChain.doFilter(servletRequest, servletResponse);
                 }
                 success((HttpServletRequest) servletRequest,(HttpServletResponse) servletResponse, filterChain);
             } catch (AccountExpiredException e) {

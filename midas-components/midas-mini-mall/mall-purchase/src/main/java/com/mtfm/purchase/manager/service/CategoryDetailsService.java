@@ -123,6 +123,9 @@ public class CategoryDetailsService extends ServiceImpl<CategoryMapper, Category
         }
         Category category = details.convertTo();
         category.setId(null);
+        if (category.getDisplay() == null) {
+            category.setDisplay(Judge.YES);
+        }
         this.save(category);
     }
 

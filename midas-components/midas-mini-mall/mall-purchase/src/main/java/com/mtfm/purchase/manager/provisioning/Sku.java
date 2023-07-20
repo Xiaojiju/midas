@@ -27,6 +27,8 @@ public class Sku implements Serializable {
      * 对应的商品id
      */
     private Long commodityId;
+
+    private String commodityCode;
     /**
      * 规格商品名
      */
@@ -48,6 +50,14 @@ public class Sku implements Serializable {
     private String currentPrice;
 
     private String vipPrice;
+
+    public String getCommodityCode() {
+        return commodityCode;
+    }
+
+    public void setCommodityCode(String commodityCode) {
+        this.commodityCode = commodityCode;
+    }
 
     public Long getCommodityId() {
         return commodityId;

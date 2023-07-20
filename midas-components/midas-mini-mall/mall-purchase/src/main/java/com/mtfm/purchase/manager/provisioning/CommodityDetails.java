@@ -39,6 +39,8 @@ public class CommodityDetails implements Serializable {
     @NotNull(groups = ValidateGroup.Create.class, message = "CommodityDetails.spuId")
     private Long spuId;
 
+    private String commodityCode;
+
     @NotBlank(groups = ValidateGroup.Create.class, message = "CommodityDetails.commodityName")
     private String commodityName;
 
@@ -81,6 +83,14 @@ public class CommodityDetails implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCommodityCode() {
+        return commodityCode;
+    }
+
+    public void setCommodityCode(String commodityCode) {
+        this.commodityCode = commodityCode;
     }
 
     public Long getSpuId() {

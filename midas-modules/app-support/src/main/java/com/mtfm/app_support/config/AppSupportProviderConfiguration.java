@@ -15,7 +15,12 @@
  */
 package com.mtfm.app_support.config;
 
-import com.mtfm.app_support.service.user.MiniProgramUserProxyAdapter;
+import com.mtfm.app_support.mapper.AppUserMapper;
+import com.mtfm.app_support.service.AppUserAccountService;
+import com.mtfm.app_support.service.AppUserBaseInfoService;
+import com.mtfm.app_support.service.AppUserReferenceService;
+import com.mtfm.app_support.service.AppUserSecretService;
+import com.mtfm.app_support.service.user.*;
 import com.mtfm.wechat_mp.authentication.MiniProgramUserDetailsAuthenticationProvider;
 import com.mtfm.weixin.mp.service.OauthCodeService;
 import org.springframework.context.annotation.Bean;
@@ -42,6 +47,39 @@ public class AppSupportProviderConfiguration {
     public MiniProgramUserDetailsAuthenticationProvider miniProgramUserDetailsAuthenticationProvider(
             OauthCodeService oauthCodeService, MiniProgramUserProxyAdapter userDetailsManager) {
         return new MiniProgramUserDetailsAuthenticationProvider(oauthCodeService, userDetailsManager);
+    }
+
+    @Bean
+    public AppUserSecretService appUserSecretService() {
+        return new AppUserSecretServiceImpl();
+    }
+
+    @Bean
+    public AppUserAccountService appUserAccountService() {
+        return new AppUserAccountServiceImpl();
+    }
+
+    @Bean
+    public AppUserBaseInfoService appUserBaseInfoService() {
+        return new AppUserBaseInfoServiceImpl();
+    }
+
+    @Bean
+    public AppUserReferenceService appUserReferenceService() {
+        return new AppUserReferenceServiceImpl();
+    }
+
+    @Bean
+    public AppUserManageService appUserManageService(AppUserMapper appUserMapper,
+                                                     AppUserReferenceService appUserReferenceService,
+                                                     AppUserSecretService appUserSecretService) {
+        return new AppUserManageService(appUserMapper, appUserReferenceService, appUserSecretService);
+    }
+
+    @Bean
+    public MiniProgramUserProxyAdapter miniProgramUserProxyAdapter(AppUserManageService appUserManageService,
+                                                                   AppUserBaseInfoService appUserBaseInfoService) {
+        return new MiniProgramUserProxyAdapter(appUserManageService, appUserBaseInfoService);
     }
 
 }

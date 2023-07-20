@@ -35,6 +35,8 @@ public class SpuDetails implements Serializable {
 
     @NotNull(groups = ValidateGroup.Update.class, message = "Service.nullId")
     private Long id;
+
+    private String spuCode;
     /**
      * 产品名称
      */
@@ -98,6 +100,14 @@ public class SpuDetails implements Serializable {
 
     public void setBrandId(Long brandId) {
         this.brandId = brandId;
+    }
+
+    public String getSpuCode() {
+        return spuCode;
+    }
+
+    public void setSpuCode(String spuCode) {
+        this.spuCode = spuCode;
     }
 
     public Long getId() {

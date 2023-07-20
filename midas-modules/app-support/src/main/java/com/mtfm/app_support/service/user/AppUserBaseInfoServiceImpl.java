@@ -17,10 +17,16 @@ package com.mtfm.app_support.service.user;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mtfm.app_support.AppSupportCode;
+import com.mtfm.app_support.config.AppSupportMessageSource;
 import com.mtfm.app_support.entity.AppUserBaseInfo;
 import com.mtfm.app_support.mapper.AppUserBaseInfoMapper;
 import com.mtfm.app_support.service.AppUserBaseInfoService;
+import com.mtfm.core.context.exceptions.ServiceException;
 import com.mtfm.security.SecurityHolder;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,12 +37,20 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class AppUserBaseInfoServiceImpl extends ServiceImpl<AppUserBaseInfoMapper, AppUserBaseInfo> implements AppUserBaseInfoService {
+public class AppUserBaseInfoServiceImpl extends ServiceImpl<AppUserBaseInfoMapper, AppUserBaseInfo> implements AppUserBaseInfoService, MessageSourceAware {
+
+    private MessageSourceAccessor messages = AppSupportMessageSource.getAccessor();
 
     @Override
     public AppUserBaseInfo getByUserId(String userId) {
-        return this.getOne(new QueryWrapper<AppUserBaseInfo>().lambda()
+        AppUserBaseInfo one = this.getOne(new QueryWrapper<AppUserBaseInfo>().lambda()
                 .eq(AppUserBaseInfo::getUserId, userId));
+        if (one == null) {
+            throw new ServiceException(this.messages.getMessage("AppUserDetailsService.userNotFoundByUserId",
+                    "could not found app user details"),
+                    AppSupportCode.USER_NOT_FOUND.getCode());
+        }
+        return one;
     }
 
     @Override
@@ -48,8 +62,18 @@ public class AppUserBaseInfoServiceImpl extends ServiceImpl<AppUserBaseInfoMappe
     public void updateAppUser(AppUserBaseInfo appUserBaseInfo) {
         String userId = (String) SecurityHolder.getPrincipal();
         AppUserBaseInfo baseInfo = this.getByUserId(userId);
+        if (baseInfo == null) {
+            throw new ServiceException(this.messages.getMessage("AppUserDetailsService.userNotFoundByUserId",
+                    "could not found app user details"),
+                    AppSupportCode.USER_NOT_FOUND.getCode());
+        }
         appUserBaseInfo.setId(baseInfo.getId());
         appUserBaseInfo.setUserId(baseInfo.getUserId());
         this.updateById(appUserBaseInfo);
+    }
+
+    @Override
+    public void setMessageSource(MessageSource messageSource) {
+        this.messages = new MessageSourceAccessor(messageSource);
     }
 }

@@ -16,18 +16,26 @@
 package com.mtfm.backend_mall.service.purchase.impl;
 
 import com.mtfm.backend_mall.MallCode;
+import com.mtfm.backend_mall.service.provisioning.CommoditySetting;
 import com.mtfm.backend_mall.service.purchase.MallCommodityManageService;
 import com.mtfm.core.context.exceptions.ServiceException;
 import com.mtfm.core.util.page.PageTemplate;
+import com.mtfm.express.manager.ExpressRelationManager;
+import com.mtfm.express.manager.provisioning.ExpressSetting;
+import com.mtfm.purchase.PurchaseMessageSource;
 import com.mtfm.purchase.exceptions.PurchaseNotFoundException;
 import com.mtfm.purchase.exceptions.PurchaseRelationException;
 import com.mtfm.purchase.manager.CommodityManager;
 import com.mtfm.purchase.manager.SpuManager;
+import com.mtfm.purchase.manager.TagManager;
 import com.mtfm.purchase.manager.provisioning.CommodityDetails;
 import com.mtfm.purchase.manager.provisioning.CommoditySplitDetails;
 import com.mtfm.purchase.manager.provisioning.SpuDetails;
 import com.mtfm.purchase.manager.service.bo.SplitPageQuery;
 import com.mtfm.tools.enums.Judge;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.context.support.MessageSourceAccessor;
 
 import java.util.List;
 
@@ -36,15 +44,24 @@ import java.util.List;
  * @since 1.0.0
  * 商品管理
  */
-public class CommodityManageServiceImpl implements MallCommodityManageService {
+public class CommodityManageServiceImpl implements MallCommodityManageService, MessageSourceAware {
+
+    private MessageSourceAccessor messages = PurchaseMessageSource.getAccessor();
 
     private SpuManager spuManager;
 
     private CommodityManager commodityManager;
 
-    public CommodityManageServiceImpl(SpuManager spuManager, CommodityManager commodityManager) {
+    private TagManager tagManager;
+
+    private ExpressRelationManager expressRelationManager;
+
+    public CommodityManageServiceImpl(SpuManager spuManager, CommodityManager commodityManager,
+                                      TagManager tagManager, ExpressRelationManager expressRelationManager) {
         this.spuManager = spuManager;
         this.commodityManager = commodityManager;
+        this.tagManager = tagManager;
+        this.expressRelationManager = expressRelationManager;
     }
 
     @Override
@@ -129,6 +146,45 @@ public class CommodityManageServiceImpl implements MallCommodityManageService {
         }
     }
 
+    @Override
+    public void setSetting(CommoditySetting setting) {
+        SpuDetails spuDetails = this.spuManager.loadSpuDetailsById(setting.getSpuId());
+        if (spuDetails == null) {
+            throw new ServiceException(this.messages.getMessage("SpuDetailsService.notFound",
+                    "Unable to find the specified product"), MallCode.SPU_NOT_FOUND.getCode());
+        }
+        // 设置标签
+        tagManager.setTags(setting.getSpuId(), setting.getTags());
+
+        // 上架状态
+        this.spuManager.listing(spuDetails.getId(), setting.getListing());
+
+        // 关联物流信息
+        this.expressRelationManager.setRelation(setting.getSpuId(), setting.getExpressSetting());
+    }
+
+    @Override
+    public CommoditySetting loadSetting(long spuId) {
+        SpuDetails spuDetails = this.spuManager.loadSpuDetailsById(spuId);
+        if (spuDetails == null) {
+            throw new ServiceException(this.messages.getMessage("SpuDetailsService.notFound",
+                    "Unable to find the specified product"), MallCode.SPU_NOT_FOUND.getCode());
+        }
+        List<String> tags = this.tagManager.loadTags(spuId);
+        ExpressSetting express = this.expressRelationManager.loadSetting(spuId);
+        CommoditySetting setting = new CommoditySetting();
+        setting.setExpressSetting(express);
+        setting.setListing(spuDetails.getListing());
+        setting.setTags(tags);
+        setting.setSpuId(spuId);
+        return setting;
+    }
+
+    @Override
+    public void setMessageSource(MessageSource messageSource) {
+        this.messages = new MessageSourceAccessor(messageSource);
+    }
+
     protected SpuManager getSpuManager() {
         return spuManager;
     }
@@ -143,5 +199,13 @@ public class CommodityManageServiceImpl implements MallCommodityManageService {
 
     public void setCommodityManager(CommodityManager commodityManager) {
         this.commodityManager = commodityManager;
+    }
+
+    protected TagManager getTagManager() {
+        return tagManager;
+    }
+
+    public void setTagManager(TagManager tagManager) {
+        this.tagManager = tagManager;
     }
 }

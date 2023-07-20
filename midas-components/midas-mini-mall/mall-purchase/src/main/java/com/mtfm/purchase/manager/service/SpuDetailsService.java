@@ -28,8 +28,6 @@ import com.mtfm.purchase.manager.mapper.SpuMapper;
 import com.mtfm.purchase.manager.provisioning.SpuDetails;
 import com.mtfm.tools.StringUtils;
 import com.mtfm.tools.enums.Judge;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
@@ -51,8 +49,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional(rollbackFor = Exception.class)
 public class SpuDetailsService extends ServiceImpl<SpuMapper, StandardProductUnit> implements SpuManager, MessageSourceAware {
-
-    private static final Logger logger = LoggerFactory.getLogger(SpuDetailsService.class);
 
     private MessageSourceAccessor messages = PurchaseMessageSource.getAccessor();
 
@@ -109,7 +105,7 @@ public class SpuDetailsService extends ServiceImpl<SpuMapper, StandardProductUni
                 .withBrandId(1L)
                 .withUnit(spuDetails.getUnit())
                 .writeBrief(spuDetails.getBrief())
-                .listing(spuDetails.getListing())
+                .listing(Judge.NO)
                 .build();
         this.save(spu);
         // 设置图片

@@ -32,10 +32,7 @@ import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author 一块小饼干
@@ -62,7 +59,10 @@ public class CommoditySkuRelationService extends ServiceImpl<CommoditySkuRelatio
     }
 
     @Override
-    public void withSku(long spuId, long commodity, Collection<Long> items) {
+    public void withSku(long spuId, long commodity, List<Long> items) {
+        if (items == null) {
+            return ;
+        }
         List<SpuDetails.SkuItemGroup> skuItemGroups = this.skuManager.loadSpuSkuItems(spuId);
         // 获取商品设定的销售规格,如果为空，则不需要操作
         if (CollectionUtils.isEmpty(skuItemGroups)) {
@@ -74,6 +74,7 @@ public class CommoditySkuRelationService extends ServiceImpl<CommoditySkuRelatio
                     "the product specifications do not match the preset specifications."));
         }
 
+        // 判断是否每个规格都设定
         for (SpuDetails.SkuItemGroup group : skuItemGroups) {
             List<SpuDetails.SkuVal> skuValues = group.getSkuValues();
             val:for (SpuDetails.SkuVal val : skuValues) {
@@ -86,7 +87,8 @@ public class CommoditySkuRelationService extends ServiceImpl<CommoditySkuRelatio
             }
         }
 
-        if (settingNum != 0) {
+        // 判断是否已经存在相同规格
+        if (settingNum != 0 || !this.setAllowed(spuId, items)) {
             throw new PurchaseRelationException(this.messages.getMessage("CommoditySkuRelationService.wrongSkuItem",
                     "the product specifications do not match the preset specifications."));
         }
@@ -110,6 +112,34 @@ public class CommoditySkuRelationService extends ServiceImpl<CommoditySkuRelatio
     @Override
     public void setMessageSource(MessageSource messageSource) {
         this.messages = new MessageSourceAccessor(messageSource);
+    }
+
+    private boolean setAllowed(long spuId, List<Long> skuIds) {
+        if (CollectionUtils.isEmpty(skuIds)) {
+            return true;
+        }
+        List<String> skus = this.baseMapper.selectWithBatchSku(spuId);
+        if (CollectionUtils.isEmpty(skus)) {
+            return true;
+        }
+        skuIds.sort((o1, o2) -> {
+            if (o1.equals(o2)) {
+                return 0;
+            }
+            if (o1 < o2) {
+                return -1;
+            }
+            return 1;
+        });
+
+        String join = String.join(",", skuIds.stream().map(String::valueOf).toArray(String[]::new));
+        boolean allowed = true;
+        for (String sku : skus) {
+            if (sku.equals(join)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     protected SkuManager getSkuManager() {

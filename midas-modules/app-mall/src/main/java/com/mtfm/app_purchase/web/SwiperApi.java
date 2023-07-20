@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.app_purchase.web.api;
+package com.mtfm.app_purchase.web;
 
 import com.mtfm.banner.manager.SwiperImageManager;
 import com.mtfm.banner.manager.SwiperNoticeManager;

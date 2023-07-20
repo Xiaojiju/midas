@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.app_purchase.web.api;
+package com.mtfm.app_purchase.web;
 
 import com.mtfm.app_purchase.service.purchase.CategoryService;
 import com.mtfm.core.context.response.RestResult;

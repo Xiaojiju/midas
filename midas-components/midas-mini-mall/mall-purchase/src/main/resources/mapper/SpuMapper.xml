@@ -19,6 +19,7 @@
     <!-- spu基础信息Mapping -->
     <resultMap id="spu_details_map" type="com.mtfm.purchase.manager.provisioning.SpuDetails">
         <id property="id" column="spu_id" jdbcType="BIGINT" javaType="long"/>
+        <result property="spuCode" column="spu_code" jdbcType="VARCHAR" javaType="string"/>
         <result property="product" column="product" jdbcType="VARCHAR" javaType="string"/>
         <result property="unit" column="unit" jdbcType="VARCHAR" javaType="string"/>
         <result property="listing" column="listing" jdbcType="INTEGER" javaType="com.mtfm.tools.enums.Judge"
@@ -39,6 +40,7 @@
     <select id="selectSpuById" resultMap="spu_details_map">
         SELECT
             `ps`.`id` AS `spu_id`,
+            `ps`.`spu_code`,
             `ps`.`product`,
             `ps`.`unit`,
             `ps`.`listing`,

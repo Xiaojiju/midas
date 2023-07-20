@@ -1,6 +1,5 @@
 com.mtfm.app_purchase.AppMallConfiguration
-com.mtfm.app_purchase.service.purchase.impl.CategoryServiceImpl
-com.mtfm.app_purchase.service.purchase.impl.CommodityServiceImpl
-com.mtfm.app_purchase.web.api.CategoryViewApi
-com.mtfm.app_purchase.web.api.CommodityViewApi
-com.mtfm.app_purchase.web.api.SwiperApi
+com.mtfm.app_purchase.web.CategoryViewApi
+com.mtfm.app_purchase.web.CommodityViewApi
+com.mtfm.app_purchase.web.SwiperApi
+com.mtfm.app_purchase.web.DeliveryAddressApi

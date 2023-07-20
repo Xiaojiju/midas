@@ -63,7 +63,7 @@ public final class JSONUtils {
             JSON_READ_FEATURES_ENABLED.add(JsonReadFeature.ALLOW_LEADING_ZEROS_FOR_NUMBERS); //允许 json number 类型的数存在前导 0 (例: 0001)
             JSON_READ_FEATURES_ENABLED.add(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS); //允许 json 存在 NaN, INF, -INF 作为 number 类型
             JSON_READ_FEATURES_ENABLED.add(JsonReadFeature.ALLOW_MISSING_VALUES); //允许 只有Key没有Value的情况
-            JSON_READ_FEATURES_ENABLED.add(JsonReadFeature.ALLOW_TRAILING_COMMA); //允许数组json的结尾多逗号
+            JSON_READ_FEATURES_ENABLED.add(JsonReadFeature.ALLOW_TRAILING_COMMA); //允许数组json的结尾多逗号\
             //初始化
             mapper = initMapper();
             mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL,true);

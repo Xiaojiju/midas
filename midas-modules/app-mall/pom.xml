@@ -29,5 +29,20 @@
             <artifactId>mall-banner</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.mtfm</groupId>
+            <artifactId>mall-express-delivery</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mtfm</groupId>
+            <artifactId>midas-security</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mtfm</groupId>
+            <artifactId>mall-sales-promotion</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

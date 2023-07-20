@@ -17,12 +17,14 @@ package com.mtfm.tools.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.io.Serializable;
+
 /**
  * @author 一块小饼干
  * @since 1.0.0
  */
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public interface BaseEnum {
+public interface BaseEnum extends Serializable {
 
     int getCode();
 
