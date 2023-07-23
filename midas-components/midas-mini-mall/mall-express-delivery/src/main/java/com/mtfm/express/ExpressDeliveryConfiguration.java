@@ -16,8 +16,10 @@
 package com.mtfm.express;
 
 import com.mtfm.express.manager.DeliveryAddressManager;
+import com.mtfm.express.manager.ExpressManager;
 import com.mtfm.express.manager.ExpressRelationManager;
 import com.mtfm.express.manager.service.DeliveryAddressManageService;
+import com.mtfm.express.manager.service.ExpressManageService;
 import com.mtfm.express.manager.service.ExpressRelationManageService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,5 +45,10 @@ public class ExpressDeliveryConfiguration {
     @Bean
     public ExpressRelationManager expressRelationManager() {
         return new ExpressRelationManageService();
+    }
+
+    @Bean
+    public ExpressManager expressManager() {
+        return new ExpressManageService();
     }
 }

@@ -87,7 +87,7 @@ public class RequestBodyAuthenticationProcessingFilter extends AbstractAuthentic
      */
     private Payload readRequestBody(HttpServletRequest request) throws IOException {
         String body = IOUtils.read(request.getInputStream());
-        return JSONUtils.parse(body, Payload.class);
+        return JSONUtils.from(body, Payload.class);
     }
 
 }

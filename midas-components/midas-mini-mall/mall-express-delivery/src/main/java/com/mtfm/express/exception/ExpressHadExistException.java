@@ -13,27 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.express.manager;
-
-import com.mtfm.express.manager.provisioning.ExpressSetting;
-
+package com.mtfm.express.exception;
 /**
  * @author 一块小饼干
  * @since 1.0.0
- * 商品物流信息
+ * 已经存在相同的物流异常
  */
-public interface ExpressRelationManager {
-    /**
-     * 商品关联物流信息
-     * @param spuId 商品id
-     * @param expressSetting 物流信息
-     */
-    void setRelation(long spuId, ExpressSetting expressSetting);
+public class ExpressHadExistException extends RuntimeException {
 
-    /**
-     * 商品的物流信息
-     * @param spuId 商品id
-     * @return 商品设定
-     */
-    ExpressSetting loadSetting(long spuId);
+    public ExpressHadExistException(String message) {
+        super(message);
+    }
+
+    public ExpressHadExistException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

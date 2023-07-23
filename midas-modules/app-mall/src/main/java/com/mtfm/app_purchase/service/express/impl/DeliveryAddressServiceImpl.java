@@ -7,9 +7,11 @@ import com.mtfm.express.entity.DeliveryAddress;
 import com.mtfm.express.manager.DeliveryAddressManager;
 import com.mtfm.express.manager.provisioning.AddressDetails;
 import com.mtfm.security.SecurityHolder;
+import com.mtfm.tools.enums.Judge;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 /**
@@ -29,8 +31,29 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService, Messa
 
     @Override
     public void createAddress(DeliveryAddress deliveryAddress) {
+        // 如果没有设定默认收货地址，则默不是默认收货地址
+        if (deliveryAddress.getDefaultIndex() != null) {
+            deliveryAddress.setDefaultIndex(Judge.NO);
+        }
         String userId = (String) SecurityHolder.getPrincipal();
         deliveryAddress.setUserId(userId);
+
+        boolean primary = deliveryAddress.getDefaultIndex() == Judge.YES;
+        if (primary) {
+            List<AddressDetails> addresses = this.deliveryAddressManager.loadAddresses(userId);
+            if (CollectionUtils.isEmpty(addresses)) {
+                this.deliveryAddressManager.createAddress(deliveryAddress);
+                return ;
+            }
+            for (AddressDetails address : addresses) {
+                if (address.getDefaultIndex() == Judge.YES) {
+                    DeliveryAddress delivery = new DeliveryAddress();
+                    delivery.setId(address.getId());
+                    delivery.setDefaultIndex(Judge.NO);
+                    this.deliveryAddressManager.updateAddress(delivery);
+                }
+            }
+        }
         this.deliveryAddressManager.createAddress(deliveryAddress);
     }
 
@@ -47,6 +70,17 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService, Messa
             throw new ServiceException(this.messages.getMessage("DeliveryAddressService.addressNotFound",
                     "the specified shipping address does not exist"),
                     MallCode.DELIVERY_ADDRESS_NOT_FOUND.getCode());
+        }
+        if (deliveryAddress.getDefaultIndex() == Judge.YES) {
+            List<AddressDetails> addresses = this.deliveryAddressManager.loadAddresses(userId);
+            for (AddressDetails details : addresses) {
+                if (details.getDefaultIndex() == Judge.YES && !details.getId().equals(deliveryAddress.getId())) {
+                    DeliveryAddress delivery = new DeliveryAddress();
+                    delivery.setId(details.getId());
+                    delivery.setDefaultIndex(Judge.NO);
+                    this.deliveryAddressManager.updateAddress(delivery);
+                }
+            }
         }
         this.deliveryAddressManager.updateAddress(deliveryAddress);
     }

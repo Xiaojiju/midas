@@ -21,6 +21,8 @@ import com.mtfm.core.util.Target;
 import com.mtfm.core.util.validator.ValidateGroup;
 import com.mtfm.express.entity.DeliveryAddress;
 import com.mtfm.express.manager.provisioning.AddressDetails;
+import com.mtfm.tools.enums.Judge;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -88,6 +90,24 @@ public class DeliveryAddressApi {
     @GetMapping("/delivery-address/{id}")
     public RestResult<AddressDetails> loadAddress(@PathVariable("id") long id) {
         return RestResult.success(this.deliveryAddressService.loadAddress(id));
+    }
+
+    /**
+     * 获取默认地址详情
+     * @return 收货地址详情
+     */
+    @GetMapping("/delivery-address")
+    public RestResult<AddressDetails> loadAddress() {
+        List<AddressDetails> addressDetails = this.deliveryAddressService.loadAddresses();
+        if (CollectionUtils.isEmpty(addressDetails)) {
+            return RestResult.success();
+        }
+        for (AddressDetails details : addressDetails) {
+            if (details.getDefaultIndex() == Judge.YES) {
+                return RestResult.success(details);
+            }
+        }
+        return RestResult.success();
     }
 
     protected DeliveryAddressService getDeliveryAddressService() {

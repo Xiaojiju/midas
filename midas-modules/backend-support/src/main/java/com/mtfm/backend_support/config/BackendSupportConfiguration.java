@@ -1,10 +1,12 @@
 package com.mtfm.backend_support.config;
 
+import com.mtfm.security.filter.RequestBodyAuthenticationProcessingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 public class BackendSupportConfiguration {
@@ -20,10 +22,10 @@ public class BackendSupportConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
         security.logout().disable()
                 .csrf().disable()
-//                .addFilterAfter(importBackendFilter.requestBodyAuthenticationProcessingFilter(), LogoutFilter.class)
-//                .addFilterAfter(importBackendFilter.tokenResolutionProcessingFilter(),
-//                        RequestBodyAuthenticationProcessingFilter.class)
-//                .addFilterAfter(importBackendFilter.requestBodyLogoutFilter(), LogoutFilter.class)
+                .addFilterAfter(importBackendFilter.requestBodyAuthenticationProcessingFilter(), LogoutFilter.class)
+                .addFilterAfter(importBackendFilter.tokenResolutionProcessingFilter(),
+                        RequestBodyAuthenticationProcessingFilter.class)
+                .addFilterAfter(importBackendFilter.requestBodyLogoutFilter(), LogoutFilter.class)
                 .sessionManagement().disable();
         return security.build();
     }

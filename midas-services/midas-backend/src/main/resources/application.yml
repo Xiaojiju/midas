@@ -3,11 +3,6 @@ spring:
     add-properties: false
   profiles:
     active: p6spy
-  redis:
-    database: 0
-    host: 175.24.185.242
-    port: 6379
-    password: duanfa00Andfuck
 mybatis-plus:
   global-config:
     db-config:
@@ -16,10 +11,6 @@ mybatis-plus:
       logic-not-delete-value: 0
   check-config-location: true
   mapper-locations: classpath*:mapper/*.xml
-solar:
-  security:
-    enable-permissions: false
-    multi-devices: single
 management:
   endpoints:
     web:
@@ -31,6 +22,3 @@ management:
   info:
     env:
       enabled: true
-logging:
-  level:
-    web: DEBUG

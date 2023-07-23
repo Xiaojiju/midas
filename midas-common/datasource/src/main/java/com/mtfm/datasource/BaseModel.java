@@ -21,6 +21,10 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.mtfm.core.convert.LocalDateTimeDeserializer;
 import com.mtfm.core.util.TimeConstants;
 
 import java.io.Serializable;
@@ -33,6 +37,8 @@ import java.time.LocalDateTime;
 public class BaseModel<T> extends Model<BaseModel<T>> implements Serializable {
 
     @JsonFormat(pattern = TimeConstants.Y_M_D_H_M_S)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @TableField(value = "create_time", fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
@@ -40,6 +46,8 @@ public class BaseModel<T> extends Model<BaseModel<T>> implements Serializable {
     private String createBy;
 
     @JsonFormat(pattern = TimeConstants.Y_M_D_H_M_S)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @TableField(value = "update_time", fill = FieldFill.UPDATE)
     private LocalDateTime updateTime;
 

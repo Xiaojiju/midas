@@ -1,4 +1,9 @@
 spring:
+  redis:
+    database: 0
+    host: 175.24.185.242
+    port: 6379
+    password: duanfa00Andfuck
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root

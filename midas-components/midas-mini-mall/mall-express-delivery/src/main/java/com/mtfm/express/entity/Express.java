@@ -19,11 +19,14 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.mtfm.core.util.validator.ValidateGroup;
 import com.mtfm.datasource.BaseModel;
 import com.mtfm.datasource.handler.CommonEnumTypeHandler;
 import com.mtfm.tools.enums.Judge;
 import org.apache.ibatis.type.JdbcType;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 /**
  * @author 一块小饼干
@@ -33,21 +36,37 @@ import java.io.Serializable;
 @TableName(value = "express", autoResultMap = true)
 public class Express extends BaseModel<Express> implements Serializable {
 
+    @NotNull(groups = ValidateGroup.Update.class, message = "Service.nullId")
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
-
+    /**
+     * 物流服务名称
+     */
+    @NotBlank(groups = ValidateGroup.Create.class, message = "Express.blankExpressService")
     @TableField("express_service")
     private String expressService;
-
+    /**
+     * 物流类型
+     */
+    @NotBlank(groups = ValidateGroup.Create.class, message = "Express.blankServiceType")
     @TableField("service_type")
     private String serviceType;
-
+    /**
+     * 起步价
+     */
+    @NotBlank(groups = ValidateGroup.Create.class, message = "Express.blankStartingPrice")
     @TableField("starting_price")
     private String startingPrice;
-
+    /**
+     * 最小承重
+     */
+    @NotBlank(groups = ValidateGroup.Create.class, message = "Express.blankMinimumLoadBearingCapacity")
     @TableField("minimum_load_bearing_capacity")
     private String minimumLoadBearingCapacity;
-
+    /**
+     * 超过每斤价格
+     */
+    @NotBlank(groups = ValidateGroup.Create.class, message = "Express.blankExceedingPricePerKilogram")
     @TableField("exceeding_price_per_kilogram")
     private String exceedingPricePerKilogram;
 
