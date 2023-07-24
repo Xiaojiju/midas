@@ -1,6 +1,7 @@
 com.mtfm.backend_mall.BackendMallConfiguration
 com.mtfm.backend_mall.service.purchase.impl.CategoryManageServiceImpl
 com.mtfm.backend_mall.service.purchase.impl.CommodityManageServiceImpl
+com.mtfm.backend_mall.service.express.impl.ExpressServiceImpl
 com.mtfm.backend_mall.web.CategoryServiceApi
 com.mtfm.backend_mall.web.CommodityServiceApi
 com.mtfm.backend_mall.web.ExpressApi

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.express.manager;
+package com.mtfm.backend_mall.service.express;
 
 import com.mtfm.core.util.page.PageTemplate;
 import com.mtfm.express.entity.Express;
@@ -21,12 +21,13 @@ import com.mtfm.express.manager.provisioning.ExpressItem;
 import com.mtfm.express.manager.provisioning.ExpressPageQuery;
 
 import java.util.List;
+
 /**
  * @author 一块小饼干
  * @since 1.0.0
- * 物流管理
+ * 物流服务业务
  */
-public interface ExpressManager {
+public interface ExpressService {
     /**
      * 创建物流信息
      * @param express 物流信息

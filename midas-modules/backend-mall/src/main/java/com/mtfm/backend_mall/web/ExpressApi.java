@@ -15,14 +15,14 @@
  */
 package com.mtfm.backend_mall.web;
 
+import com.mtfm.backend_mall.service.express.ExpressService;
 import com.mtfm.core.context.response.RestResult;
 import com.mtfm.core.util.BatchWrapper;
-import com.mtfm.core.util.page.PageQuery;
 import com.mtfm.core.util.page.PageTemplate;
 import com.mtfm.core.util.validator.ValidateGroup;
 import com.mtfm.express.entity.Express;
-import com.mtfm.express.manager.ExpressManager;
 import com.mtfm.express.manager.provisioning.ExpressItem;
+import com.mtfm.express.manager.provisioning.ExpressPageQuery;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,51 +37,51 @@ import java.util.List;
 @RequestMapping("/solar/api/v1")
 public class ExpressApi {
 
-    private ExpressManager expressManager;
+    private ExpressService expressService;
 
-    public ExpressApi(ExpressManager expressManager) {
-        this.expressManager = expressManager;
+    public ExpressApi(ExpressService expressService) {
+        this.expressService = expressService;
     }
 
     @PostMapping("/express")
     public RestResult<Void> createExpress(@RequestBody @Validated({ValidateGroup.Create.class}) Express express) {
         express.setId(null);
-        this.expressManager.createExpressService(express);
+        this.expressService.createExpressService(express);
         return RestResult.success();
     }
 
     @PutMapping("/express")
     public RestResult<Void> updateExpress(@RequestBody @Validated({ValidateGroup.Update.class}) Express express) {
-        this.expressManager.updateExpressService(express);
+        this.expressService.updateExpressService(express);
         return RestResult.success();
     }
 
     @GetMapping("/express/{id}")
     public RestResult<Express> getExpressDetails(@PathVariable("id") long id) {
-        return RestResult.success(this.expressManager.loadByExpressId(id));
+        return RestResult.success(this.expressService.loadByExpressId(id));
     }
 
     @GetMapping("/expresses")
-    public RestResult<PageTemplate<Express>> getPage(PageQuery query) {
-        return RestResult.success(this.expressManager.loadPage(query));
+    public RestResult<PageTemplate<Express>> getPage(ExpressPageQuery query) {
+        return RestResult.success(this.expressService.loadPage(query));
     }
 
     @DeleteMapping("/expresses")
     public RestResult<Void> deleteBatch(@RequestBody @Validated({ValidateGroup.Delete.class}) BatchWrapper<Long> wrapper) {
-        this.expressManager.removeServiceBatch(wrapper.getTargets());
+        this.expressService.removeServiceBatch(wrapper.getTargets());
         return RestResult.success();
     }
 
     @GetMapping("/express")
     public RestResult<List<ExpressItem>> getItems(String expressService) {
-        return RestResult.success(this.expressManager.loadExpressByName(expressService));
+        return RestResult.success(this.expressService.loadExpressByName(expressService));
     }
 
-    protected ExpressManager getExpressManager() {
-        return expressManager;
+    protected ExpressService getExpressService() {
+        return expressService;
     }
 
-    public void setExpressManager(ExpressManager expressManager) {
-        this.expressManager = expressManager;
+    public void setExpressService(ExpressService expressService) {
+        this.expressService = expressService;
     }
 }

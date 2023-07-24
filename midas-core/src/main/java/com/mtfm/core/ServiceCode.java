@@ -13,20 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mtfm.backend_mall;
-
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.ResourceBundleMessageSource;
-
+package com.mtfm.core;
 /**
  * @author 一块小饼干
  * @since 1.0.0
- * 商城后台配置文件
+ * 通用业务错误码
  */
-@Configuration
-public class BackendMallConfiguration {
+public enum ServiceCode implements CodeExpression {
 
-    public BackendMallConfiguration(ResourceBundleMessageSource resourceBundleMessageSource) {
-        resourceBundleMessageSource.addBasenames("i18n/backend_mall_messages");
+    DATA_EXIST(500900, "data exist"),
+    DATA_NOT_FOUND(500901, "data not found");
+
+    private final int code;
+    private final String message;
+
+    ServiceCode(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
+    @Override
+    public int getCode() {
+        return this.code;
+    }
+
+    @Override
+    public String getMessage() {
+        return this.message;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }

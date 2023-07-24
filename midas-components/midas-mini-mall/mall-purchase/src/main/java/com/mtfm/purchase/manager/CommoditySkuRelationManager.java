@@ -2,7 +2,6 @@ package com.mtfm.purchase.manager;
 
 import com.mtfm.purchase.manager.provisioning.SpuDetails;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface CommoditySkuRelationManager {

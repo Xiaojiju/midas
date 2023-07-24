@@ -15,7 +15,6 @@
  */
 package com.mtfm.backend_mall.service.provisioning;
 
-import com.mtfm.express.enums.PostageType;
 import com.mtfm.express.manager.provisioning.ExpressSetting;
 import com.mtfm.tools.enums.Judge;
 

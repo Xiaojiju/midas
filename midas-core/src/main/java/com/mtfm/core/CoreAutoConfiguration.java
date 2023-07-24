@@ -18,6 +18,8 @@ package com.mtfm.core;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.mtfm.core.convert.LocalDateConverter;
 import com.mtfm.core.convert.LocalDateTimeConverter;
 import org.springframework.context.annotation.Bean;
@@ -54,6 +56,10 @@ public class CoreAutoConfiguration {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
         objectMapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL,true);
         objectMapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
+        SimpleModule simpleModule = new SimpleModule();
+        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
+        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
+        objectMapper.registerModule(simpleModule);
         return objectMapper;
     }
 }

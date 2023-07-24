@@ -17,7 +17,6 @@ package com.mtfm.express.manager.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.mtfm.core.util.page.Page;
 import com.mtfm.core.util.page.PageTemplate;
 import com.mtfm.express.ExpressMessageSource;
 import com.mtfm.express.entity.Express;
@@ -25,7 +24,9 @@ import com.mtfm.express.exception.ExpressHadExistException;
 import com.mtfm.express.exception.NoneExpressServiceException;
 import com.mtfm.express.manager.ExpressManager;
 import com.mtfm.express.manager.provisioning.ExpressItem;
+import com.mtfm.express.manager.provisioning.ExpressPageQuery;
 import com.mtfm.express.mapper.ExpressMapper;
+import com.mtfm.tools.StringUtils;
 import com.mtfm.tools.enums.Judge;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
@@ -35,6 +36,8 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 /**
  * @author 一块小饼干
  * @since 1.0.0
@@ -75,8 +78,8 @@ public class ExpressManageService extends ServiceImpl<ExpressMapper, Express> im
         }
         for (Express item : expresses) {
             if (!item.getId().equals(express.getId())) {
-                throw new NoneExpressServiceException(this.messages.getMessage("ExpressRelationManager.nonExpressService",
-                        "No associated express service"));
+                throw new ExpressHadExistException(this.messages.getMessage("ExpressRelationManager.existExpressService",
+                        "a express service with the same type and name already exists"));
             }
         }
         this.updateById(express);
@@ -98,11 +101,16 @@ public class ExpressManageService extends ServiceImpl<ExpressMapper, Express> im
     }
 
     @Override
-    public PageTemplate<Express> loadPage(Page page) {
+    public PageTemplate<Express> loadPage(ExpressPageQuery page) {
         com.baomidou.mybatisplus.extension.plugins.pagination.Page<Express> expressPage
                 = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>();
         expressPage.setCurrent(page.getCurrent()).setSize(page.getSize());
-        expressPage = this.page(expressPage);
+        QueryWrapper<Express> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .like(StringUtils.hasText(page.getExpressService()), Express::getExpressService, page.getExpressService())
+                .ge(Objects.nonNull(page.getUpdateTime()), Express::getUpdateTime, page.getUpdateTime())
+                .eq(Express::getDeleted, Judge.NO);
+        expressPage = this.page(expressPage, queryWrapper);
         return new PageTemplate<>(expressPage.getCurrent(), expressPage.getSize(), expressPage.getTotal(), expressPage.getRecords());
     }
 

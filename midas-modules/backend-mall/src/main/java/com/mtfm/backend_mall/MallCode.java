@@ -61,7 +61,9 @@ public enum MallCode implements CodeExpression {
     /**
      * 规格商品不存在
      */
-    COMMODITY_NOT_FOUND(500318, "could not found commodity, maybe not exist");
+    COMMODITY_NOT_FOUND(500318, "could not found commodity, maybe not exist"),
+
+    EXPRESS_SERVICE_EXIST(500319, "");
 
     private final int code;
     private final String message;
