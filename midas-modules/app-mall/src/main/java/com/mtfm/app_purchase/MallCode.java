@@ -20,12 +20,17 @@ import com.mtfm.core.CodeExpression;
 /**
  * @author 一块小饼干
  * @since 1.0.0
- * 产品错误码
+ * 错误码
+ * 前台错误码
  */
 public enum MallCode implements CodeExpression {
-
+    /**
+     * 品牌名已存在
+     */
     BRAND_NAME_EXIST(500300, "brand name exist"),
-
+    /**
+     * 指定的收货地址不存在
+     */
     DELIVERY_ADDRESS_NOT_FOUND(500301, "the specified shipping address does not exist"),
     /**
      * 商品不存在

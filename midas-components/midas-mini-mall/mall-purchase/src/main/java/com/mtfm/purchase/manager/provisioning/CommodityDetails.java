@@ -21,6 +21,7 @@ import com.mtfm.purchase.entity.CommodityImage;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
@@ -75,6 +76,7 @@ public class CommodityDetails implements Serializable {
     /**
      * 规格图片
      */
+    @Size(max = 9, groups = {ValidateGroup.Create.class, ValidateGroup.Update.class}, message = "SpuDetails.imageLimit")
     private List<CommodityImage> skuImages;
 
     public Long getId() {

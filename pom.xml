@@ -38,6 +38,7 @@
         <module>midas-modules/app-mall</module>
         <module>midas-modules/backend-mall</module>
 		<module>midas-components/third-sdk/weixin</module>
+        <module>midas-components/midas-mini-mall/mall-cart</module>
 
     </modules>
 	<properties>

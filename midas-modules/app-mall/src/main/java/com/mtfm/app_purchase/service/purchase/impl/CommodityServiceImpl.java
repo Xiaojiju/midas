@@ -103,4 +103,12 @@ public class CommodityServiceImpl implements CommodityService {
     public void setTagManager(TagManager tagManager) {
         this.tagManager = tagManager;
     }
+
+    protected ExpressRelationManager getExpressRelationManager() {
+        return expressRelationManager;
+    }
+
+    public void setExpressRelationManager(ExpressRelationManager expressRelationManager) {
+        this.expressRelationManager = expressRelationManager;
+    }
 }

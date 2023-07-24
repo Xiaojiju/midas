@@ -17,6 +17,7 @@ package com.mtfm.backend_mall.service.purchase.impl;
 
 import com.mtfm.backend_mall.MallCode;
 import com.mtfm.backend_mall.service.purchase.CategoryManageService;
+import com.mtfm.core.ServiceCode;
 import com.mtfm.core.context.exceptions.ServiceException;
 import com.mtfm.purchase.exceptions.PurchaseExistException;
 import com.mtfm.purchase.exceptions.PurchaseNotAllowedException;
@@ -58,7 +59,7 @@ public class CategoryManageServiceImpl implements CategoryManageService, Message
         try {
             this.categoryManager.createCategory(categoryDetails);
         } catch (PurchaseExistException exist) {
-            throw new ServiceException(exist.getMessage(), MallCode.CATEGORY_NAME_EXIST.getCode());
+            throw new ServiceException(exist.getMessage(), ServiceCode.DATA_EXIST.getCode());
         } catch (PurchaseNotFoundException notFound) {
             throw new ServiceException(notFound.getMessage(), MallCode.CATEGORY_PARENT_NOT_FOUND.getCode());
         } catch (PurchaseNotAllowedException notAllowed) {
@@ -71,7 +72,7 @@ public class CategoryManageServiceImpl implements CategoryManageService, Message
         try {
             this.categoryManager.updateCategory(categoryDetails);
         } catch (PurchaseExistException exist) {
-            throw new ServiceException(exist.getMessage(), MallCode.CATEGORY_NAME_EXIST.getCode());
+            throw new ServiceException(exist.getMessage(), ServiceCode.DATA_EXIST.getCode());
         } catch (PurchaseNotFoundException notFound) {
             throw new ServiceException(notFound.getMessage(), MallCode.CATEGORY_PARENT_NOT_FOUND.getCode());
         } catch (PurchaseNotAllowedException notAllowed) {

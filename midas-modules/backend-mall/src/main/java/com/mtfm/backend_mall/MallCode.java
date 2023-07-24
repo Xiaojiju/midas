@@ -24,46 +24,40 @@ import com.mtfm.core.CodeExpression;
  */
 public enum MallCode implements CodeExpression {
     /**
-     * 品牌已存在
-     */
-    BRAND_NAME_EXIST(500300, "brand name exist"),
-    /**
      * 商品不存在
      */
-    SPU_NOT_FOUND(500311, "unable to find the specified product"),
+    SPU_NOT_FOUND(500300, "unable to find the specified product"),
     /**
      * 分类关联有商品，不允许删除
      */
-    CATEGORY_NOT_ALLOWED_DELETED(500312, "there are still product associations under the specified " +
+    CATEGORY_NOT_ALLOWED_DELETED(500301, "there are still product associations under the specified " +
             "category for deletion, and deletion is not allowed"),
     /**
      * 分类包含子节点，不允许删除
      */
-    CATEGORY_NOT_ALLOWED_DELETE_NODE(500313, "there are child node associations under the specified " +
+    CATEGORY_NOT_ALLOWED_DELETE_NODE(500302, "there are child node associations under the specified " +
             "deleted category, and deletion is not allowed"),
     /**
      * 分类已存在
      */
-    CATEGORY_NAME_EXIST(500314, "category name has exist or is empty"),
+    CATEGORY_NAME_EXIST(500303, "category name has exist or is empty"),
     /**
      * 分类的父级不存在
      */
-    CATEGORY_PARENT_NOT_FOUND(500315, "the parent of the added category does not exist"),
+    CATEGORY_PARENT_NOT_FOUND(500304, "the parent of the added category does not exist"),
     /**
      * 分类不允许添加子节点
      */
-    CATEGORY_NOT_ALLOWED_LEVEL(500316, "classification allows up to 3 levels, no more levels are " +
+    CATEGORY_NOT_ALLOWED_LEVEL(500305, "classification allows up to 3 levels, no more levels are " +
             "allowed to be added"),
     /**
      * 商品规格与预设的规格不匹配
      */
-    COMMODITY_SKU_NOT_MATCH(500317, "the product specifications do not match the preset specifications"),
+    COMMODITY_SKU_NOT_MATCH(500306, "the product specifications do not match the preset specifications"),
     /**
      * 规格商品不存在
      */
-    COMMODITY_NOT_FOUND(500318, "could not found commodity, maybe not exist"),
-
-    EXPRESS_SERVICE_EXIST(500319, "");
+    COMMODITY_NOT_FOUND(500307, "could not found commodity, maybe not exist");
 
     private final int code;
     private final String message;

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+  Copyright 2022 一块小饼干(莫杨)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<mapper namespace="com.mtfm.app_purchase.mapper.CartMapper">
+    <resultMap id="cart_item_map" type="com.mtfm.cart.entity.CartItem">
+        <result property="spuId" column="spu_id" jdbcType="BIGINT" javaType="long"/>
+        <result property="commodityId" column="commodity_id" jdbcType="BIGINT" javaType="long"/>
+        <result property="product" column="product" jdbcType="VARCHAR" javaType="string"/>
+        <result property="title" column="title" jdbcType="VARCHAR" javaType="string"/>
+        <result property="subtitle" column="subtitle" jdbcType="VARCHAR" javaType="string"/>
+        <result property="previousMarketPrice" column="current_price" jdbcType="DECIMAL" javaType="string"/>
+        <result property="previousOfficialPrice" column="price" jdbcType="DECIMAL" javaType="string"/>
+        <result property="previousVipPrice" column="vip_price" jdbcType="DECIMAL" javaType="string"/>
+        <result property="skuAttributes" column="sku_attributes" jdbcType="VARCHAR" javaType="string"/>
+        <result property="indexImage" column="image_url" jdbcType="VARCHAR" javaType="string"/>
+    </resultMap>
+    <select id="selectById" resultMap="cart_item_map">
+        SELECT
+            `temp`.*,
+            `pci`.`image_url`
+        FROM
+            (
+                SELECT
+                `pc`.`id` `commodity_id`,
+                `pc`.`spu_id`,
+                `ps`.`product`,
+                `pc`.`title`,
+                `pc`.`subtitle`,
+                `pc`.`price`,
+                `pc`.`current_price`,
+                `pc`.`vip_price`,
+                GROUP_CONCAT( `psiv`.`item_val` SEPARATOR ',' ) `sku_attributes`
+                FROM
+                `purchase_commodity` `pc`
+                LEFT JOIN `purchase_spu` `ps` ON `pc`.`spu_id` = `ps`.`id`
+                LEFT JOIN `purchase_commodity_sku_relation` `pcsr` ON `pcsr`.`commodity_id` = `pc`.`id`
+                LEFT JOIN `purchase_sku_item_value` `psiv` ON `pcsr`.`sku_id` = `psiv`.`id`
+                WHERE
+                `pc`.`id` = 1
+                AND `pc`.`deleted` = 0
+                AND `ps`.`deleted` = 0
+                GROUP BY
+                `pc`.`id`
+            ) `temp`
+            LEFT JOIN `purchase_commodity_image` `pci` ON `temp`.`commodity_id` = `pci`.`commodity_id`
+        WHERE
+            `pci`.`index_image` = 1
+        LIMIT 1
+    </select>
+</mapper>

@@ -52,7 +52,9 @@ public class NodeTree<T extends Linkable<T>> implements Tree<T>, Serializable {
         if (function.test(element)) {
             return new NodeTree<>(element);
         }
-        return new NodeTree<>(find(element.getNodes(), function));
+        NodeTree<T> root = new NodeTree<>();
+        find(element.getNodes(), function, root);
+        return root;
     }
 
     @Override
@@ -76,18 +78,21 @@ public class NodeTree<T extends Linkable<T>> implements Tree<T>, Serializable {
         }
     }
 
-    private T find(List<T> elements, Predicate<T> function) {
+    private void find(List<T> elements, Predicate<T> function, NodeTree<T> nodeTree) {
+        if (CollectionUtils.isEmpty(elements)) {
+            return ;
+        }
         for (T element : elements) {
             if (function.test(element)) {
-                return element;
+                nodeTree.setElement(element);
+                break;
             } else {
                 if (CollectionUtils.isEmpty(element.getNodes())) {
                     continue;
                 }
-                return find(element.getNodes(), function);
+                find(element.getNodes(), function, nodeTree);
             }
         }
-        return null;
     }
 
     public static <T extends Linkable<T>> NodeTree<T> build(List<T> list) {

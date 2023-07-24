@@ -22,6 +22,7 @@ import com.mtfm.tools.enums.Judge;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
@@ -64,6 +65,7 @@ public class SpuDetails implements Serializable {
     /**
      * 图片
      */
+    @Size(max = 9, groups = {ValidateGroup.Create.class, ValidateGroup.Update.class}, message = "SpuDetails.imageLimit")
     private List<SpuImage> images;
     /**
      * 属性值

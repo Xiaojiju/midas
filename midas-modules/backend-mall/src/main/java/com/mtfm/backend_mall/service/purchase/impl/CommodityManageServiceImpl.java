@@ -18,6 +18,7 @@ package com.mtfm.backend_mall.service.purchase.impl;
 import com.mtfm.backend_mall.MallCode;
 import com.mtfm.backend_mall.service.provisioning.CommoditySetting;
 import com.mtfm.backend_mall.service.purchase.MallCommodityManageService;
+import com.mtfm.core.ServiceCode;
 import com.mtfm.core.context.exceptions.ServiceException;
 import com.mtfm.core.util.page.PageTemplate;
 import com.mtfm.express.manager.ExpressRelationManager;
@@ -79,7 +80,7 @@ public class CommodityManageServiceImpl implements MallCommodityManageService, M
         try {
             this.spuManager.removeSpuById(spuId);
         } catch (PurchaseNotFoundException notFound) {
-            throw new ServiceException(notFound.getMessage(), MallCode.SPU_NOT_FOUND.getCode());
+            throw new ServiceException(notFound.getMessage(), ServiceCode.DATA_NOT_FOUND.getCode());
         }
     }
 
@@ -88,7 +89,7 @@ public class CommodityManageServiceImpl implements MallCommodityManageService, M
         try {
             return this.spuManager.loadSpuDetailsById(spuId);
         } catch (PurchaseNotFoundException notFound) {
-            throw new ServiceException(notFound.getMessage(), MallCode.SPU_NOT_FOUND.getCode());
+            throw new ServiceException(notFound.getMessage(), ServiceCode.DATA_NOT_FOUND.getCode());
         }
     }
 
@@ -101,7 +102,7 @@ public class CommodityManageServiceImpl implements MallCommodityManageService, M
                 this.spuManager.listing(spuId, Judge.NO);
             }
         } catch (PurchaseNotFoundException e) {
-            throw new ServiceException(e.getMessage(), MallCode.SPU_NOT_FOUND.getCode());
+            throw new ServiceException(e.getMessage(), ServiceCode.DATA_NOT_FOUND.getCode());
         }
     }
 
@@ -142,7 +143,7 @@ public class CommodityManageServiceImpl implements MallCommodityManageService, M
         try {
             this.commodityManager.deleteByCommodityId(commodityId);
         } catch (PurchaseNotFoundException notFound) {
-            throw new ServiceException(notFound.getMessage(), MallCode.COMMODITY_NOT_FOUND.getCode());
+            throw new ServiceException(notFound.getMessage(), ServiceCode.DATA_NOT_FOUND.getCode());
         }
     }
 
@@ -207,5 +208,13 @@ public class CommodityManageServiceImpl implements MallCommodityManageService, M
 
     public void setTagManager(TagManager tagManager) {
         this.tagManager = tagManager;
+    }
+
+    protected ExpressRelationManager getExpressRelationManager() {
+        return expressRelationManager;
+    }
+
+    public void setExpressRelationManager(ExpressRelationManager expressRelationManager) {
+        this.expressRelationManager = expressRelationManager;
     }
 }
