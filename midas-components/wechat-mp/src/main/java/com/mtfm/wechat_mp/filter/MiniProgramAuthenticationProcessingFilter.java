@@ -85,6 +85,6 @@ public class MiniProgramAuthenticationProcessingFilter extends AbstractAuthentic
 
     private MpUser.UserInfo getCode(HttpServletRequest request) throws IOException {
         String body = IOUtils.read(request.getInputStream());
-        return JSONUtils.parse(body, MpUser.UserInfo.class);
+        return JSONUtils.from(body, MpUser.UserInfo.class);
     }
 }

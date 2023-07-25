@@ -49,11 +49,7 @@ public class MiniProgramUserDetailsAuthenticationProvider implements Authenticat
 
     private MessageSourceAccessor messages = MiniProgramMessageSource.getAccessor();
 
-    private final OauthCodeService oauthCodeService;
-
-    private PhoneInfoService phoneInfoService;
-
-    private AccessTokenService accessTokenService;
+    private final PhoneInfoService phoneInfoService;
 
     private UserDetailsChecker postCheck = new AppUserPreAuthenticationChecks();
 
@@ -61,9 +57,9 @@ public class MiniProgramUserDetailsAuthenticationProvider implements Authenticat
 
     private static final String NONE_CODE = "NODE_CODE";
 
-    public MiniProgramUserDetailsAuthenticationProvider(OauthCodeService oauthCodeService,
+    public MiniProgramUserDetailsAuthenticationProvider(PhoneInfoService phoneInfoService,
                                                         UserDetailsManager userDetailsManager) {
-        this.oauthCodeService = oauthCodeService;
+        this.phoneInfoService = phoneInfoService;
         this.userDetailsManager = userDetailsManager;
     }
 
@@ -150,13 +146,4 @@ public class MiniProgramUserDetailsAuthenticationProvider implements Authenticat
     public void setMessages(MessageSourceAccessor messages) {
         this.messages = messages;
     }
-
-    protected OauthCodeService getOauthCodeService() {
-        return oauthCodeService;
-    }
-
-    protected UserDetailsManager getUserDetailsManager() {
-        return userDetailsManager;
-    }
-
 }

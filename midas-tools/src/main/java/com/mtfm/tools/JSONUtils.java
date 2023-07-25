@@ -76,7 +76,9 @@ public final class JSONUtils {
 
     public static ObjectMapper initMapper() {
         JsonMapper.Builder builder = JsonMapper.builder().enable(JSON_READ_FEATURES_ENABLED.toArray(new JsonReadFeature[0]));
-        return builder.build();
+        JsonMapper objectMapper = builder.build();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return objectMapper;
     }
 
     /**

@@ -23,6 +23,7 @@ import com.mtfm.app_support.service.AppUserSecretService;
 import com.mtfm.app_support.service.user.*;
 import com.mtfm.wechat_mp.authentication.MiniProgramUserDetailsAuthenticationProvider;
 import com.mtfm.weixin.mp.service.OauthCodeService;
+import com.mtfm.weixin.mp.service.PhoneInfoService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -45,8 +46,8 @@ public class AppSupportProviderConfiguration {
      */
     @Bean
     public MiniProgramUserDetailsAuthenticationProvider miniProgramUserDetailsAuthenticationProvider(
-            OauthCodeService oauthCodeService, MiniProgramUserProxyAdapter userDetailsManager) {
-        return new MiniProgramUserDetailsAuthenticationProvider(oauthCodeService, userDetailsManager);
+            PhoneInfoService phoneInfoService, MiniProgramUserProxyAdapter userDetailsManager) {
+        return new MiniProgramUserDetailsAuthenticationProvider(phoneInfoService, userDetailsManager);
     }
 
     @Bean
