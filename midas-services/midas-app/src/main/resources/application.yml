@@ -39,4 +39,4 @@ logging:
 wechat:
   mini-program:
     secret-key: 867bc491cc06f43db0ee11408dfa862a
-    app-id: wxb105c377fce347bc
+    app-id: wx00f59941a5147e72
