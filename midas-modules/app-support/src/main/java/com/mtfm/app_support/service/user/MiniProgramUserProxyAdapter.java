@@ -49,9 +49,9 @@ public class MiniProgramUserProxyAdapter extends AppUserInfoDetailsService {
         MpUserDetails registry = (MpUserDetails) user;
         AppUserBaseInfo appUserBaseInfo = AppUserBaseInfo.uncreated()
                 .whereFrom(registry.getCountry(), registry.getProvince(), registry.getCity())
-                .withAvatar(registry.getAvatar())
+                .withAvatar(registry.getAvatarUrl())
                 .withGender(registry.getGender())
-                .withNickname(registry.getNickname())
+                .withNickname(registry.getNickName())
                 .build();
         AppUser appUser = AppUser.builder(registry.getUsername(), AppSupportIdentifier.PHONE)
                 .usedSecret(false)
@@ -73,9 +73,9 @@ public class MiniProgramUserProxyAdapter extends AppUserInfoDetailsService {
         AppUserBaseInfo baseInfo = this.getAppUserBaseInfoService().getByUserId(oneByUsername.getUserId());
         AppUserBaseInfo appUserBaseInfo = AppUserBaseInfo.created(baseInfo.getId(), baseInfo.getUserId())
                 .whereFrom(createUser.getCountry(), createUser.getProvince(), createUser.getCity())
-                .withAvatar(createUser.getAvatar())
+                .withAvatar(createUser.getAvatarUrl())
                 .withGender(createUser.getGender())
-                .withNickname(createUser.getNickname())
+                .withNickname(createUser.getNickName())
                 .build();
         AppUser appUser = AppUser.builder(createUser.getUsername(), AppSupportIdentifier.PHONE)
                 .usedSecret(false)

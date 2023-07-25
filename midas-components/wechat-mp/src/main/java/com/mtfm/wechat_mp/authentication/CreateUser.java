@@ -35,8 +35,8 @@ public class CreateUser extends MpUser implements UserDetails, Serializable {
         this.openId = openId;
         this.unionId = unionId;
         if (mpUser != null) {
-            super.setNickname(mpUser.getNickname());
-            super.setAvatar(mpUser.getAvatar());
+            super.setNickName(mpUser.getNickName());
+            super.setAvatarUrl(mpUser.getAvatarUrl());
             super.setGender(mpUser.getGender());
             super.setCountry(mpUser.getCountry());
             super.setProvince(mpUser.getProvince());

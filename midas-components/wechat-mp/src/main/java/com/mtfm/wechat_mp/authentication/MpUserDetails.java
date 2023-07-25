@@ -32,8 +32,8 @@ public class MpUserDetails extends MpUser implements UserDetails, Serializable {
     public MpUserDetails(String phone, MpUser mpUser) {
         this.phone = phone;
         if (mpUser != null) {
-            super.setNickname(mpUser.getNickname());
-            super.setAvatar(mpUser.getAvatar());
+            super.setNickName(mpUser.getNickName());
+            super.setAvatarUrl(mpUser.getAvatarUrl());
             super.setGender(mpUser.getGender());
             super.setCountry(mpUser.getCountry());
             super.setProvince(mpUser.getProvince());

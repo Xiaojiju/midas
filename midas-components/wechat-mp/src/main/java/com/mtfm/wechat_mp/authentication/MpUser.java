@@ -24,9 +24,9 @@ import java.io.Serializable;
  */
 public class MpUser implements Serializable {
 
-    private String nickname;
+    private String nickName;
 
-    private String avatar;
+    private String avatarUrl;
 
     private Integer gender;
 
@@ -39,9 +39,9 @@ public class MpUser implements Serializable {
     public MpUser() {
     }
 
-    public MpUser(String nickname, String avatar, Integer gender, String country, String province, String city) {
-        this.nickname = nickname;
-        this.avatar = avatar;
+    public MpUser(String nickName, String avatarUrl, Integer gender, String country, String province, String city) {
+        this.nickName = nickName;
+        this.avatarUrl = avatarUrl;
         this.gender = gender;
         this.country = country;
         this.province = province;
@@ -52,20 +52,20 @@ public class MpUser implements Serializable {
         return new MpUserBuilder();
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getNickName() {
+        return nickName;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
-    public String getAvatar() {
-        return avatar;
+    public String getAvatarUrl() {
+        return avatarUrl;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     public Integer getGender() {
@@ -102,8 +102,8 @@ public class MpUser implements Serializable {
 
     public static class MpUserBuilder {
 
-        private String nickname;
-        private String avatar;
+        private String nickName;
+        private String avatarUrl;
         private Integer gender;
         private String country;
         private String province;
@@ -113,13 +113,13 @@ public class MpUser implements Serializable {
 
         }
 
-        public MpUserBuilder withNickname(String nickname) {
-            this.nickname = nickname;
+        public MpUserBuilder withNickname(String nickName) {
+            this.nickName = nickName;
             return this;
         }
 
-        public MpUserBuilder withAvatar(String avatar) {
-            this.avatar = avatar;
+        public MpUserBuilder withAvatar(String avatarUrl) {
+            this.avatarUrl = avatarUrl;
             return this;
         }
 
@@ -136,7 +136,7 @@ public class MpUser implements Serializable {
         }
 
         public MpUser build() {
-            return new MpUser(this.nickname, this.avatar, this.gender, this.country, this.province, this.city);
+            return new MpUser(this.nickName, this.avatarUrl, this.gender, this.country, this.province, this.city);
         }
     }
 
