@@ -44,7 +44,7 @@ public class SpuDetails implements Serializable {
     @NotBlank(groups = ValidateGroup.Create.class, message = "SpuDetails.productNotBlank")
     private String product;
 
-    @NotBlank(groups = ValidateGroup.Create.class, message = "SpuDetails.categoryNonNull")
+    @NotNull(groups = ValidateGroup.Create.class, message = "SpuDetails.categoryNonNull")
     private Long categoryId;
 
     private Long brandId;

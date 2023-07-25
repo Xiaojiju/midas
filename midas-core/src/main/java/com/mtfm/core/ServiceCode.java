@@ -22,7 +22,8 @@ package com.mtfm.core;
 public enum ServiceCode implements CodeExpression {
 
     DATA_EXIST(500900, "data exist"),
-    DATA_NOT_FOUND(500901, "data not found");
+    DATA_NOT_FOUND(500901, "data not found"),
+    DELETE_FAIL(500901, "data remove fail");
 
     private final int code;
     private final String message;

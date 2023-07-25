@@ -21,7 +21,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.mtfm.cart.manager.provisioning.CartItemDetails;
 import com.mtfm.datasource.BaseModel;
-import org.springframework.util.Assert;
 
 import java.io.Serializable;
 /**
@@ -118,7 +117,6 @@ public class CartItem extends BaseModel<CartItem> implements CartItemDetails, Se
         this.commodityId = commodityId;
     }
 
-    @Override
     public String getUserId() {
         return userId;
     }

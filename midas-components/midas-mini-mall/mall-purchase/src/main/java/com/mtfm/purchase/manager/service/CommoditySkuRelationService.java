@@ -31,6 +31,7 @@ import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,10 +136,11 @@ public class CommoditySkuRelationService extends ServiceImpl<CommoditySkuRelatio
         });
 
         String join = String.join(",", skuIds.stream().map(String::valueOf).toArray(String[]::new));
-        boolean allowed = true;
         for (String sku : skus) {
-            if (sku.equals(join)) {
-                return false;
+            if (StringUtils.hasText(sku)) {
+                if (sku.equals(join)) {
+                    return false;
+                }
             }
         }
         return true;

@@ -101,11 +101,11 @@ public class CategoryDetailsService extends ServiceImpl<CategoryMapper, Category
         if (details == null) {
             throw new NullPointerException("category details could not be null");
         }
-        String name = details.getCategory();
-        if (this.categoryExist(name)) {
-            throw new PurchaseExistException(this.messages.getMessage("CategoryManager.exist",
-                    "category name has exist or is empty"));
-        }
+//        String name = details.getCategory();
+//        if (this.categoryExist(name)) {
+//            throw new PurchaseExistException(this.messages.getMessage("CategoryManager.exist",
+//                    "category name has exist or is empty"));
+//        }
         Long parentId = details.getParentId();
         if (parentId == 0L) {
             details.setLevel(0);

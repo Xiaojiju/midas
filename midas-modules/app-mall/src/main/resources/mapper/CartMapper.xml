@@ -17,49 +17,101 @@
 -->
 
 <mapper namespace="com.mtfm.app_purchase.mapper.CartMapper">
+    <!-- cart item map -->
     <resultMap id="cart_item_map" type="com.mtfm.cart.entity.CartItem">
-        <result property="spuId" column="spu_id" jdbcType="BIGINT" javaType="long"/>
-        <result property="commodityId" column="commodity_id" jdbcType="BIGINT" javaType="long"/>
-        <result property="product" column="product" jdbcType="VARCHAR" javaType="string"/>
-        <result property="title" column="title" jdbcType="VARCHAR" javaType="string"/>
-        <result property="subtitle" column="subtitle" jdbcType="VARCHAR" javaType="string"/>
-        <result property="previousMarketPrice" column="current_price" jdbcType="DECIMAL" javaType="string"/>
-        <result property="previousOfficialPrice" column="price" jdbcType="DECIMAL" javaType="string"/>
-        <result property="previousVipPrice" column="vip_price" jdbcType="DECIMAL" javaType="string"/>
-        <result property="skuAttributes" column="sku_attributes" jdbcType="VARCHAR" javaType="string"/>
-        <result property="indexImage" column="image_url" jdbcType="VARCHAR" javaType="string"/>
+        <result property="spuId" column="cart_spu_id" jdbcType="BIGINT" javaType="long"/>
+        <result property="commodityId" column="cart_commodity_id" jdbcType="BIGINT" javaType="long"/>
+        <result property="product" column="cart_product" jdbcType="VARCHAR" javaType="string"/>
+        <result property="title" column="cart_title" jdbcType="VARCHAR" javaType="string"/>
+        <result property="subtitle" column="cart_subtitle" jdbcType="VARCHAR" javaType="string"/>
+        <result property="previousMarketPrice" column="previous_market_price" jdbcType="DECIMAL" javaType="string"/>
+        <result property="previousOfficialPrice" column="previous_official_price" jdbcType="DECIMAL" javaType="string"/>
+        <result property="previousVipPrice" column="previous_vip_price" jdbcType="DECIMAL" javaType="string"/>
+        <result property="skuAttributes" column="cart_sku_attributes" jdbcType="VARCHAR" javaType="string"/>
+        <result property="indexImage" column="cart_image_url" jdbcType="VARCHAR" javaType="string"/>
     </resultMap>
+    <!-- cart item view -->
+    <resultMap id="cart_item_view" type="com.mtfm.app_purchase.service.provisioning.CartItemView" extends="cart_item_map">
+        <id property="id" column="cart_id" jdbcType="BIGINT" javaType="long"/>
+        <result property="quantity" column="cart_quantity" jdbcType="INTEGER" javaType="int"/>
+        <result property="listing" column="listing" jdbcType="INTEGER" javaType="com.mtfm.tools.enums.Judge"
+                typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+        <result property="createTime" column="cart_create_time" jdbcType="DATE" javaType="java.time.LocalDateTime"/>
+        <collection property="sku" resultMap="com.mtfm.purchase.manager.mapper.CommodityMapper.sku_stocks_map"/>
+    </resultMap>
+    <!-- 查询购物车商品 -->
     <select id="selectById" resultMap="cart_item_map">
         SELECT
             `temp`.*,
-            `pci`.`image_url`
+            `pci`.`image_url` `cart_image_url`
         FROM
             (
                 SELECT
-                `pc`.`id` `commodity_id`,
-                `pc`.`spu_id`,
-                `ps`.`product`,
-                `pc`.`title`,
-                `pc`.`subtitle`,
-                `pc`.`price`,
-                `pc`.`current_price`,
-                `pc`.`vip_price`,
-                GROUP_CONCAT( `psiv`.`item_val` SEPARATOR ',' ) `sku_attributes`
+                    `pc`.`id` `cart_commodity_id`,
+                    `pc`.`spu_id` `cart_spu_id`,
+                    `ps`.`product` `cart_product`,
+                    `pc`.`title` `cart_title`,
+                    `pc`.`subtitle` `cart_subtitle`,
+                    `pc`.`price` `previous_official_price`,
+                    `pc`.`current_price` `previous_market_price`,
+                    `pc`.`vip_price` `previous_vip_price`,
+                    GROUP_CONCAT( `psiv`.`item_val` SEPARATOR ',' ) `cart_sku_attributes`
                 FROM
-                `purchase_commodity` `pc`
-                LEFT JOIN `purchase_spu` `ps` ON `pc`.`spu_id` = `ps`.`id`
-                LEFT JOIN `purchase_commodity_sku_relation` `pcsr` ON `pcsr`.`commodity_id` = `pc`.`id`
-                LEFT JOIN `purchase_sku_item_value` `psiv` ON `pcsr`.`sku_id` = `psiv`.`id`
+                    `purchase_commodity` `pc`
+                    LEFT JOIN `purchase_spu` `ps` ON `pc`.`spu_id` = `ps`.`id`
+                    LEFT JOIN `purchase_commodity_sku_relation` `pcsr` ON `pcsr`.`commodity_id` = `pc`.`id`
+                    LEFT JOIN `purchase_sku_item_value` `psiv` ON `pcsr`.`sku_id` = `psiv`.`id`
                 WHERE
-                `pc`.`id` = 1
-                AND `pc`.`deleted` = 0
-                AND `ps`.`deleted` = 0
+                    `pc`.`id` = #{ commodityId }
+                    AND `pc`.`deleted` = 0
+                    AND `ps`.`deleted` = 0
                 GROUP BY
-                `pc`.`id`
+                    `pc`.`id`
             ) `temp`
-            LEFT JOIN `purchase_commodity_image` `pci` ON `temp`.`commodity_id` = `pci`.`commodity_id`
+            LEFT JOIN `purchase_commodity_image` `pci` ON `temp`.`cart_commodity_id` = `pci`.`commodity_id`
         WHERE
             `pci`.`index_image` = 1
         LIMIT 1
+    </select>
+    <!-- 获取购物车全部商品 -->
+    <select id="selectItems" resultMap="cart_item_view">
+        SELECT
+            `temp`.*,
+            GROUP_CONCAT( `psiv`.`item_val` SEPARATOR ',' ) `sku`
+        FROM
+            (
+                SELECT
+                    `ci`.`id` `cart_id`,
+                    `ci`.`commodity_id` `cart_commodity_id`,
+                    `ci`.`spu_id` `cart_spu_id`,
+                    `ci`.`product` `cart_product`,
+                    `ci`.`title` `cart_title`,
+                    `ci`.`subtitle` `cart_subtitle`,
+                    `ci`.`previous_official_price`,
+                    `ci`.`previous_market_price`,
+                    `ci`.`previous_vip_price`,
+                    `ci`.`quantity` `cart_quantity`,
+                    `ci`.`sku_attributes` `cart_sku_attributes`,
+                    `ci`.`index_image` `cart_image_url`,
+                    `ci`.`create_time` `cart_create_time`,
+                    `ps`.`listing`,
+                    `pc`.`id` `commodity_id`,
+                    `pc`.`commodity_code`,
+                    `pc`.`commodity_name`,
+                    `pc`.`stocks`,
+                    `pc`.`price`,
+                    `pc`.`current_price`,
+                    `pc`.`vip_price`
+                FROM
+                    `cart_item` `ci`
+                    LEFT JOIN `purchase_spu` `ps` ON `ci`.`spu_id` = `ps`.`id`
+                    LEFT JOIN `purchase_commodity` `pc` ON `pc`.`spu_id` = `ps`.`id`
+                WHERE
+                    `ci`.`user_id` = #{ userId }
+            ) `temp`
+            LEFT JOIN `purchase_commodity_sku_relation` `pcsr` ON `pcsr`.`commodity_id` = `temp`.`cart_commodity_id`
+            LEFT JOIN `purchase_sku_item_value` `psiv` ON `pcsr`.`sku_id` = `psiv`.`id`
+        GROUP BY
+            `temp`.`cart_id`, `temp`.`commodity_id`
     </select>
 </mapper>

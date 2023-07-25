@@ -21,7 +21,6 @@ import com.mtfm.cart.MallCartMessageSource;
 import com.mtfm.cart.entity.CartItem;
 import com.mtfm.cart.exception.CartItemNotFoundException;
 import com.mtfm.cart.manager.CartItemManager;
-import com.mtfm.cart.manager.provisioning.CartItemDetails;
 import com.mtfm.cart.mapper.CartItemMapper;
 import com.mtfm.tools.StringUtils;
 import com.mtfm.tools.enums.Judge;
@@ -70,7 +69,10 @@ public class CartItemManageService extends ServiceImpl<CartItemMapper, CartItem>
         QueryWrapper<CartItem> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(CartItem::getUserId, userId)
                 .in(CartItem::getId, items);
-        this.remove(queryWrapper);
+        if (!this.remove(queryWrapper)) {
+            throw new CartItemNotFoundException(this.messages.getMessage("CartItemManager.cartItemNotFound",
+                    "Unable to find the specified product from the shopping cart"));
+        }
     }
 
     @Override

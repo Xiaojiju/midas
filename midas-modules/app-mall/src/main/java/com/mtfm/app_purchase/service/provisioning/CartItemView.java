@@ -15,7 +15,13 @@
  */
 package com.mtfm.app_purchase.service.provisioning;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.mtfm.cart.manager.provisioning.CartItemDetails;
+import com.mtfm.core.convert.LocalDateTimeDeserializer;
+import com.mtfm.core.util.TimeConstants;
 import com.mtfm.purchase.manager.provisioning.Sku;
 import com.mtfm.tools.enums.Judge;
 
@@ -37,14 +43,6 @@ public class CartItemView implements CartItemDetails, Serializable {
      * 规格商品id
      */
     private Long commodityId;
-    /**
-     * 所属用户
-     */
-    private String userId;
-
-    private String spuCode;
-
-    private String commodityCode;
     /**
      * 商品名称
      */
@@ -74,10 +72,6 @@ public class CartItemView implements CartItemDetails, Serializable {
      */
     private String previousVipPrice;
     /**
-     * 属性（json，包含spu和sku的属性）
-     */
-    private String attributes;
-    /**
      * 规格（json）
      */
     private String skuAttributes;
@@ -85,15 +79,24 @@ public class CartItemView implements CartItemDetails, Serializable {
      * 商品主图
      */
     private String indexImage;
-
+    /**
+     * 上架状态
+     */
     private Judge listing;
-
+    /**
+     * 促销活动
+     */
     private String promotion;
-
-    private Integer stocks;
-
+    /**
+     * 创建时间
+     */
+    @JsonFormat(pattern = TimeConstants.Y_M_D_H_M_S)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime createTime;
-
+    /**
+     * 库存
+     */
     private Sku sku;
 
     @Override
@@ -121,31 +124,6 @@ public class CartItemView implements CartItemDetails, Serializable {
 
     public void setCommodityId(Long commodityId) {
         this.commodityId = commodityId;
-    }
-
-    @Override
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getSpuCode() {
-        return spuCode;
-    }
-
-    public void setSpuCode(String spuCode) {
-        this.spuCode = spuCode;
-    }
-
-    public String getCommodityCode() {
-        return commodityCode;
-    }
-
-    public void setCommodityCode(String commodityCode) {
-        this.commodityCode = commodityCode;
     }
 
     @Override
@@ -209,14 +187,6 @@ public class CartItemView implements CartItemDetails, Serializable {
         this.previousVipPrice = previousVipPrice;
     }
 
-    public String getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(String attributes) {
-        this.attributes = attributes;
-    }
-
     @Override
     public String getSkuAttributes() {
         return skuAttributes;
@@ -249,14 +219,6 @@ public class CartItemView implements CartItemDetails, Serializable {
 
     public void setPromotion(String promotion) {
         this.promotion = promotion;
-    }
-
-    public Integer getStocks() {
-        return stocks;
-    }
-
-    public void setStocks(Integer stocks) {
-        this.stocks = stocks;
     }
 
     @Override

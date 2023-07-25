@@ -37,6 +37,7 @@ import com.mtfm.tools.enums.Judge;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -45,6 +46,7 @@ import java.util.List;
  * @since 1.0.0
  * 商品管理
  */
+@Transactional(rollbackFor = Exception.class)
 public class CommodityManageServiceImpl implements MallCommodityManageService, MessageSourceAware {
 
     private MessageSourceAccessor messages = PurchaseMessageSource.getAccessor();

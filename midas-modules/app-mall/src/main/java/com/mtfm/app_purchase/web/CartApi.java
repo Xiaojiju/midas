@@ -15,8 +15,17 @@
  */
 package com.mtfm.app_purchase.web;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.mtfm.app_purchase.service.cart.CartService;
+import com.mtfm.app_purchase.service.provisioning.CartItemView;
+import com.mtfm.app_purchase.web.body.Quantity;
+import com.mtfm.core.context.response.RestResult;
+import com.mtfm.core.util.BatchWrapper;
+import com.mtfm.core.util.Target;
+import com.mtfm.core.util.validator.ValidateGroup;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author 一块小饼干
@@ -26,4 +35,33 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/solar/api/v1")
 public class CartApi {
+
+    private final CartService cartService;
+
+    public CartApi(CartService cartService) {
+        this.cartService = cartService;
+    }
+
+    @PostMapping("/shopping-cart")
+    public RestResult<Void> addCommodity(@RequestBody @Validated({ValidateGroup.Create.class}) Target<Long> target) {
+        this.cartService.addCart(target.getTarget());
+        return RestResult.success();
+    }
+
+    @DeleteMapping("/shopping-cart")
+    public RestResult<Void> removeBatch(@RequestBody @Validated({ValidateGroup.Delete.class}) BatchWrapper<Long> batchWrapper) {
+        this.cartService.removeItems(batchWrapper.getTargets());
+        return RestResult.success();
+    }
+
+    @PutMapping("/shopping-cart/quantity")
+    public RestResult<Void> setQuantity(@RequestBody @Validated({ValidateGroup.Update.class}) Quantity quantity) {
+        this.cartService.updateQuantity(quantity.getId(), quantity.getQuantity());
+        return RestResult.success();
+    }
+
+    @GetMapping("/shopping-cart")
+    public RestResult<List<CartItemView>> getViews() {
+        return RestResult.success(this.cartService.loadViews());
+    }
 }

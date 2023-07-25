@@ -58,13 +58,14 @@ public class CategoryManageServiceImpl implements CategoryManageService, Message
     public void createCategory(CategoryDetails categoryDetails) {
         try {
             this.categoryManager.createCategory(categoryDetails);
-        } catch (PurchaseExistException exist) {
-            throw new ServiceException(exist.getMessage(), ServiceCode.DATA_EXIST.getCode());
         } catch (PurchaseNotFoundException notFound) {
             throw new ServiceException(notFound.getMessage(), MallCode.CATEGORY_PARENT_NOT_FOUND.getCode());
         } catch (PurchaseNotAllowedException notAllowed) {
             throw new ServiceException(notAllowed.getMessage(), MallCode.CATEGORY_NOT_ALLOWED_LEVEL.getCode());
         }
+        // catch (PurchaseExistException exist) {
+        //            throw new ServiceException(exist.getMessage(), ServiceCode.DATA_EXIST.getCode());
+        //        }
     }
 
     @Override

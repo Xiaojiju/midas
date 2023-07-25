@@ -15,12 +15,16 @@
  */
 package com.mtfm.app_purchase;
 
+import com.mtfm.app_purchase.mapper.CartMapper;
+import com.mtfm.app_purchase.service.cart.CartService;
+import com.mtfm.app_purchase.service.cart.impl.CartServiceImpl;
 import com.mtfm.app_purchase.service.express.DeliveryAddressService;
 import com.mtfm.app_purchase.service.express.impl.DeliveryAddressServiceImpl;
 import com.mtfm.app_purchase.service.purchase.CategoryService;
 import com.mtfm.app_purchase.service.purchase.CommodityService;
 import com.mtfm.app_purchase.service.purchase.impl.CategoryServiceImpl;
 import com.mtfm.app_purchase.service.purchase.impl.CommodityServiceImpl;
+import com.mtfm.cart.manager.CartItemManager;
 import com.mtfm.express.manager.DeliveryAddressManager;
 import com.mtfm.express.manager.ExpressRelationManager;
 import com.mtfm.purchase.manager.CategoryManager;
@@ -57,5 +61,10 @@ public class AppMallConfiguration {
     @Bean
     public DeliveryAddressService deliveryAddressService(DeliveryAddressManager deliveryAddressManager) {
         return new DeliveryAddressServiceImpl(deliveryAddressManager);
+    }
+
+    @Bean
+    public CartService cartService(CartMapper cartMapper, CartItemManager cartItemManager) {
+        return new CartServiceImpl(cartMapper, cartItemManager);
     }
 }

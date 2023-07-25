@@ -31,8 +31,6 @@ public interface CartItemDetails extends Serializable {
 
     Long getCommodityId();
 
-    String getUserId();
-
     String getProduct();
 
     String getTitle();

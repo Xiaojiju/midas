@@ -37,6 +37,6 @@
             LEFT JOIN `purchase_commodity_sku_relation` `pcsr` ON `pc`.`id` = `pcsr`.`commodity_id`
         WHERE
             `pc`.`spu_id` = #{ spuId }
-            GROUP BY `pcsr`.`commodity_id`
+            GROUP BY `pc`.`id`
     </select>
 </mapper>

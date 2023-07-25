@@ -15,6 +15,9 @@
  */
 package com.mtfm.cart;
 
+import com.mtfm.cart.manager.CartItemManager;
+import com.mtfm.cart.manager.service.CartItemManageService;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 /**
@@ -27,5 +30,10 @@ public class MallCartConfiguration {
 
     public MallCartConfiguration(ResourceBundleMessageSource messageSource) {
         messageSource.addBasenames("i18n/mall_cart_messages");
+    }
+
+    @Bean
+    public CartItemManager cartItemManager() {
+        return new CartItemManageService();
     }
 }

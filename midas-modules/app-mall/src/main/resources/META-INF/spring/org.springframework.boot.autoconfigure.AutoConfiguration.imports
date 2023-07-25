@@ -3,3 +3,4 @@ com.mtfm.app_purchase.web.CategoryViewApi
 com.mtfm.app_purchase.web.CommodityViewApi
 com.mtfm.app_purchase.web.SwiperApi
 com.mtfm.app_purchase.web.DeliveryAddressApi
+com.mtfm.app_purchase.web.CartApi

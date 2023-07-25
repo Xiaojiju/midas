@@ -62,7 +62,7 @@ public class CommodityDetails implements Serializable {
 
     private Integer sale;
 
-    @NotBlank(groups = ValidateGroup.Create.class, message = "CommodityDetails.stocks")
+    @NotNull(groups = ValidateGroup.Create.class, message = "CommodityDetails.stocks")
     private Integer stocks;
     /**
      * 对应选择的规则

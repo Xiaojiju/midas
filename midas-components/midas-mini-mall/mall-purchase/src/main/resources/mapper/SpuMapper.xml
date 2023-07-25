@@ -60,7 +60,7 @@
 
     <select id="selectCommodityCount" resultType="long">
         SELECT
-            COUNT(`ps`.`id`)
+            COUNT(`pc`.`id`)
         FROM
             `purchase_commodity` `pc`
         WHERE
