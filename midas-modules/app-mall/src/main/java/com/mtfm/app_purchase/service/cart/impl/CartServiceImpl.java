@@ -22,6 +22,7 @@ import com.mtfm.app_purchase.service.provisioning.CartItemView;
 import com.mtfm.cart.entity.CartItem;
 import com.mtfm.cart.exception.CartItemNotFoundException;
 import com.mtfm.cart.manager.CartItemManager;
+import com.mtfm.cart.manager.provisioning.CartItemDetails;
 import com.mtfm.core.ServiceCode;
 import com.mtfm.core.context.exceptions.ServiceException;
 import com.mtfm.security.SecurityHolder;
@@ -29,6 +30,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 /**
@@ -60,9 +62,28 @@ public class CartServiceImpl implements CartService, MessageSourceAware {
                     "could not found commodity, maybe not exist."),
                     ServiceCode.DATA_NOT_FOUND.getCode());
         }
-        cartItem.setUserId(userId);
-        cartItem.setQuantity(1);
-        this.cartItemManager.addItem(cartItem);
+        List<? extends CartItemDetails> cartItemDetails = this.cartItemManager.loadItems(userId);
+        if (CollectionUtils.isEmpty(cartItemDetails)) {
+            cartItem.setUserId(userId);
+            cartItem.setQuantity(1);
+            this.cartItemManager.addItem(cartItem);
+            return ;
+        }
+        CartItem exist = null;
+        for (CartItemDetails details : cartItemDetails) {
+            if (details.getCommodityId() == id) {
+                exist = (CartItem) details;
+                break;
+            }
+        }
+        if (exist == null) {
+            cartItem.setUserId(userId);
+            cartItem.setQuantity(1);
+            this.cartItemManager.addItem(cartItem);
+            return ;
+        }
+        exist.setQuantity(exist.getQuantity() + 1);
+        this.cartItemManager.updateItem(exist);
     }
 
     @Override
@@ -70,7 +91,17 @@ public class CartServiceImpl implements CartService, MessageSourceAware {
         // String userId = (String) SecurityHolder.getPrincipal();
         String userId = "1";
         try {
-            this.cartItemManager.removeItems(userId, items);
+            List<? extends CartItemDetails> cartItemDetails = this.cartItemManager.loadItems(userId);
+            if (CollectionUtils.isEmpty(cartItemDetails)) {
+                return ;
+            }
+            boolean allMatch = cartItemDetails.stream().allMatch((item) -> ((CartItem) item).getUserId().equals(userId));
+            if (allMatch) {
+                this.cartItemManager.removeItems(items);
+                return ;
+            }
+            throw new ServiceException(this.messages.getMessage("CartItemManager.cartItemWrongOwn",
+                    "partial specified data does not exist"), ServiceCode.DELETE_FAIL.getCode());
         } catch (CartItemNotFoundException notFound) {
             throw new ServiceException(notFound.getMessage(), ServiceCode.DELETE_FAIL.getCode());
         }
@@ -81,7 +112,26 @@ public class CartServiceImpl implements CartService, MessageSourceAware {
         // String userId = (String) SecurityHolder.getPrincipal();
         String userId = "1";
         try {
-            this.cartItemManager.setQuality(id, userId, quantity);
+            List<? extends CartItemDetails> cartItemDetails = this.cartItemManager.loadItems(userId);
+            if (CollectionUtils.isEmpty(cartItemDetails)) {
+                throw new ServiceException(this.messages.getMessage("CommodityManageService.notFound",
+                        "could not found commodity, maybe not exist."),
+                        ServiceCode.DATA_NOT_FOUND.getCode());
+            }
+            CartItem cartItem = null;
+            for (CartItemDetails details : cartItemDetails) {
+                if (details.getId() == id) {
+                    cartItem = (CartItem) details;
+                    break;
+                }
+            }
+            if (cartItem == null) {
+                throw new ServiceException(this.messages.getMessage("CommodityManageService.notFound",
+                        "could not found commodity, maybe not exist."),
+                        ServiceCode.DATA_NOT_FOUND.getCode());
+            }
+            cartItem.setQuantity(quantity);
+            this.cartItemManager.updateItem(cartItem);
         } catch (CartItemNotFoundException notFound) {
             throw new ServiceException(this.messages.getMessage("CommodityManageService.notFound",
                     "could not found commodity, maybe not exist."),

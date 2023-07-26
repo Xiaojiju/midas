@@ -63,5 +63,7 @@ public interface CommodityMapper extends BaseMapper<Commodity> {
      * @param query 过滤条件
      * @return 简要信息
      */
-    Page<CommodityView> selectViews(Page<CommodityView> page, @Param("query") CommodityPageQuery query);
+    List<CommodityView> selectViews(@Param("query") CommodityPageQuery query);
+
+    long selectTotal(@Param("query") CommodityPageQuery query);
 }

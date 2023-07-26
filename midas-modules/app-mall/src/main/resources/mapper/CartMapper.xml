@@ -108,6 +108,9 @@
                     LEFT JOIN `purchase_commodity` `pc` ON `pc`.`spu_id` = `ps`.`id`
                 WHERE
                     `ci`.`user_id` = #{ userId }
+                    AND `pc`.`deleted` = 0
+                    AND `ps`.`deleted` = 0
+                    AND `ci`.`deleted` = 0
             ) `temp`
             LEFT JOIN `purchase_commodity_sku_relation` `pcsr` ON `pcsr`.`commodity_id` = `temp`.`cart_commodity_id`
             LEFT JOIN `purchase_sku_item_value` `psiv` ON `pcsr`.`sku_id` = `psiv`.`id`

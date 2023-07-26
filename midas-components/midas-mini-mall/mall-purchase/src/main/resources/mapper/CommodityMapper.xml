@@ -270,6 +270,7 @@
             `pci`.`index_image`
         FROM
             `purchase_commodity` `pc`
+            LEFT JOIN `purchase_spu` `spu` ON `pc`.`spu_id` = `spu`.`id`
             LEFT JOIN `purchase_commodity_sku_relation` `pcsr` ON `pc`.`id` = `pcsr`.`commodity_id`
             LEFT JOIN `purchase_sku_item_value` `psiv` ON `pcsr`.`sku_id` = `psiv`.`id`
             LEFT JOIN `purchase_commodity_attr_val` `pcav` ON `pc`.`id` = `pcav`.`commodity_id`
@@ -277,32 +278,102 @@
         WHERE
             `pc`.`id` = #{ commodityId }
             AND `pc`.`deleted` = 0
+            AND `spu`.`deleted` = 0
     </select>
     <!-- 查询规格商品的简要信息 -->
     <select id="selectViews" resultMap="commodity_view_map">
         SELECT
-            `result`.*,
-            `psi`.`image_url` `index_image`,
+            `data`.*,
             `pt`.`tag_name`
         FROM (
             SELECT
+                `result`.*,
+                `psi`.`image_url` `index_image`
+            FROM (
+                SELECT
+                    `spu`.`id`,
+                    `spu`.`product`,
+                    SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`id` ORDER BY `commodity`.`current_price` ASC), ",", 1) `commodity_id`,
+                    SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`commodity_name` ORDER BY `commodity`.`current_price` ASC), ",", 1) `commodity_name`,
+                    SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`title` ORDER BY `commodity`.`current_price` ASC), ",", 1) `title`,
+                    SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`subtitle` ORDER BY `commodity`.`current_price` ASC), ",", 1) `subtitle`,
+                    SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`price` ORDER BY `commodity`.`current_price` ASC), ",", 1) `price`,
+                    SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`current_price` ORDER BY `commodity`.`current_price` ASC), ",", 1) `current_price`,
+                    SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`vip_price` ORDER BY `commodity`.`current_price` ASC), ",", 1) `vip_price`,
+                    SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`stocks` ORDER BY `commodity`.`current_price` ASC), ",", 1) `stocks`,
+                    SUM(`commodity`.`sale`) `sale`
+                FROM
+                    `purchase_spu` `spu`
+                    LEFT JOIN `purchase_commodity` `commodity` ON `commodity`.`spu_id` = `spu`.`id`
+                    LEFT JOIN `purchase_category` `category` ON `spu`.`category_id` = `category`.`id`
+                <where>
+                    `commodity`.`deleted` = 0
+                    AND `spu`.`deleted` = 0
+                    AND `spu`.`listing` = 1
+                    AND `commodity`.`id` is not null
+                    <if test="query.product != null and query.product != ''">
+                        AND `spu`.`product` LIKE CONCAT('%', #{ query.product}, '%')
+                    </if>
+                    <if test="query.category != null">
+                        AND `category`.`id` = #{ query.category }
+                    </if>
+                    <if test="query.categoryName != null and query.categoryName != ''">
+                        AND `category`.`category` = #{ query.categoryName }
+                    </if>
+                </where>
+                GROUP BY `spu`.`id`
+            ) `result`
+            LEFT JOIN `purchase_spu_image` `psi` ON `result`.`id` = `psi`.`spu_id`
+            <where>
+                `psi`.`index_image` = 1
+                <if test="query.lessPrice != null and query.lessPrice != ''">
+                    AND `result`.`current_price` &lt;= #{ query.lessPrice }
+                </if>
+                <if test="query.greaterPrice != null and query.greaterPrice != ''">
+                    AND `result`.`current_price` &gt;= #{ query.greaterPrice }
+                </if>
+            </where>
+            <if test="(query.sortBySale != null and query.sortBySale != '') or (query.sortByPrice != null and query.sortByprice != '')">
+                ORDER BY
+                <if test="query.sortBySale == 'asc'">
+                    `result`.`sale` ASC
+                </if>
+                <if test="query.sortBySale == 'desc'">
+                    `result`.`sale` DESC
+                </if>
+                <if test="query.sortBySale != null and query.sortBySale != '' and query.sortByPrice != null and query.sortByPrice != ''">
+                    ,
+                </if>
+                <if test="query.sortByPrice == 'asc'">
+                    `result`.`current_price` ASC
+                </if>
+                <if test="query.sortByPrice == 'desc'">
+                    `result`.`current_price` DESC
+                </if>
+            </if>
+            LIMIT #{ query.current }, #{ query.size }
+        ) `data`
+        LEFT JOIN `purchase_tag` `pt` ON `data`.`id` = `pt`.`spu_id`
+    </select>
+    <!-- 查询总数 -->
+    <select id="selectTotal" resultType="long">
+        SELECT
+            COUNT(`result`.`id`)
+        FROM (
+            SELECT
                 `spu`.`id`,
-                `spu`.`product`,
-                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`id` ORDER BY `commodity`.`current_price` ASC), ",", 1) `commodity_id`,
-                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`commodity_name` ORDER BY `commodity`.`current_price` ASC), ",", 1) `commodity_name`,
-                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`title` ORDER BY `commodity`.`current_price` ASC), ",", 1) `title`,
-                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`subtitle` ORDER BY `commodity`.`current_price` ASC), ",", 1) `subtitle`,
                 SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`price` ORDER BY `commodity`.`current_price` ASC), ",", 1) `price`,
                 SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`current_price` ORDER BY `commodity`.`current_price` ASC), ",", 1) `current_price`,
-                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`vip_price` ORDER BY `commodity`.`current_price` ASC), ",", 1) `vip_price`,
-                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`stocks` ORDER BY `commodity`.`current_price` ASC), ",", 1) `stocks`,
-                SUM(`commodity`.`sale`) `sale`
+                SUBSTRING_INDEX(GROUP_CONCAT(`commodity`.`vip_price` ORDER BY `commodity`.`current_price` ASC), ",", 1) `vip_price`
             FROM
                 `purchase_spu` `spu`
                 LEFT JOIN `purchase_commodity` `commodity` ON `commodity`.`spu_id` = `spu`.`id`
                 LEFT JOIN `purchase_category` `category` ON `spu`.`category_id` = `category`.`id`
             <where>
                 `commodity`.`deleted` = 0
+                AND `spu`.`deleted` = 0
+                AND `spu`.`listing` = 1
+                AND `commodity`.`id` is not null
                 <if test="query.product != null and query.product != ''">
                     AND `spu`.`product` LIKE CONCAT('%', #{ query.product}, '%')
                 </if>
@@ -312,36 +383,16 @@
                 <if test="query.categoryName != null and query.categoryName != ''">
                     AND `category`.`category` = #{ query.categoryName }
                 </if>
-                <if test="query.lessPrice != null and query.lessPrice != ''">
-                    AND `commodity`.`current_price` &lt;= #{ query.lessPrice }
-                </if>
-                <if test="query.greaterPrice != null and query.greaterPrice != ''">
-                    AND `commodity`.`current_price` &gt;= #{ query.greaterPrice }
-                </if>
             </where>
             GROUP BY `spu`.`id`
         ) `result`
-        LEFT JOIN `purchase_spu_image` `psi` ON `result`.`id` = `psi`.`spu_id`
-        LEFT JOIN `purchase_tag` `pt` ON `result`.`id` = `pt`.`spu_id`
-        WHERE
-            `psi`.`index_image` = 1
-        <if test="(query.sortBySale != null and query.sortBySale != '') or (query.sortByPrice != null and query.sortByprice != '')">
-            ORDER BY
-            <if test="query.sortBySale == 'asc'">
-                `commodity`.`sale` ASC
+        <where>
+            <if test="query.lessPrice != null and query.lessPrice != ''">
+                AND `result`.`current_price` &lt;= #{ query.lessPrice }
             </if>
-            <if test="query.sortBySale == 'desc'">
-                `commodity`.`sale` DESC
+            <if test="query.greaterPrice != null and query.greaterPrice != ''">
+                AND `result`.`current_price` &gt;= #{ query.greaterPrice }
             </if>
-            <if test="query.sortBySale != null and query.sortBySale != ''">
-                ,
-            </if>
-            <if test="query.sortByPrice == 'asc'">
-                `commodity`.`current_price` ASC
-            </if>
-            <if test="query.sortByPrice == 'desc'">
-                `commodity`.`current_price` DESC
-            </if>
-        </if>
+        </where>
     </select>
 </mapper>

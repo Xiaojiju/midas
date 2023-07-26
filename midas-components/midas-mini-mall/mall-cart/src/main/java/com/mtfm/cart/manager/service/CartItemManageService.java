@@ -22,7 +22,6 @@ import com.mtfm.cart.entity.CartItem;
 import com.mtfm.cart.exception.CartItemNotFoundException;
 import com.mtfm.cart.manager.CartItemManager;
 import com.mtfm.cart.mapper.CartItemMapper;
-import com.mtfm.tools.StringUtils;
 import com.mtfm.tools.enums.Judge;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
@@ -48,28 +47,16 @@ public class CartItemManageService extends ServiceImpl<CartItemMapper, CartItem>
     }
 
     @Override
-    public void setQuality(long id, String userId, int quantity) {
-        if (!StringUtils.hasText(userId)) {
-            throw new IllegalArgumentException("user id could not be null");
-        }
-        CartItem cartItem = this.getById(id);
-        if (cartItem == null || cartItem.getId() == id) {
-            throw new CartItemNotFoundException(this.messages.getMessage("CartItemManager.cartItemNotFound",
-                    "Unable to find the specified product from the shopping cart"));
-        }
-        cartItem.setQuantity(quantity);
+    public void updateItem(CartItem cartItem) {
         this.updateById(cartItem);
     }
 
     @Override
-    public void removeItems(String userId, List<Long> items) {
+    public void removeItems(List<Long> items) {
         if (CollectionUtils.isEmpty(items)) {
             return ;
         }
-        QueryWrapper<CartItem> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(CartItem::getUserId, userId)
-                .in(CartItem::getId, items);
-        if (!this.remove(queryWrapper)) {
+        if (!this.removeBatchByIds(items)) {
             throw new CartItemNotFoundException(this.messages.getMessage("CartItemManager.cartItemNotFound",
                     "Unable to find the specified product from the shopping cart"));
         }

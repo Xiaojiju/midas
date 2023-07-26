@@ -18,6 +18,7 @@ package com.mtfm.backend_support.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mtfm.datasource.BaseModel;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -61,6 +62,7 @@ public class SolarRole extends BaseModel<SolarRole> implements Serializable, Gra
         this.roleName = roleName;
     }
 
+    @JsonIgnore
     @Override
     public String getAuthority() {
         return this.id;

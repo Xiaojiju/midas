@@ -152,9 +152,11 @@ public class CommodityManageService extends ServiceImpl<CommodityMapper, Commodi
 
     @Override
     public PageTemplate<CommodityView> loadCommodityViewPage(CommodityPageQuery query) {
-        Page<CommodityView> page = new Page<CommodityView>().setSize(query.getSize()).setCurrent(query.getCurrent());
-        page = this.baseMapper.selectViews(page, query);
-        return new PageTemplate<>(page.getCurrent(), page.getSize(), page.getTotal(), page.getRecords());
+        long current = query.getCurrent();
+        query.setCurrent((current - 1) * query.getSize());
+        List<CommodityView> page = this.baseMapper.selectViews(query);
+        long total = this.baseMapper.selectTotal(query);
+        return new PageTemplate<>(current, query.getSize(), total, page);
     }
 
     @Override

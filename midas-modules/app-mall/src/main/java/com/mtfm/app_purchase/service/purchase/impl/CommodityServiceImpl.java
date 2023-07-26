@@ -15,6 +15,7 @@
  */
 package com.mtfm.app_purchase.service.purchase.impl;
 
+import com.mtfm.app_purchase.AppPurchaseMessageSource;
 import com.mtfm.app_purchase.MallCode;
 import com.mtfm.app_purchase.service.provisioning.SpuView;
 import com.mtfm.app_purchase.service.purchase.CommodityService;
@@ -29,6 +30,9 @@ import com.mtfm.purchase.manager.provisioning.CommodityDetails;
 import com.mtfm.purchase.manager.provisioning.CommodityView;
 import com.mtfm.purchase.manager.provisioning.SpuDetails;
 import com.mtfm.purchase.manager.service.bo.CommodityPageQuery;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.context.support.MessageSourceAccessor;
 
 import java.util.List;
 
@@ -37,7 +41,9 @@ import java.util.List;
  * @since 1.0.0
  * 商品业务
  */
-public class CommodityServiceImpl implements CommodityService {
+public class CommodityServiceImpl implements CommodityService, MessageSourceAware {
+
+    private MessageSourceAccessor messages = AppPurchaseMessageSource.getAccessor();
 
     private CommodityManager commodityManager;
 
@@ -62,7 +68,12 @@ public class CommodityServiceImpl implements CommodityService {
 
     @Override
     public CommodityDetails loadDetails(long commodityId) {
-        return this.commodityManager.loadCommodityById(commodityId);
+        CommodityDetails commodityDetails = this.commodityManager.loadCommodityById(commodityId);
+        if (commodityDetails == null) {
+            throw new ServiceException(this.messages.getMessage("CommodityManageService.notFound",
+                    "could not found commodity, maybe not exist."), MallCode.SPU_NOT_FOUND.getCode());
+        }
+        return commodityDetails;
     }
 
     @Override
@@ -78,6 +89,11 @@ public class CommodityServiceImpl implements CommodityService {
         } catch (PurchaseNotFoundException notFound) {
             throw new ServiceException(notFound.getMessage(), MallCode.SPU_NOT_FOUND.getCode());
         }
+    }
+
+    @Override
+    public void setMessageSource(MessageSource messageSource) {
+        this.messages = new MessageSourceAccessor(messageSource);
     }
 
     protected CommodityManager getCommodityManager() {

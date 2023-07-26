@@ -69,10 +69,8 @@ public class GlobalExceptionHandler implements MessageSourceAware {
 
     @ExceptionHandler({HttpMessageNotReadableException.class })
     public RestResult<Void> httpMessageNotReadableException(HttpMessageNotReadableException e) {
-        HttpInputMessage httpInputMessage = e.getHttpInputMessage();
-        HttpHeaders headers = httpInputMessage.getHeaders();
-        List<String> contentTypes = headers.get("Content-Type");
-        return RestResult.error("request body missing and request body must accord with Content-Type:" + contentTypes);
+        return RestResult.error(this.messageSource.getMessage("Exception.jsonTransferWrong",
+                "The parameter conversion passed is incorrect. Please refer to the documentation for the correct construction parameters"));
     }
 
     @ExceptionHandler({ MissingServletRequestParameterException.class })

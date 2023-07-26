@@ -32,19 +32,16 @@ public interface CartItemManager {
     void addItem(CartItem cartItem);
 
     /**
-     * 设置数量
-     * @param id 购物车商品id
-     * @param userId 用户id
-     * @param quality 数量
+     * 修复商品到购物车中
+     * @param cartItem 商品
      */
-    void setQuality(long id, String userId, int quantity);
+    void updateItem(CartItem cartItem);
 
     /**
      * 删除购物车商品
-     * @param userId 用户id
      * @param items 购物车商品id
      */
-    void removeItems(String userId, List<Long> items);
+    void removeItems(List<Long> items);
 
     /**
      * 获取购物车商品
