@@ -2,7 +2,7 @@ com.mtfm.backend_support.config.ImportBackendFilter
 com.mtfm.backend_support.config.BackendSupportConfiguration
 com.mtfm.backend_support.config.BackendSupportComponentConfiguration
 com.mtfm.backend_support.config.BackendAuthenticationProviderConfiguration
-com.mtfm.backend_support.web.RoleServiceApi
-com.mtfm.backend_support.web.UserServiceApi
-com.mtfm.backend_support.web.MenuServiceApi
+com.mtfm.backend_support.web.GroupServiceApi
+com.mtfm.backend_support.web.RouterServiceApi
+com.mtfm.backend_support.web.UserProfileServiceApi
 com.mtfm.backend_support.listener.ClearSessionApplicationListener

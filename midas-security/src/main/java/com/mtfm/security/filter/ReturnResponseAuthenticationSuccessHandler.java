@@ -2,11 +2,6 @@ package com.mtfm.security.filter;
 
 import com.mtfm.core.context.response.RestResult;
 import com.mtfm.core.util.ResponseUtils;
-import com.mtfm.security.authentication.SecurityToken;
-import com.mtfm.security.core.LocalSessionProvider;
-import com.mtfm.security.core.LocalSessionToken;
-import com.mtfm.security.core.SessionContext;
-import com.mtfm.security.core.UserSubject;
 import com.mtfm.tools.JSONUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,45 +13,14 @@ import java.io.IOException;
 
 public class ReturnResponseAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    private SessionContext<Authentication> securitySessionContextHolder;
-
-    private LocalSessionProvider localSessionProvider;
-
-    public ReturnResponseAuthenticationSuccessHandler(SessionContext<Authentication> securitySessionContextHolder) {
-        this(securitySessionContextHolder, new LocalSessionProvider());
-    }
-
-    public ReturnResponseAuthenticationSuccessHandler(SessionContext<Authentication> securitySessionContextHolder,
-                                                      LocalSessionProvider localSessionProvider) {
-        this.securitySessionContextHolder = securitySessionContextHolder;
-        this.localSessionProvider = localSessionProvider;
+    public ReturnResponseAuthenticationSuccessHandler() {
     }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
         Authentication authentication) throws IOException {
-        LocalSessionToken localSessionToken = localSessionProvider.provide(authentication);
-        securitySessionContextHolder.putSession(localSessionToken);
-        SecurityContextHolder.getContext().setAuthentication(localSessionToken);
-        UserSubject userSubject = (UserSubject) localSessionToken.getDetails();
-        SecurityToken securityToken = SecurityToken.SecurityTokenBuilder.withAccessToken((String) localSessionToken.getCredentials())
-                        .setSignAccessTimestamp(userSubject.getSignTimestamps()).build();
-        ResponseUtils.writeObject(response, JSONUtils.toJsonString(RestResult.success(securityToken)));
-    }
-
-    public SessionContext<Authentication> getSecuritySessionContextHolder() {
-        return securitySessionContextHolder;
-    }
-
-    public void setSecuritySessionContextHolder(SessionContext<Authentication> securitySessionContextHolder) {
-        this.securitySessionContextHolder = securitySessionContextHolder;
-    }
-
-    public LocalSessionProvider getLocalSessionProvider() {
-        return localSessionProvider;
-    }
-
-    public void setLocalSessionProvider(LocalSessionProvider localSessionProvider) {
-        this.localSessionProvider = localSessionProvider;
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        RestResult<Object> success = RestResult.success();
+        ResponseUtils.writeObject(response, JSONUtils.toJsonString(success));
     }
 }

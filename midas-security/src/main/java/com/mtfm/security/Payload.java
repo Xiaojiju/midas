@@ -15,6 +15,8 @@
  */
 package com.mtfm.security;
 
+import com.mtfm.tools.StringUtils;
+
 import java.io.Serializable;
 
 /**
@@ -40,6 +42,10 @@ public class Payload implements Serializable {
     public Payload(String username, String password) {
         this.username = username;
         this.password = password;
+    }
+
+    public boolean isEmpty() {
+        return !StringUtils.hasText(this.username) || !StringUtils.hasText(this.password);
     }
 
     public String getUsername() {

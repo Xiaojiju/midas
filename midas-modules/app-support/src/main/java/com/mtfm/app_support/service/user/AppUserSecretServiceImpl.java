@@ -23,6 +23,7 @@ import com.mtfm.app_support.entity.AppUserSecret;
 import com.mtfm.app_support.mapper.AppUserSecretMapper;
 import com.mtfm.app_support.service.AppUserSecretService;
 import com.mtfm.core.context.exceptions.ServiceException;
+import com.mtfm.security.AppUser;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
@@ -45,9 +46,9 @@ public class AppUserSecretServiceImpl extends ServiceImpl<AppUserSecretMapper, A
     @Override
     public AppUserSecret getByUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userId = (String) authentication.getPrincipal();
+        AppUser appUser = (AppUser) authentication.getPrincipal();
         QueryWrapper<AppUserSecret> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(AppUserSecret::getUserId, userId);
+        queryWrapper.lambda().eq(AppUserSecret::getUserId, appUser.getId());
         return this.getOne(queryWrapper);
     }
 

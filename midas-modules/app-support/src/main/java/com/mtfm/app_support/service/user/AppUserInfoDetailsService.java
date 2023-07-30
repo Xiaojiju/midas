@@ -33,20 +33,20 @@ import org.springframework.util.Assert;
  * @author 一块小饼干
  * @since 1.0.0
  * 用户基本信息业务
- * 该类是{@link AppUserManageService}的代理类，其目的主要是用户在更上层进行更新用户的基本信息
+ * 该类是{@link AppUserAccountManageService}的代理类，其目的主要是用户在更上层进行更新用户的基本信息
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class AppUserInfoDetailsService implements UserDetailsManager, MessageSourceAware {
 
-    private AppUserManageService appUserManageService;
+    private AppUserAccountManageService appUserAccountManageService;
 
     private AppUserBaseInfoService appUserBaseInfoService;
 
     private MessageSourceAccessor messages;
 
-    public AppUserInfoDetailsService(AppUserManageService appUserManageService, AppUserBaseInfoService appUserBaseInfoService) {
-        this.appUserManageService = appUserManageService;
+    public AppUserInfoDetailsService(AppUserAccountManageService appUserAccountManageService, AppUserBaseInfoService appUserBaseInfoService) {
+        this.appUserAccountManageService = appUserAccountManageService;
         this.appUserBaseInfoService = appUserBaseInfoService;
     }
 
@@ -60,8 +60,8 @@ public class AppUserInfoDetailsService implements UserDetailsManager, MessageSou
         Assert.isInstanceOf(AppUserDetails.class, user, "only supports AppUserDetails.class");
         AppUserDetails appUserDetails = (AppUserDetails) user;
         AppUserBaseInfo appUserBaseInfo = appUserDetails.getAppUserBaseInfo();
-        this.appUserManageService.createUser(appUserDetails);
-        AppUserReference savedUser = this.appUserManageService.getAppUserReferenceService().getOneByUsername(appUserDetails.getUsername());
+        this.appUserAccountManageService.createUser(appUserDetails);
+        AppUserReference savedUser = this.appUserAccountManageService.getAppUserReferenceService().getOneByUsername(appUserDetails.getUsername());
         AppUserBaseInfo build = AppUserBaseInfo.uncreated(savedUser.getUserId())
                 .whereFrom(appUserBaseInfo.getCountry(), appUserBaseInfo.getProvince(), appUserBaseInfo.getCity())
                 .withAvatar(appUserBaseInfo.getAvatar())
@@ -77,7 +77,7 @@ public class AppUserInfoDetailsService implements UserDetailsManager, MessageSou
         Assert.isInstanceOf(AppUserDetails.class, user, "only supports AppUserDetails.class");
         AppUserDetails appUserDetails = (AppUserDetails) user;
         AppUserBaseInfo appUserBaseInfo = appUserDetails.getAppUserBaseInfo();
-        this.appUserManageService.updateUser(appUserDetails);
+        this.appUserAccountManageService.updateUser(appUserDetails);
         AppUserBaseInfo userBaseInfo = this.appUserBaseInfoService.getByUserId(appUserDetails.getId());
         AppUserBaseInfo build = AppUserBaseInfo.created(userBaseInfo.getId(), userBaseInfo.getUserId())
                 .whereFrom(appUserBaseInfo.getCountry(), appUserBaseInfo.getProvince(), appUserBaseInfo.getCity())
@@ -91,30 +91,30 @@ public class AppUserInfoDetailsService implements UserDetailsManager, MessageSou
 
     @Override
     public void deleteUser(String username) {
-        this.appUserManageService.deleteUser(username);
+        this.appUserAccountManageService.deleteUser(username);
     }
 
     @Override
     public void changePassword(String oldPassword, String newPassword) {
-        this.appUserManageService.changePassword(oldPassword, newPassword);
+        this.appUserAccountManageService.changePassword(oldPassword, newPassword);
     }
 
     @Override
     public boolean userExists(String username) {
-        return this.appUserManageService.userExists(username);
+        return this.appUserAccountManageService.userExists(username);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return this.appUserManageService.loadUserByUsername(username);
+        return this.appUserAccountManageService.loadUserByUsername(username);
     }
 
-    public AppUserManageService getAppUserManageService() {
-        return appUserManageService;
+    public AppUserAccountManageService getAppUserManageService() {
+        return appUserAccountManageService;
     }
 
-    public void setAppUserManageService(AppUserManageService appUserManageService) {
-        this.appUserManageService = appUserManageService;
+    public void setAppUserManageService(AppUserAccountManageService appUserAccountManageService) {
+        this.appUserAccountManageService = appUserAccountManageService;
     }
 
     public AppUserBaseInfoService getAppUserBaseInfoService() {

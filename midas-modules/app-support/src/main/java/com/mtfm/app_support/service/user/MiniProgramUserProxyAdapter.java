@@ -38,13 +38,13 @@ import org.springframework.util.Assert;
 @Transactional(rollbackFor = Exception.class)
 public class MiniProgramUserProxyAdapter extends AppUserInfoDetailsService {
 
-    public MiniProgramUserProxyAdapter(AppUserManageService appUserManageService, AppUserBaseInfoService appUserBaseInfoService) {
-        super(appUserManageService, appUserBaseInfoService);
+    public MiniProgramUserProxyAdapter(AppUserAccountManageService appUserAccountManageService, AppUserBaseInfoService appUserBaseInfoService) {
+        super(appUserAccountManageService, appUserBaseInfoService);
     }
 
     @Override
     public void createUser(UserDetails user) {
-        Assert.isInstanceOf(MpUserDetails.class, user, "only supports Registry.class");
+        Assert.isInstanceOf(MpUserDetails.class, user, "only supports MpUserDetails.class");
         // 将小程序用户转为项目的用户
         MpUserDetails registry = (MpUserDetails) user;
         AppUserBaseInfo appUserBaseInfo = AppUserBaseInfo.uncreated()
@@ -63,7 +63,7 @@ public class MiniProgramUserProxyAdapter extends AppUserInfoDetailsService {
 
     @Override
     public void updateUser(UserDetails user) {
-        Assert.isInstanceOf(MpUserDetails.class, user, "only supports Registry.class");
+        Assert.isInstanceOf(MpUserDetails.class, user, "only supports MpUserDetails.class");
         // 将小程序用户转为项目的用户
         MpUserDetails createUser = (MpUserDetails) user;
         AppUserReference oneByUsername = this.getAppUserManageService().getAppUserReferenceService().getOneByUsername(createUser.getUsername());

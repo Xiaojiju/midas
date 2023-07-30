@@ -32,7 +32,7 @@ import org.springframework.util.StringUtils;
 @TableName("solar_secret")
 public class SolarSecret {
 
-    @TableId(value = "s_id", type = IdType.ASSIGN_ID)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
 
     /**

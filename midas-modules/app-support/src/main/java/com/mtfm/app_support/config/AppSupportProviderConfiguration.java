@@ -21,8 +21,7 @@ import com.mtfm.app_support.service.AppUserBaseInfoService;
 import com.mtfm.app_support.service.AppUserReferenceService;
 import com.mtfm.app_support.service.AppUserSecretService;
 import com.mtfm.app_support.service.user.*;
-import com.mtfm.wechat_mp.authentication.MiniProgramUserDetailsAuthenticationProvider;
-import com.mtfm.weixin.mp.service.OauthCodeService;
+import com.mtfm.wechat_mp.authentication.MiniProgramPhoneAuthenticationProvider;
 import com.mtfm.weixin.mp.service.PhoneInfoService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,14 +39,14 @@ import java.util.List;
 public class AppSupportProviderConfiguration {
     /**
      * 注入小程序认证类
-     * @param oauthCodeService 远程微信小程序服务
+     * @param phoneInfoService 远程微信小程序服务
      * @param userDetailsManager 用户加载
      * @return 微信小程序认证处理器
      */
     @Bean
-    public MiniProgramUserDetailsAuthenticationProvider miniProgramUserDetailsAuthenticationProvider(
+    public MiniProgramPhoneAuthenticationProvider miniProgramUserDetailsAuthenticationProvider(
             PhoneInfoService phoneInfoService, MiniProgramUserProxyAdapter userDetailsManager) {
-        return new MiniProgramUserDetailsAuthenticationProvider(phoneInfoService, userDetailsManager);
+        return new MiniProgramPhoneAuthenticationProvider(userDetailsManager, phoneInfoService);
     }
 
     @Bean
@@ -71,16 +70,16 @@ public class AppSupportProviderConfiguration {
     }
 
     @Bean
-    public AppUserManageService appUserManageService(AppUserMapper appUserMapper,
-                                                     AppUserReferenceService appUserReferenceService,
-                                                     AppUserSecretService appUserSecretService) {
-        return new AppUserManageService(appUserMapper, appUserReferenceService, appUserSecretService);
+    public AppUserAccountManageService appUserManageService(AppUserMapper appUserMapper,
+                                                            AppUserReferenceService appUserReferenceService,
+                                                            AppUserSecretService appUserSecretService) {
+        return new AppUserAccountManageService(appUserMapper, appUserReferenceService, appUserSecretService);
     }
 
     @Bean
-    public MiniProgramUserProxyAdapter miniProgramUserProxyAdapter(AppUserManageService appUserManageService,
+    public MiniProgramUserProxyAdapter miniProgramUserProxyAdapter(AppUserAccountManageService appUserAccountManageService,
                                                                    AppUserBaseInfoService appUserBaseInfoService) {
-        return new MiniProgramUserProxyAdapter(appUserManageService, appUserBaseInfoService);
+        return new MiniProgramUserProxyAdapter(appUserAccountManageService, appUserBaseInfoService);
     }
 
 }

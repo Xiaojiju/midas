@@ -17,11 +17,11 @@ package com.mtfm.security.filter;
 
 import com.mtfm.core.util.tools.IOUtils;
 import com.mtfm.security.Payload;
-import com.mtfm.security.core.SecuritySessionContextHolder;
 import com.mtfm.tools.JSONUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -57,9 +57,6 @@ public class RequestBodyAuthenticationProcessingFilter extends AbstractAuthentic
     public Authentication attemptAuthentication(HttpServletRequest request,
         HttpServletResponse response) throws AuthenticationException, IOException {
         Payload payload = this.readRequestBody(request);
-        if (payload == null) {
-            payload = new Payload();
-        }
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         payload.getUsername(), payload.getPassword());
         return this.getAuthenticationManager().authenticate(authenticationToken);
@@ -74,7 +71,7 @@ public class RequestBodyAuthenticationProcessingFilter extends AbstractAuthentic
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
         AuthenticationException failed) throws IOException, ServletException {
-        SecuritySessionContextHolder.close();
+        SecurityContextHolder.clearContext();
         super.unsuccessfulAuthentication(request, response, failed);
     }
 

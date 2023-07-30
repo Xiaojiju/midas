@@ -7,9 +7,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 
 
 @SpringBootApplication
-@EnableWebSecurity(debug = false)
+@EnableWebSecurity(debug = true)
 @MapperScan(basePackages = {
-        "com.mtfm.backend_support.service.mapper",
+        "com.mtfm.backend_support.provisioning.mapper",
         "com.mtfm.purchase.manager.mapper",
         "com.mtfm.banner.mapper",
         "com.mtfm.express.mapper"

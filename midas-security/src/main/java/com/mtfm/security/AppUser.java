@@ -24,7 +24,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * @author 一块小饼干
@@ -32,6 +32,10 @@ import java.util.Collection;
  * 用户信息
  */
 public class AppUser implements UserDetails, CredentialsContainer, Serializable {
+
+    private static final String DEFAULT_ADMIN_UID = "1";
+
+    private static final String DEFAULT_ADMIN_USERNAME = "admin";
 
     private String id;
 
@@ -59,7 +63,7 @@ public class AppUser implements UserDetails, CredentialsContainer, Serializable 
 
     private Judge thirdPart;
 
-    private Collection<? extends GrantedAuthority> authorities;
+    private List<GrantedAuthority> authorities;
 
     public AppUser() {
     }
@@ -67,7 +71,7 @@ public class AppUser implements UserDetails, CredentialsContainer, Serializable 
     public AppUser(String id, String username, String identifier, String password, LocalDateTime secretExpiredTime,
                    LocalDateTime accountExpiredTime, Judge validated, Judge accountLocked, String additionalKey,
                    LocalDateTime usernameExpiredTime, Judge secretAccess, Judge loginAccess, Judge thirdPart,
-                   Collection<? extends GrantedAuthority> authorities) {
+                   List<GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.identifier = identifier;
@@ -97,8 +101,19 @@ public class AppUser implements UserDetails, CredentialsContainer, Serializable 
         this.password = null;
     }
 
+    public static boolean isAdmin(String uId) {
+        if (!StringUtils.hasText(uId)) {
+            return false;
+        }
+        return uId.equals(DEFAULT_ADMIN_UID);
+    }
+
+    public boolean isAdmin() {
+        return this.id.equals(DEFAULT_ADMIN_UID) || this.username.equals(DEFAULT_ADMIN_USERNAME);
+    }
+
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public List<GrantedAuthority> getAuthorities() {
         return this.authorities;
     }
 
@@ -225,7 +240,7 @@ public class AppUser implements UserDetails, CredentialsContainer, Serializable 
         this.usernameExpiredTime = usernameExpiredTime;
     }
 
-    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+    public void setAuthorities(List<GrantedAuthority> authorities) {
         this.authorities = authorities;
     }
 
@@ -260,7 +275,7 @@ public class AppUser implements UserDetails, CredentialsContainer, Serializable 
         private Judge secretAccess;
         private Judge loginAccess;
         private Judge thirdPart;
-        private Collection<? extends GrantedAuthority> authorities;
+        private List<GrantedAuthority> authorities;
 
         private AppUserBuilder(String username, String identifier) {
             this(null, username, identifier);
@@ -356,7 +371,7 @@ public class AppUser implements UserDetails, CredentialsContainer, Serializable 
             return this;
         }
 
-        public AppUserBuilder putAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        public AppUserBuilder putAuthorities(List<GrantedAuthority> authorities) {
             this.authorities = authorities;
             return this;
         }

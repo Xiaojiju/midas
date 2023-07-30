@@ -22,3 +22,7 @@ management:
   info:
     env:
       enabled: true
+server:
+  servlet:
+    session:
+      timeout: 10

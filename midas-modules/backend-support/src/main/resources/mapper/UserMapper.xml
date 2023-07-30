@@ -15,74 +15,141 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<mapper namespace="com.mtfm.backend_support.service.mapper.UserMapper">
-    <!-- 用户信息 -->
-    <resultMap id="user_information_map" type="com.mtfm.backend_support.service.provisioning.UserInformation">
-        <id column="id" property="id" jdbcType="VARCHAR" javaType="string"/>
-        <result column="username" property="username" jdbcType="VARCHAR" javaType="string"/>
-        <result column="expiredTime" property="expiredTime" jdbcType="DATE" javaType="java.time.LocalDateTime"/>
-        <result column="identifier" property="identifier" jdbcType="VARCHAR" javaType="string"/>
-        <result column="locked" property="locked" javaType="com.mtfm.tools.enums.Judge"
-                jdbcType="INTEGER" typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
-        <result column="nickname" property="nickname" jdbcType="VARCHAR" javaType="string"/>
-        <result column="avatar" property="avatar" jdbcType="VARCHAR" javaType="string"/>
-        <result column="nation" property="nation" jdbcType="VARCHAR" javaType="string"/>
-        <collection property="roles" ofType="com.mtfm.backend_support.service.provisioning.RoleGrantedAuthority">
-            <id column="r_id" property="id" jdbcType="VARCHAR" javaType="string"/>
-            <result column="roleName" property="roleName" javaType="string" jdbcType="VARCHAR"/>
+<mapper namespace="com.mtfm.backend_support.provisioning.mapper.UserManageMapper">
+    <!-- AppUser Mapper Result-->
+    <resultMap id="app_user_result_map" type="com.mtfm.security.AppUser">
+        <id column="id" property="id" javaType="string" jdbcType="VARCHAR"/>
+        <result column="username" property="username" javaType="string" jdbcType="VARCHAR"/>
+        <result column="identifier" property="identifier" javaType="string" jdbcType="VARCHAR"/>
+        <result column="password" property="password" javaType="string" jdbcType="VARCHAR"/>
+        <result column="secretExpiredTime" property="secretExpiredTime" javaType="java.time.LocalDateTime" jdbcType="DATE"/>
+        <result column="accountExpiredTime" property="accountExpiredTime" javaType="java.time.LocalDateTime" jdbcType="DATE" />
+        <result column="accountLocked" property="accountLocked" javaType="com.mtfm.tools.enums.Judge" jdbcType="INTEGER"
+                typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+        <result column="usernameExpiredTime" property="usernameExpiredTime" javaType="java.time.LocalDateTime" jdbcType="DATE" />
+        <result column="secretAccess" property="secretAccess" javaType="com.mtfm.tools.enums.Judge" jdbcType="INTEGER"
+                typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+        <result column="loginAccess" property="loginAccess" javaType="com.mtfm.tools.enums.Judge" jdbcType="INTEGER"
+                typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+        <result column="thirdPart" property="thirdPart" javaType="com.mtfm.tools.enums.Judge" jdbcType="INTEGER"
+                typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+        <result column="validated" property="validated" javaType="com.mtfm.tools.enums.Judge" jdbcType="INTEGER"
+                typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+    </resultMap>
+    <resultMap id="simple_user_map" type="com.mtfm.backend_support.provisioning.authority.SimpleUser">
+        <result property="username" column="username" jdbcType="VARCHAR" javaType="string"/>
+        <result property="nickname" column="nickname" jdbcType="VARCHAR" javaType="string"/>
+        <result property="gender" column="gender" jdbcType="INTEGER" javaType="int"/>
+        <result property="avatarUrl" column="avatar" jdbcType="VARCHAR" javaType="string"/>
+        <result property="birth" column="birth" jdbcType="DATE" javaType="java.time.LocalDateTime"/>
+        <result property="accountLocked" column="locked" jdbcType="BIGINT" javaType="com.mtfm.tools.enums.Judge"
+                typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+        <result property="expiredTime" column="expired_time" jdbcType="DATE" javaType="java.time.LocalDateTime"/>
+        <result property="createTime" column="create_time" jdbcType="DATE" javaType="java.time.LocalDateTime"/>
+    </resultMap>
+    <resultMap id="user_profile_details_map" type="com.mtfm.backend_support.provisioning.authority.SimpleUserProfile" extends="simple_user_map">
+        <collection property="groups" ofType="com.mtfm.backend_support.provisioning.authority.GroupAuthority">
+            <id property="id" column="group_id" jdbcType="VARCHAR" javaType="string"/>
+            <result property="groupName" column="group_name" jdbcType="VARCHAR" javaType="string"/>
         </collection>
     </resultMap>
-    <!-- 查询用户分页 -->
-    <select id="selectUsers" resultMap="user_information_map">
+    <resultMap id="user_map" type="com.mtfm.backend_support.entity.SolarUser">
+        <id property="id" column="id" jdbcType="BIGINT" javaType="string"/>
+        <result property="locked" column="locked" jdbcType="INTEGER" javaType="com.mtfm.tools.enums.Judge"
+                typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+        <result property="expiredTime" column="expiredTime" jdbcType="DATE" javaType="java.time.LocalDateTime"/>
+        <result property="createTime" column="createTime" jdbcType="DATE" javaType="java.time.LocalDateTime"/>
+        <result property="updateBy" column="updateBy" jdbcType="VARCHAR" javaType="string"/>
+        <result property="updateTime" column="updateTime" jdbcType="DATE" javaType="java.time.LocalDateTime"/>
+        <result property="createBy" column="createBy" jdbcType="VARCHAR" javaType="string"/>
+    </resultMap>
+    <!-- 查询用户详情 -->
+    <select id="selectCurrentUserDetailsByUsername" resultMap="app_user_result_map">
         SELECT
-            `su`.`u_id` `id`,
-            `sur`.`reference_key` `username`,
-            `su`.`expired_time` `expiredTime`,
-            `sur`.`identifier` `identifier`,
-            `su`.`locked` `locked`,
-            `sbi`.`nickname` `nickname`,
-            `sbi`.`avatar` `avatar`,
-            `sbi`.`gender` `gender`,
-            `sbi`.`birth` `birth`,
-            `sr`.`r_id` `r_id`,
-            `sr`.`role_name` `roleName`
+            `u`.`id`,
+            `ur`.`username`,
+            `ur`.`identifier`,
+            `s`.`secret_key` `password`,
+            `s`.`secret_expired_time` `secretExpiredTime`,
+            `u`.`expired_time` `accountExpiredTime`,
+            `u`.`locked` `accountLocked`,
+            `ur`.`expired_time` `usernameExpiredTime`,
+            `ur`.`login_access` `loginAccess`,
+            `ur`.`secret_access` `secretAccess`,
+            `ur`.`third_part` `thirdPart`,
+            `ur`.`validated` `validated`
         FROM
-            `solar_user` `su`
-            LEFT JOIN `solar_user_reference` `sur` ON `su`.`u_id` = `sur`.`u_id`
-            LEFT JOIN `solar_base_info` `sbi` ON `su`.`u_id` = `sbi`.`u_id`
-            LEFT JOIN `solar_user_role` `ur` ON `su`.`u_id` = `ur`.`u_id`
-            LEFT JOIN `solar_role` `sr` ON `ur`.`r_id` = `sr`.`r_id`
+            `solar_user_username` `ur`
+            LEFT JOIN `solar_secret` `s` ON `ur`.`u_id` = `s`.`u_id`
+            LEFT JOIN `solar_user` `u` ON `s`.`u_id` = `u`.`id`
+        WHERE
+            `ur`.`username` = #{ username }
+            AND `ur`.`deleted` = 0
+            AND `u`.`deleted` = 0
+    </select>
+    <select id="selectUserByUsername" resultMap="user_map">
+        SELECT
+            `u`.`id`,
+            `u`.`locked`,
+            `u`.`expired_time` `expiredTime`,
+            `u`.`create_time` `createTime`,
+            `u`.`create_by` `createBy`,
+            `u`.`update_time` `updateTime`,
+            `u`.`update_by` `updateBy`
+        FROM
+            `solar_user_username` `ur`
+            LEFT JOIN `solar_user` `u` ON `ur`.`u_id` = `u`.`id`
+        WHERE
+            `ur`.`username` = #{ username }
+            AND `ur`.`identifier` = 'DEFAULT'
+    </select>
+    <select id="selectDetails" resultMap="user_profile_details_map">
+        SELECT
+            `suu`.`username`,
+            `sup`.`nickname`,
+            `sup`.`gender`,
+            `sup`.`avatar`,
+            `sup`.`birth`,
+            `su`.`locked`,
+            `su`.`expired_time`,
+            `su`.`create_time`
+            `sg`.`id` `group_id`,
+            `sg`.`group_name`
+        FROM
+            `solar_user_username` `suu`
+            LEFT JOIN `solar_user` `su` ON `suu`.`u_id` = `su`.`id`
+            LEFT JOIN `solar_user_profile` `sup` ON `su`.`id` = `sup`.`u_id`
+            LEFT JOIN `solar_user_authority` `sua` ON `su`.`id` = `sua`.`u_id`
+            LEFT JOIN `solar_group` `sg` ON `sua`.`group_id` = `sg`.`id`
+        WHERE
+            `suu`.`username` = #{ username }
+            AND `suu`.`identifier` = 'DEFAULT'
+    </select>
+    <select id="selectUserPage" resultMap="simple_user_map">
+        SELECT
+            `suu`.`username`,
+            `sup`.`nickname`,
+            `sup`.`gender`,
+            `sup`.`avatar`,
+            `sup`.`birth`,
+            `su`.`locked`,
+            `su`.`expired_time`,
+            `su`.`create_time`
+        FROM
+            `solar_user_username` `suu`
+            LEFT JOIN `solar_user` `su` ON `suu`.`u_id` = `su`.`id`
+            LEFT JOIN `solar_user_profile` `sup` ON `su`.`id` = `sup`.`u_id`
         <where>
-            `sur`.`identifier` = 'DEFAULT'
-            AND `su`.`deleted` = 0
+            AND `suu`.`identifier` = 'DEFAULT'
+            AND `suu`.`deleted` = 0
             <if test="username != null and username != ''">
-                AND `sur`.`reference_key` LIKE #{ username }
+                AND `suu`.`username` LIKE #{ username }
+            </if>
+            <if test="nickname !+ null and nickname != ''">
+                AND `sup`.`nickname` LIKE #{ nickname }
             </if>
         </where>
-    </select>
-    <!-- 查询用户 -->
-    <select id="selectInformation" resultMap="user_information_map">
-        SELECT
-            `su`.`u_id` `id`,
-            `sur`.`reference_key` `username`,
-            `su`.`expired_time` `expiredTime`,
-            `sur`.`identifier` `identifier`,
-            `su`.`locked` `locked`,
-            `sbi`.`nickname` `nickname`,
-            `sbi`.`avatar` `avatar`,
-            `sbi`.`gender` `gender`,
-            `sbi`.`birth` `birth`,
-            `sr`.`r_id` `r_id`,
-            `sr`.`role_name` `roleName`
-        FROM
-            `solar_user` `su`
-            LEFT JOIN `solar_user_reference` `sur` ON `su`.`u_id` = `sur`.`u_id`
-            LEFT JOIN `solar_base_info` `sbi` ON `su`.`u_id` = `sbi`.`u_id`
-            LEFT JOIN `solar_user_role` `ur` ON `su`.`u_id` = `ur`.`u_id`
-            LEFT JOIN `solar_role` `sr` ON `ur`.`r_id` = `sr`.`r_id`
         WHERE
-            `su`.`u_id` = #{ userId }
-            AND `su`.`deleted` = 0
-            AND `sur`.`identifier` = 'DEFAULT'
+
     </select>
 </mapper>

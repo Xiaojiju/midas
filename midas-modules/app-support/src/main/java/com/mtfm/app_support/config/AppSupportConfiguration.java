@@ -16,7 +16,7 @@
 package com.mtfm.app_support.config;
 
 import com.mtfm.security.filter.RequestBodyLogoutFilter;
-import com.mtfm.wechat_mp.filter.MiniProgramAuthenticationProcessingFilter;
+import com.mtfm.security.filter.ResponseBodyExpiredStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -41,13 +41,20 @@ public class AppSupportConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
-        security.logout().disable()
-                .csrf().disable()
-                .addFilterBefore(importAppFilter.requestBodyLogoutFilter(), LogoutFilter.class)
-                .addFilterBefore(importAppFilter.miniProgramAuthenticationProcessingFilter(), RequestBodyLogoutFilter.class)
-                .addFilterBefore(importAppFilter.tokenResolutionProcessingFilter(),
-                        MiniProgramAuthenticationProcessingFilter.class)
-                .sessionManagement().disable();
+        security
+            .logout().disable()
+            .csrf().disable()
+            .authorizeRequests()
+            .antMatchers("/solar/api/v1/login/mp")
+            .permitAll()
+            .anyRequest()
+            .anonymous()
+            .and()
+            .addFilterAfter(importAppFilter.miniProgramAuthenticationProcessingFilter(), RequestBodyLogoutFilter.class)
+            .addFilterAfter(importAppFilter.requestBodyLogoutFilter(), LogoutFilter.class)
+            .sessionManagement()
+            .maximumSessions(1)
+            .expiredSessionStrategy(new ResponseBodyExpiredStrategy());
         return security.build();
     }
     

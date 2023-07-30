@@ -39,7 +39,7 @@ public class SolarUser extends BaseModel<SolarUser> implements Serializable {
     private static final String DEFAULT_ADMIN_UID = "1";
     private static final String DEFAULT_ADMIN_USERNAME = "admin";
 
-    @TableId(value = "u_id", type = IdType.ASSIGN_ID)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
     /**
      * 账号锁定

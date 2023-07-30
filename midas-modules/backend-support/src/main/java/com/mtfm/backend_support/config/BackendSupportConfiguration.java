@@ -1,6 +1,6 @@
 package com.mtfm.backend_support.config;
 
-import com.mtfm.security.filter.RequestBodyAuthenticationProcessingFilter;
+import com.mtfm.security.filter.ResponseBodyExpiredStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -20,13 +20,20 @@ public class BackendSupportConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
-        security.logout().disable()
+        security
+                .logout().disable()
                 .csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/solar/api/v1/login")
+                .permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
                 .addFilterAfter(importBackendFilter.requestBodyAuthenticationProcessingFilter(), LogoutFilter.class)
-                .addFilterAfter(importBackendFilter.tokenResolutionProcessingFilter(),
-                        RequestBodyAuthenticationProcessingFilter.class)
                 .addFilterAfter(importBackendFilter.requestBodyLogoutFilter(), LogoutFilter.class)
-                .sessionManagement().disable();
+                .sessionManagement()
+                .maximumSessions(1)
+                .expiredSessionStrategy(new ResponseBodyExpiredStrategy());
         return security.build();
     }
 

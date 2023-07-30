@@ -4,11 +4,9 @@ import com.mtfm.security.SecurityConstants;
 import com.mtfm.security.authentication.AppUserPostAuthenticationChecks;
 import com.mtfm.security.authentication.AppUserPreAuthenticationChecks;
 import com.mtfm.security.cache.RedisUserCache;
-import com.mtfm.security.core.AnySessionContextHandler;
-import com.mtfm.security.core.SecuritySessionContextHolder;
 import com.mtfm.security.filter.ReturnResponseAuthenticationFailHandler;
 import com.mtfm.security.filter.ReturnResponseAuthenticationSuccessHandler;
-import com.mtfm.security.service.NullUserFromJdbcImpl;
+import com.mtfm.security.provisioning.NullUserFromJdbcImpl;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -101,27 +99,11 @@ public class WebAutoSecurityConfiguration {
     }
 
     /**
-     * 默认的Session上下文处理器
-     */
-    @Bean
-    public AnySessionContextHandler anySessionContextHandler() {
-        return new AnySessionContextHandler();
-    }
-
-    /**
-     * 默认的用户处理会话持有器
-     */
-    @Bean
-    public SecuritySessionContextHolder securitySessionContextHolder(AnySessionContextHandler anySessionContextHandler) {
-        return new SecuritySessionContextHolder(anySessionContextHandler);
-    }
-
-    /**
      * 认证成功处理器
      */
     @Bean
-    public ReturnResponseAuthenticationSuccessHandler successHandler(SecuritySessionContextHolder contextHolder) {
-        return new ReturnResponseAuthenticationSuccessHandler(contextHolder);
+    public ReturnResponseAuthenticationSuccessHandler successHandler() {
+        return new ReturnResponseAuthenticationSuccessHandler();
     }
 
     /**

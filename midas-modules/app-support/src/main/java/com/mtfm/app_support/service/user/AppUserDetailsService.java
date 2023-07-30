@@ -18,8 +18,6 @@ package com.mtfm.app_support.service.user;
 import com.mtfm.app_support.mapper.AppUserMapper;
 import com.mtfm.security.AppUser;
 import com.mtfm.security.config.WebAutoSecurityConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
@@ -38,14 +36,15 @@ import org.springframework.util.Assert;
 @Service
 public class AppUserDetailsService implements UserDetailsService, MessageSourceAware, InitializingBean {
 
-    private static final Logger logger = LoggerFactory.getLogger(AppUserDetailsService.class);
     private AppUserMapper appUserMapper;
+
     private MessageSourceAccessor messages;
 
     /**
      * 默认关闭权限，如果需要开启，在注入容器前，需要在获取 {@link WebAutoSecurityConfiguration#isEnablePermissions()}的值进行动态配置
      */
     private boolean enablePermissions = false;
+
     private static final String NONE_PASSWORD = "NONE";
 
     public AppUserDetailsService(AppUserMapper appUserMapper) {

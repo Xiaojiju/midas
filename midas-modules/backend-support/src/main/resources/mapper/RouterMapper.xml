@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+  Copyright 2022 一块小饼干(莫杨)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<mapper namespace="com.mtfm.backend_support.provisioning.mapper.RouterMapper">
+    <!-- granted-menu -->
+    <resultMap id="granted_router_map" type="com.mtfm.backend_support.provisioning.authority.GrantedRouter">
+        <id column="key" property="key" javaType="string" jdbcType="VARCHAR"/>
+        <result column="router_name" property="routerName" javaType="string" jdbcType="VARCHAR"/>
+        <result column="router_link" property="routerLink" javaType="string" jdbcType="VARCHAR"/>
+        <result column="component_address" property="componentAddress" javaType="string" jdbcType="VARCHAR"/>
+        <result column="router_level" property="menuLevel" javaType="com.mtfm.backend_support.MenuLevel" jdbcType="INTEGER"
+                typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+        <result column="authority_code" property="authorityCode" javaType="string" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parent" javaType="string" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectRouters" resultMap="granted_router_map">
+        SELECT
+            `sr`.`id` `key`,
+            `sr`.`router_name`,
+            `sr`.`router_link`,
+            `sr`.`component_address`,
+            `sr`.`router_level`,
+            `sr`.`perm` `authority_code`,
+            `sr`.`icon`,
+            `sr`.`parent_id`
+        FROM
+            `solar_group` `sg`
+            LEFT JOIN `solar_group_authority` `sga` IN `sg`.`id` = `sga`.`group_id`
+            LEFT JOIN `solar_router` `sr` ON `sga`.`router_id` = `sr`.`id`
+        WHERE
+            `sg`.`group_name` = #{ group }
+            AND `sr`.`deleted` = 0
+    </select>
+
+    <select id="selectRoutersByUser" resultMap="granted_router_map">
+        SELECT
+            `sr`.`id` `key`,
+            `sr`.`router_name`,
+            `sr`.`router_link`,
+            `sr`.`component_address`,
+            `sr`.`router_level`,
+            `sr`.`authority_code`,
+            `sr`.`icon`,
+            `sr`.`parent_id`
+        FROM
+            `solar_user_authority` `sua`
+            LEFT JOIN `solar_group_authority` `sga` ON `sga`.`group_id` = `sua`.`group_id`
+            LEFT JOIN `solar_router` `sr` ON `sga`.`router_id` = `sr`.`id`
+        WHERE
+            `sr`.`deleted` = 0
+            <if test="userId != null and userId != ''">
+                AND `sua`.`u_id` = #{ userId }
+            </if>
+    </select>
+</mapper>

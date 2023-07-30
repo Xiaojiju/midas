@@ -19,10 +19,11 @@ import com.mtfm.app_support.entity.AppUserBaseInfo;
 import com.mtfm.app_support.entity.AppUserSecret;
 import com.mtfm.app_support.service.AppUserBaseInfoService;
 import com.mtfm.app_support.service.AppUserSecretService;
-import com.mtfm.app_support.service.user.AppUserManageService;
+import com.mtfm.app_support.service.user.AppUserAccountManageService;
 import com.mtfm.app_support.web.body.Password;
 import com.mtfm.app_support.web.response.PasswordExist;
 import com.mtfm.core.context.response.RestResult;
+import com.mtfm.security.AppUser;
 import com.mtfm.security.SecurityHolder;
 import com.mtfm.wechat_mp.authentication.MpUser;
 import org.springframework.web.bind.annotation.*;
@@ -37,15 +38,15 @@ public class AppUserDetailsApi {
 
     private AppUserBaseInfoService appUserBaseInfoService;
 
-    private AppUserManageService appUserManageService;
+    private AppUserAccountManageService appUserAccountManageService;
 
     private AppUserSecretService appUserSecretService;
 
     public AppUserDetailsApi(AppUserBaseInfoService appUserBaseInfoService,
-                             AppUserManageService appUserManageService,
+                             AppUserAccountManageService appUserAccountManageService,
                              AppUserSecretService appUserSecretService) {
         this.appUserBaseInfoService = appUserBaseInfoService;
-        this.appUserManageService = appUserManageService;
+        this.appUserAccountManageService = appUserAccountManageService;
         this.appUserSecretService = appUserSecretService;
     }
 
@@ -55,8 +56,8 @@ public class AppUserDetailsApi {
      */
     @GetMapping("/user")
     public RestResult<MpUser> getUserDetails() {
-        String userId = (String) SecurityHolder.getPrincipal();
-        AppUserBaseInfo appUserBaseInfo = this.appUserBaseInfoService.getByUserId(userId);
+        AppUser appUser = (AppUser) SecurityHolder.getPrincipal();
+        AppUserBaseInfo appUserBaseInfo = this.appUserBaseInfoService.getByUserId(appUser.getId());
         MpUser mpUser = MpUser.builder()
                 .withNickname(appUserBaseInfo.getNickname())
                 .withAvatar(appUserBaseInfo.getAvatar())
@@ -82,7 +83,7 @@ public class AppUserDetailsApi {
      */
     @PostMapping("/user/pwd")
     public RestResult<Void> changePassword(@RequestBody Password password) {
-        this.appUserManageService.changePassword(password.getOldPassword(), password.getNewPassword());
+        this.appUserAccountManageService.changePassword(password.getOldPassword(), password.getNewPassword());
         return RestResult.success();
     }
 
@@ -105,12 +106,12 @@ public class AppUserDetailsApi {
         this.appUserBaseInfoService = appUserBaseInfoService;
     }
 
-    protected AppUserManageService getAppUserManageService() {
-        return appUserManageService;
+    protected AppUserAccountManageService getAppUserManageService() {
+        return appUserAccountManageService;
     }
 
-    public void setAppUserManageService(AppUserManageService appUserManageService) {
-        this.appUserManageService = appUserManageService;
+    public void setAppUserManageService(AppUserAccountManageService appUserAccountManageService) {
+        this.appUserAccountManageService = appUserAccountManageService;
     }
 
     protected AppUserSecretService getAppUserSecretService() {

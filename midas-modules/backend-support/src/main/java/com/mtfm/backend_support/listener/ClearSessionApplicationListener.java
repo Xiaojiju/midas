@@ -15,8 +15,6 @@
  */
 package com.mtfm.backend_support.listener;
 
-import com.mtfm.security.core.AnySessionContext;
-import com.mtfm.security.core.UserSubject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
@@ -35,10 +33,7 @@ public class ClearSessionApplicationListener implements ApplicationListener<Clea
 
     private static final Logger logger = LoggerFactory.getLogger(ClearSessionApplicationListener.class);
 
-    private final AnySessionContext<UserSubject> anySessionContext;
-
-    public ClearSessionApplicationListener(AnySessionContext<UserSubject> anySessionContext) {
-        this.anySessionContext = anySessionContext;
+    public ClearSessionApplicationListener() {
     }
 
     @Async
@@ -50,6 +45,5 @@ public class ClearSessionApplicationListener implements ApplicationListener<Clea
                 logger.debug("userId is null, could clear session");
             }
         }
-        anySessionContext.clear(userId);
     }
 }

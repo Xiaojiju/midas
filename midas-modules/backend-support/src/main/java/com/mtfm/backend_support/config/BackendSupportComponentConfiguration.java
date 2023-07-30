@@ -1,15 +1,18 @@
 package com.mtfm.backend_support.config;
 
-import com.mtfm.backend_support.service.*;
-import com.mtfm.backend_support.service.mapper.BackendUserServiceMapper;
-import com.mtfm.backend_support.service.mapper.UserRoleMapper;
-import com.mtfm.backend_support.service.secret.UserSecretManagerService;
-import com.mtfm.backend_support.service.user.*;
+import com.mtfm.backend_support.provisioning.GroupAuthorityManager;
+import com.mtfm.backend_support.provisioning.ManageUserDetailsService;
+import com.mtfm.backend_support.provisioning.RouterManager;
+import com.mtfm.backend_support.provisioning.UserProfileManager;
+import com.mtfm.backend_support.provisioning.authority.SimpleUserProfile;
+import com.mtfm.backend_support.provisioning.mapper.*;
+import com.mtfm.backend_support.provisioning.service.*;
 import com.mtfm.security.config.WebAutoSecurityConfiguration;
-import com.mtfm.security.service.GrantAuthorityService;
+import com.mtfm.security.provisioning.PermissionGrantedManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.UserDetailsManager;
 
 @Configuration
 public class BackendSupportComponentConfiguration {
@@ -26,57 +29,39 @@ public class BackendSupportComponentConfiguration {
      * @return 用户业务处理类 {@link UserDetailsService}
      */
     @Bean
-    public UserDetailsManageService userDetailsManageService(BackendUserServiceMapper backendUserServiceMapper,
-                                                             GrantAuthorityService grantAuthorityService) {
-        UserDetailsManageService userDetailsManageService
-                = new UserDetailsManageService(backendUserServiceMapper, this.configuration.isEnablePermissions());
-        userDetailsManageService.setGrantAuthorityService(grantAuthorityService);
-        return userDetailsManageService;
+    public UserDetailsManager userDetailsManager(UsernameMapper usernameMapper, UserSecretMapper userSecretMapper,
+                                                 GroupAuthorityManager groupAuthorityManager, UserManageMapper userManageMapper,
+                                                 UserDetailsService userDetailsService) {
+        return new UserManageService(usernameMapper, userSecretMapper, groupAuthorityManager, userManageMapper, userDetailsService);
     }
 
     @Bean
-    public RoleManager roleService() {
-        return new RoleDetailsManageService();
+    public UserDetailsService userDetailsService(PermissionGrantedManager permissionGrantedManager, UserManageMapper userManageMapper) {
+        return new UserDetailsManageService(permissionGrantedManager, userManageMapper, configuration.isEnablePermissions());
     }
 
     @Bean
-    public UserRoleManager userRoleManager(UserRoleMapper userRoleMapper) {
-        return new UserRoleManageService(userRoleMapper);
+    public GroupAuthorityManager groupAuthorityManager(AuthorityMapper authorityMapper,
+                                                       UserManageMapper userManageMapper,
+                                                       RouterMapper routerMapper) {
+        return new AuthorityGroupManager(authorityMapper, userManageMapper, routerMapper);
     }
 
     @Bean
-    public RouterManager routerManager(UserRoleManager userRoleManager) {
-        return new GrantUserAuthorityService(userRoleManager);
+    public ManageUserDetailsService<SimpleUserProfile> manageUserDetailsService(UserDetailsManager userDetailsManager,
+                                                                                UserProfileMapper userProfileMapper,
+                                                                                UsernameMapper usernameMapper,
+                                                                                UserManageMapper userManageMapper) {
+        return new UserManageServiceTemplate(userDetailsManager, userProfileMapper, usernameMapper, userManageMapper);
     }
 
     @Bean
-    public UserReferenceManager userReferenceManager() {
-        return new UserReferenceManagerService();
+    public RouterManager routerManager(RouterMapper routerMapper, UserManageMapper userManageMapper, GroupAuthorityManager groupAuthorityManager) {
+        return new RouterManageService(routerMapper, userManageMapper, groupAuthorityManager);
     }
 
     @Bean
-    public UserSecretManager userSecretManager() {
-        return new UserSecretManagerService();
-    }
-
-    @Bean
-    public UserBaseInfoManager userBaseInfoManager() {
-        return new UserBaseInfoManagerService();
-    }
-
-    @Bean
-    public UserManageService userManageService(UserDetailsManageService userDetailsManageService,
-                                               UserRoleManager userRoleManager) {
-        return new UserManageService(userDetailsManageService, userRoleManager);
-    }
-
-    @Bean
-    public UserInformationManageService userInformationManageService(UserManageService userManageService) {
-        return new UserInformationManageService(userManageService);
-    }
-
-    @Bean
-    public GrantAuthorityService grantAuthorityService(UserRoleManager userRoleManager) {
-        return new GrantUserAuthorityService(userRoleManager);
+    public UserProfileManager userProfileManager(UserProfileMapper userProfileMapper) {
+        return new UserProfileManageService(userProfileMapper);
     }
 }

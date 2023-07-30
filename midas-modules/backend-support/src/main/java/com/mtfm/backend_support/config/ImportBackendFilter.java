@@ -15,9 +15,6 @@
  */
 package com.mtfm.backend_support.config;
 
-import com.mtfm.security.config.WebAutoSecurityConfiguration;
-import com.mtfm.security.core.HttpRequestSessionHandler;
-import com.mtfm.security.core.SecuritySessionContextHolder;
 import com.mtfm.security.filter.*;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,37 +34,22 @@ import org.springframework.security.authentication.AuthenticationManager;
 @Configuration
 public class ImportBackendFilter {
 
-    private final SecuritySessionContextHolder securitySessionContextHolder;
-
     private final AuthenticationManager authenticationManager;
 
     private final ReturnResponseAuthenticationSuccessHandler successHandler;
 
     private final ReturnResponseAuthenticationFailHandler failHandler;
 
-    private final WebAutoSecurityConfiguration configuration;
-
-    public ImportBackendFilter(SecuritySessionContextHolder securitySessionContextHolder,
-                               AuthenticationManager authenticationManager,
+    public ImportBackendFilter(AuthenticationManager authenticationManager,
                                ReturnResponseAuthenticationSuccessHandler successHandler,
-                               ReturnResponseAuthenticationFailHandler failHandler,
-                               WebAutoSecurityConfiguration configuration) {
-        this.securitySessionContextHolder = securitySessionContextHolder;
+                               ReturnResponseAuthenticationFailHandler failHandler) {
         this.authenticationManager = authenticationManager;
         this.successHandler = successHandler;
         this.failHandler = failHandler;
-        this.configuration = configuration;
     }
 
     public RequestBodyLogoutFilter requestBodyLogoutFilter() {
-        return new RequestBodyLogoutFilter(new JsonBasedLogoutSuccessHandler(), new CacheClearLogoutHandler(securitySessionContextHolder));
-    }
-
-    public TokenResolutionProcessingFilter tokenResolutionProcessingFilter() {
-        TokenResolutionProcessingFilter filter =
-                new TokenResolutionProcessingFilter(securitySessionContextHolder, "/solar/api/v1/login/mp");
-        filter.setHttpRequestSessionHandler(new HttpRequestSessionHandler(configuration.getHeader()));
-        return filter;
+        return new RequestBodyLogoutFilter(new JsonBasedLogoutSuccessHandler(), new CacheClearLogoutHandler());
     }
 
     public RequestBodyAuthenticationProcessingFilter requestBodyAuthenticationProcessingFilter() {

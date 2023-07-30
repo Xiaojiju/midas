@@ -22,7 +22,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * @author 一块小饼干
@@ -51,7 +51,7 @@ public class AppUserDetails extends AppUser implements Serializable {
     public AppUserDetails(String id, String username, String identifier, String password, LocalDateTime secretExpiredTime,
                           LocalDateTime accountExpiredTime, Judge validated, Judge accountLocked, String additionalKey,
                           LocalDateTime usernameExpiredTime, Judge secretAccess, Judge thirdPart, Judge loginAccess,
-                          Collection<? extends GrantedAuthority> authorities, AppUserBaseInfo appUserBaseInfo) {
+                          List<GrantedAuthority> authorities, AppUserBaseInfo appUserBaseInfo) {
         super(id, username, identifier, password, secretExpiredTime, accountExpiredTime, validated, accountLocked,
                 additionalKey, usernameExpiredTime, secretAccess, thirdPart, loginAccess, authorities);
         this.appUserBaseInfo = appUserBaseInfo;
