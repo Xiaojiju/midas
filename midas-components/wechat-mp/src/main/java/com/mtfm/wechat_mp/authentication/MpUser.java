@@ -16,6 +16,7 @@
 package com.mtfm.wechat_mp.authentication;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 /**
  * @author 一块小饼干

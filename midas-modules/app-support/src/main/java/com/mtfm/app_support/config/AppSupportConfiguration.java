@@ -48,7 +48,7 @@ public class AppSupportConfiguration {
             .antMatchers("/solar/api/v1/login/mp")
             .permitAll()
             .anyRequest()
-            .anonymous()
+            .authenticated()
             .and()
             .addFilterAfter(importAppFilter.miniProgramAuthenticationProcessingFilter(), RequestBodyLogoutFilter.class)
             .addFilterAfter(importAppFilter.requestBodyLogoutFilter(), LogoutFilter.class)

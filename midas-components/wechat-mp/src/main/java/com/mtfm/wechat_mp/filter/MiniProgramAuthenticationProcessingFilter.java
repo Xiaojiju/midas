@@ -67,7 +67,7 @@ public class MiniProgramAuthenticationProcessingFilter extends AbstractAuthentic
             return UsernamePasswordAuthenticationToken.unauthenticated(null, null);
         }
         MiniProgramAuthenticationToken unauthenticated =
-                MiniProgramAuthenticationToken.unauthenticated(null, userInfo.getMpUser(), userInfo.getJsCode());
+                MiniProgramAuthenticationToken.unauthenticated(userInfo.getMpUser(), userInfo.getJsCode());
         return this.getAuthenticationManager().authenticate(unauthenticated);
     }
 

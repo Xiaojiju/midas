@@ -69,7 +69,7 @@ public abstract class MiniProgramAuthenticationProvider implements Authenticatio
             if (logger.isDebugEnabled()) {
                 logger.debug("first time try to load user failed, and then create User;");
             }
-            MpUser mpUser = (MpUser) authentication.getDetails();
+            MpUser mpUser = (MpUser) authentication.getPrincipal();
             MpUserDetails registry = new MpUserDetails(username, mpUser);
             userDetailsManager.createUser(registry);
             try {
@@ -93,8 +93,7 @@ public abstract class MiniProgramAuthenticationProvider implements Authenticatio
         UserDetails userDetails = userDetailsManager.loadUserByUsername(username);
         Assert.notNull(userDetails, "retrieveUser returned null - a violation of the interface contract");
         postCheck.check(userDetails);
-        return MiniProgramAuthenticationToken.authenticated(
-                userDetails, authentication, null, userDetails.getAuthorities());
+        return MiniProgramAuthenticationToken.authenticated(userDetails.getAuthorities(), userDetails, authentication.getCredentials());
     }
 
     private String determineJsCode(Authentication authentication) {

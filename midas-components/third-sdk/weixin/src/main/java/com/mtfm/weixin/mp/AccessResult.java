@@ -15,6 +15,8 @@
  */
 package com.mtfm.weixin.mp;
 
+import com.mtfm.tools.StringUtils;
+
 /**
  * @author 一块小饼干
  * @since 1.0.0
@@ -28,6 +30,11 @@ public class AccessResult extends ErrorMsg {
 
     public String getAccess_token() {
         return access_token;
+    }
+
+    @Override
+    public boolean success() {
+        return super.success() || StringUtils.hasText(access_token);
     }
 
     public void setAccess_token(String access_token) {

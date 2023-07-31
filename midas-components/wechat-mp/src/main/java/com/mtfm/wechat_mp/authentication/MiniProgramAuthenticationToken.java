@@ -29,37 +29,29 @@ import java.util.Collection;
 public class MiniProgramAuthenticationToken extends AbstractAuthenticationToken {
 
     private final Object principal;
-    private final Object details;
+
     private final Object credentials;
 
-    public MiniProgramAuthenticationToken(Collection<? extends GrantedAuthority> authorities, Object principal, Object details, Object credentials) {
+    public MiniProgramAuthenticationToken(Collection<? extends GrantedAuthority> authorities, Object principal, Object credentials) {
         super(authorities);
         this.principal = principal;
-        this.details = details;
         this.credentials = credentials;
         super.setAuthenticated(true);
     }
 
-    public MiniProgramAuthenticationToken(Object principal, Object details, Object credentials) {
+    public MiniProgramAuthenticationToken(Object principal, Object credentials) {
         super(null);
         this.principal = principal;
-        this.details = details;
         this.credentials = credentials;
         setAuthenticated(false);
     }
 
-    public static MiniProgramAuthenticationToken unauthenticated(Object principal, Object details, Object credentials) {
-        return new MiniProgramAuthenticationToken(principal, details, credentials);
+    public static MiniProgramAuthenticationToken unauthenticated(Object principal, Object credentials) {
+        return new MiniProgramAuthenticationToken(principal, credentials);
     }
 
-    public static MiniProgramAuthenticationToken authenticated(Object principal, Object details, Object credentials,
-                                                               Collection<? extends GrantedAuthority> authorities) {
-        return new MiniProgramAuthenticationToken(authorities, principal, details, credentials);
-    }
-
-    @Override
-    public Object getCredentials() {
-        return this.credentials;
+    public static MiniProgramAuthenticationToken authenticated(Collection<? extends GrantedAuthority> authorities, Object principal, Object credentials) {
+        return new MiniProgramAuthenticationToken(authorities, principal, credentials);
     }
 
     @Override
@@ -68,8 +60,8 @@ public class MiniProgramAuthenticationToken extends AbstractAuthenticationToken 
     }
 
     @Override
-    public Object getDetails() {
-        return this.details;
+    public Object getCredentials() {
+        return credentials;
     }
 
     @Override

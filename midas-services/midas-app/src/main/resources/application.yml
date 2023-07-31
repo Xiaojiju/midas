@@ -38,5 +38,5 @@ logging:
     web: DEBUG
 wechat:
   mini-program:
-    secret-key: 867bc491cc06f43db0ee11408dfa862a
+    secret-key: df6af86891bb5f3c31fbc7d5d6f8ae11
     app-id: wx00f59941a5147e72

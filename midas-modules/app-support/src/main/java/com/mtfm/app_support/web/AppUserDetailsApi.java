@@ -72,7 +72,15 @@ public class AppUserDetailsApi {
      * @param appUserBaseInfo 用户基本信息
      */
     @PutMapping("/user")
-    public RestResult<Void> updateBaseInfo(@RequestBody AppUserBaseInfo appUserBaseInfo) {
+    public RestResult<Void> updateBaseInfo(@RequestBody MpUser mpUser) {
+        AppUser appUser = (AppUser) SecurityHolder.getPrincipal();
+        AppUserBaseInfo appUserBaseInfo = this.appUserBaseInfoService.getByUserId(appUser.getId());
+        appUserBaseInfo = AppUserBaseInfo.created(appUserBaseInfo.getId(), appUserBaseInfo.getUserId())
+                .whereFrom(mpUser.getCountry(), mpUser.getProvince(), mpUser.getCity())
+                .withNickname(mpUser.getNickName())
+                .withAvatar(mpUser.getAvatarUrl())
+                .withGender(mpUser.getGender())
+                .build();
         this.appUserBaseInfoService.updateAppUser(appUserBaseInfo);
         return RestResult.success();
     }

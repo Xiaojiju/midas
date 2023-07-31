@@ -27,15 +27,14 @@ import java.io.Serializable;
  */
 public class ErrorMsg implements Serializable {
 
+    private static final String OK = "0";
+
     private String errcode;
 
     private String errmsg;
 
     public boolean success() {
-        if (StringUtils.hasText(errcode)) {
-            return String.valueOf(HttpStatus.OK.value()).equals(this.errcode);
-        }
-        return true;
+        return OK.equals(this.errcode);
     }
 
     public String getErrcode() {

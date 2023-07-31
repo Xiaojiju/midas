@@ -60,8 +60,7 @@ public class AppUserBaseInfoServiceImpl extends ServiceImpl<AppUserBaseInfoMappe
 
     @Override
     public void updateAppUser(AppUserBaseInfo appUserBaseInfo) {
-        String userId = (String) SecurityHolder.getPrincipal();
-        AppUserBaseInfo baseInfo = this.getByUserId(userId);
+        AppUserBaseInfo baseInfo = this.getByUserId(appUserBaseInfo.getUserId());
         if (baseInfo == null) {
             throw new ServiceException(this.messages.getMessage("AppUserDetailsService.userNotFoundByUserId",
                     "could not found app user details"),
