@@ -35,7 +35,9 @@ public enum MallCode implements CodeExpression {
     /**
      * 商品不存在
      */
-    SPU_NOT_FOUND(500302, "unable to find the specified product");
+    SPU_NOT_FOUND(500302, "unable to find the specified product"),
+
+    INSUFFICIENT_STOCKS(500303, "insufficient stock");
 
     private final int code;
     private final String message;

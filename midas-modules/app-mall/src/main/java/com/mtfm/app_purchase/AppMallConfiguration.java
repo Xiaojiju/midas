@@ -64,7 +64,7 @@ public class AppMallConfiguration {
     }
 
     @Bean
-    public CartService cartService(CartMapper cartMapper, CartItemManager cartItemManager) {
-        return new CartServiceImpl(cartMapper, cartItemManager);
+    public CartService cartService(CartMapper cartMapper, CartItemManager cartItemManager, CommodityService commodityService) {
+        return new CartServiceImpl(cartMapper, cartItemManager, commodityService);
     }
 }

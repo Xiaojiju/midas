@@ -16,15 +16,18 @@
 package com.mtfm.app_purchase.service.cart.impl;
 
 import com.mtfm.app_purchase.AppPurchaseMessageSource;
+import com.mtfm.app_purchase.MallCode;
 import com.mtfm.app_purchase.mapper.CartMapper;
 import com.mtfm.app_purchase.service.cart.CartService;
 import com.mtfm.app_purchase.service.provisioning.CartItemView;
+import com.mtfm.app_purchase.service.purchase.CommodityService;
 import com.mtfm.cart.entity.CartItem;
 import com.mtfm.cart.exception.CartItemNotFoundException;
 import com.mtfm.cart.manager.CartItemManager;
 import com.mtfm.cart.manager.provisioning.CartItemDetails;
 import com.mtfm.core.ServiceCode;
 import com.mtfm.core.context.exceptions.ServiceException;
+import com.mtfm.purchase.manager.provisioning.CommodityDetails;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
@@ -46,13 +49,17 @@ public class CartServiceImpl implements CartService, MessageSourceAware {
 
     private final CartItemManager cartItemManager;
 
-    public CartServiceImpl(CartMapper cartMapper, CartItemManager cartItemManager) {
+    private final CommodityService commodityService;
+
+    public CartServiceImpl(CartMapper cartMapper, CartItemManager cartItemManager, CommodityService commodityService) {
         this.cartMapper = cartMapper;
         this.cartItemManager = cartItemManager;
+        this.commodityService = commodityService;
     }
 
     @Override
     public void addCart(long id) {
+        this.insufficient(id);
         // String userId = (String) SecurityHolder.getPrincipal();
         String userId = "1";
         CartItem cartItem = this.cartMapper.selectById(id);
@@ -82,6 +89,8 @@ public class CartServiceImpl implements CartService, MessageSourceAware {
             return ;
         }
         exist.setQuantity(exist.getQuantity() + 1);
+        // 再次确定是否有库存
+        this.insufficient(id);
         this.cartItemManager.updateItem(exist);
     }
 
@@ -108,6 +117,7 @@ public class CartServiceImpl implements CartService, MessageSourceAware {
 
     @Override
     public void updateQuantity(long id, int quantity) {
+        this.insufficient(id);
         // String userId = (String) SecurityHolder.getPrincipal();
         String userId = "1";
         try {
@@ -130,6 +140,8 @@ public class CartServiceImpl implements CartService, MessageSourceAware {
                         ServiceCode.DATA_NOT_FOUND.getCode());
             }
             cartItem.setQuantity(quantity);
+            // 再次确认
+            this.insufficient(id);
             this.cartItemManager.updateItem(cartItem);
         } catch (CartItemNotFoundException notFound) {
             throw new ServiceException(this.messages.getMessage("CommodityManageService.notFound",
@@ -150,5 +162,13 @@ public class CartServiceImpl implements CartService, MessageSourceAware {
     @Override
     public void setMessageSource(MessageSource messageSource) {
         this.messages = new MessageSourceAccessor(messageSource);
+    }
+
+    private void insufficient(long id) {
+        CommodityDetails commodityDetails = this.commodityService.loadDetails(id);
+        if (commodityDetails.getStocks() <= 0) {
+            throw new ServiceException(this.messages.getMessage("CartService.InsufficientStocks",
+                    "insufficient stock"), MallCode.INSUFFICIENT_STOCKS.getCode());
+        }
     }
 }
