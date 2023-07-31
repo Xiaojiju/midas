@@ -16,6 +16,12 @@
   limitations under the License.
 -->
 <mapper namespace="com.mtfm.express.mapper.ExpressMapper">
+    <resultMap id="express_item_map" type="com.mtfm.express.manager.provisioning.ExpressItem">
+        <id property="id" column="id" jdbcType="BIGINT" javaType="int"/>
+        <result property="expressService" column="expressService" jdbcType="VARCHAR" javaType="string"/>
+        <result property="serviceType" column="serviceType" jdbcType="INTEGER" javaType="com.mtfm.express.enums.ServiceType"
+                typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
+    </resultMap>
     <select id="selectExpressItem" resultType="com.mtfm.express.manager.provisioning.ExpressItem">
         SELECT
             `e`.`id`,

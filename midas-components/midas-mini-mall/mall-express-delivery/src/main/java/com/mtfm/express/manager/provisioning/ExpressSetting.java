@@ -1,6 +1,7 @@
 package com.mtfm.express.manager.provisioning;
 
 import com.mtfm.express.enums.PostageType;
+import com.mtfm.express.enums.ServiceType;
 
 import java.io.Serializable;
 
@@ -20,7 +21,7 @@ public class ExpressSetting implements Serializable {
 
     private String expressService;
 
-    private String serviceType;
+    private ServiceType serviceType;
 
     public PostageType getPostageType() {
         return postageType;
@@ -54,11 +55,11 @@ public class ExpressSetting implements Serializable {
         this.expressService = expressService;
     }
 
-    public String getServiceType() {
+    public ServiceType getServiceType() {
         return serviceType;
     }
 
-    public void setServiceType(String serviceType) {
+    public void setServiceType(ServiceType serviceType) {
         this.serviceType = serviceType;
     }
 }

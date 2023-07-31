@@ -22,7 +22,8 @@
         <result property="postage" column="postage" jdbcType="VARCHAR" javaType="string"/>
         <result property="postageType" column="postage_type" javaType="com.mtfm.express.enums.PostageType" jdbcType="INTEGER"/>
         <result property="expressService" column="express_service" jdbcType="VARCHAR" javaType="string"/>
-        <result property="serviceType" column="service_type" jdbcType="VARCHAR" javaType="string"/>
+        <result property="serviceType" column="service_type" jdbcType="INTEGER" javaType="com.mtfm.express.enums.ServiceType"
+                typeHandler="com.mtfm.datasource.handler.CommonEnumTypeHandler"/>
     </resultMap>
     <!-- 查询物流设定 -->
     <select id="selectSetting" resultMap="express_relation_map">

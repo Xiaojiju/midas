@@ -21,6 +21,7 @@ import com.mtfm.core.context.exceptions.ServiceException;
 import com.mtfm.express.entity.DeliveryAddress;
 import com.mtfm.express.manager.DeliveryAddressManager;
 import com.mtfm.express.manager.provisioning.AddressDetails;
+import com.mtfm.security.AppUser;
 import com.mtfm.security.SecurityHolder;
 import com.mtfm.tools.enums.Judge;
 import org.springframework.context.MessageSource;
@@ -50,12 +51,12 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService, Messa
         if (deliveryAddress.getDefaultIndex() != null) {
             deliveryAddress.setDefaultIndex(Judge.NO);
         }
-        String userId = (String) SecurityHolder.getPrincipal();
-        deliveryAddress.setUserId(userId);
+        AppUser appUser = (AppUser) SecurityHolder.getPrincipal();
+        deliveryAddress.setUserId(appUser.getId());
 
         boolean primary = deliveryAddress.getDefaultIndex() == Judge.YES;
         if (primary) {
-            List<AddressDetails> addresses = this.deliveryAddressManager.loadAddresses(userId);
+            List<AddressDetails> addresses = this.deliveryAddressManager.loadAddresses(appUser.getId());
             if (CollectionUtils.isEmpty(addresses)) {
                 this.deliveryAddressManager.createAddress(deliveryAddress);
                 return ;
@@ -80,7 +81,8 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService, Messa
                     "the specified shipping address does not exist"),
                     MallCode.DELIVERY_ADDRESS_NOT_FOUND.getCode());
         }
-        String userId = (String) SecurityHolder.getPrincipal();
+        AppUser appUser = (AppUser) SecurityHolder.getPrincipal();
+        String userId = appUser.getId();
         if (!userId.equals(address.getUserId())) {
             throw new ServiceException(this.messages.getMessage("DeliveryAddressService.addressNotFound",
                     "the specified shipping address does not exist"),
@@ -102,7 +104,8 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService, Messa
 
     @Override
     public void removeAddress(long id) {
-        String userId = (String) SecurityHolder.getPrincipal();
+        AppUser appUser = (AppUser) SecurityHolder.getPrincipal();
+        String userId = appUser.getId();
         DeliveryAddress deliveryAddress = this.deliveryAddressManager.loadAddress(id);
         if (userId.equals(deliveryAddress.getUserId())) {
             this.deliveryAddressManager.removeAddress(id);
@@ -115,7 +118,8 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService, Messa
 
     @Override
     public List<AddressDetails> loadAddresses() {
-        String userId = (String) SecurityHolder.getPrincipal();
+        AppUser appUser = (AppUser) SecurityHolder.getPrincipal();
+        String userId = appUser.getId();
         return this.deliveryAddressManager.loadAddresses(userId);
     }
 

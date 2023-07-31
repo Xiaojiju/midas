@@ -15,6 +15,8 @@
  */
 package com.mtfm.express.manager.provisioning;
 
+import com.mtfm.express.enums.ServiceType;
+
 import java.io.Serializable;
 /**
  * @author 一块小饼干
@@ -31,7 +33,7 @@ public class ExpressItem implements Serializable {
     /**
      * 服务类型
      */
-    private String serviceType;
+    private ServiceType serviceType;
 
     public Long getId() {
         return id;
@@ -49,11 +51,11 @@ public class ExpressItem implements Serializable {
         this.expressService = expressService;
     }
 
-    public String getServiceType() {
+    public ServiceType getServiceType() {
         return serviceType;
     }
 
-    public void setServiceType(String serviceType) {
+    public void setServiceType(ServiceType serviceType) {
         this.serviceType = serviceType;
     }
 }

@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.mtfm.core.util.validator.ValidateGroup;
 import com.mtfm.datasource.BaseModel;
 import com.mtfm.datasource.handler.CommonEnumTypeHandler;
+import com.mtfm.express.enums.ServiceType;
 import com.mtfm.tools.enums.Judge;
 import org.apache.ibatis.type.JdbcType;
 
@@ -48,9 +49,9 @@ public class Express extends BaseModel<Express> implements Serializable {
     /**
      * 物流类型
      */
-    @NotBlank(groups = ValidateGroup.Create.class, message = "Express.blankServiceType")
-    @TableField("service_type")
-    private String serviceType;
+    @NotNull(groups = ValidateGroup.Create.class, message = "Express.blankServiceType")
+    @TableField(value = "service_type", jdbcType = JdbcType.INTEGER, typeHandler = CommonEnumTypeHandler.class)
+    private ServiceType serviceType;
     /**
      * 起步价
      */
@@ -89,11 +90,11 @@ public class Express extends BaseModel<Express> implements Serializable {
         this.expressService = expressService;
     }
 
-    public String getServiceType() {
+    public ServiceType getServiceType() {
         return serviceType;
     }
 
-    public void setServiceType(String serviceType) {
+    public void setServiceType(ServiceType serviceType) {
         this.serviceType = serviceType;
     }
 

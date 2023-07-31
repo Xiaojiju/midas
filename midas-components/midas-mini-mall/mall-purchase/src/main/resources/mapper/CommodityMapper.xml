@@ -26,6 +26,7 @@
         <result property="price" column="price" jdbcType="DECIMAL" javaType="string"/>
         <result property="currentPrice" column="current_price" jdbcType="DECIMAL" javaType="string"/>
         <result property="vipPrice" column="vip_price" jdbcType="DECIMAL" javaType="string"/>
+        <result property="indexImage" column="index_image" jdbcType="VARCHAR" javaType="string"/>
     </resultMap>
     <!-- CommoditySplitDetails Map -->
     <resultMap id="split_commodity_map" type="com.mtfm.purchase.manager.provisioning.CommoditySplitDetails">
@@ -98,22 +99,31 @@
     <!-- 查询规格库存 -->
     <select id="selectStocks" resultMap="sku_stocks_map">
         SELECT
-            `commodity`.`id` `commodity_id`,
-            `commodity`.`commodity_code`,
-            `commodity`.`commodity_name`,
-            `commodity`.`stocks`,
-            `commodity`.`price`,
-            `commodity`.`current_price`,
-            `commodity`.`vip_price`,
-            GROUP_CONCAT(`psiv`.`item_val` SEPARATOR ',') `sku`
+            `temp`.*,
+            `pci`.`image_url`
         FROM
-            `purchase_commodity` `commodity`
-            LEFT JOIN `purchase_commodity_sku_relation` `pcsr` ON `commodity`.`id` = `pcsr`.`commodity_id`
-            LEFT JOIN `purchase_sku_item_value` `psiv` ON `pcsr`.`sku_id` = `psiv`.`id`
-        WHERE
-            `commodity`.`deleted` = 0
-            AND `commodity`.`spu_id` = #{ spuId }
-        GROUP BY `commodity`.`id`
+            (
+                SELECT
+                    `commodity`.`id` `commodity_id`,
+                    `commodity`.`commodity_code`,
+                    `commodity`.`commodity_name`,
+                    `commodity`.`stocks`,
+                    `commodity`.`price`,
+                    `commodity`.`current_price`,
+                    `commodity`.`vip_price`,
+                    GROUP_CONCAT( `psiv`.`item_val` SEPARATOR ',' ) `sku`
+                FROM
+                    `purchase_commodity` `commodity`
+                    LEFT JOIN `purchase_commodity_sku_relation` `pcsr` ON `commodity`.`id` = `pcsr`.`commodity_id`
+                    LEFT JOIN `purchase_sku_item_value` `psiv` ON `pcsr`.`sku_id` = `psiv`.`id`
+                WHERE
+                    `commodity`.`deleted` = 0
+                    AND `commodity`.`spu_id` = #{ spuId }
+                GROUP BY
+                    `commodity`.`id`
+            ) `temp`
+            LEFT JOIN `purchase_commodity_image` `pci` ON `pci`.`commodity_id` = `temp`.`commodity_id`
+            AND `pci`.`index_image` = 1
     </select>
     <!-- 商品系列列表 -->
     <select id="selectCommodities" resultMap="split_commodity_map">

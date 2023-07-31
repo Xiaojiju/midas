@@ -28,6 +28,8 @@ import com.mtfm.cart.manager.provisioning.CartItemDetails;
 import com.mtfm.core.ServiceCode;
 import com.mtfm.core.context.exceptions.ServiceException;
 import com.mtfm.purchase.manager.provisioning.CommodityDetails;
+import com.mtfm.security.AppUser;
+import com.mtfm.security.SecurityHolder;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
@@ -60,17 +62,16 @@ public class CartServiceImpl implements CartService, MessageSourceAware {
     @Override
     public void addCart(long id) {
         this.insufficient(id);
-        // String userId = (String) SecurityHolder.getPrincipal();
-        String userId = "1";
-        CartItem cartItem = this.cartMapper.selectById(id);
+        AppUser appUser = (AppUser) SecurityHolder.getPrincipal();
+        CartItem cartItem = this.cartMapper.selectById(Long.parseLong(appUser.getId()));
         if (cartItem == null) {
             throw new ServiceException(this.messages.getMessage("CommodityManageService.notFound",
                     "could not found commodity, maybe not exist."),
                     ServiceCode.DATA_NOT_FOUND.getCode());
         }
-        List<? extends CartItemDetails> cartItemDetails = this.cartItemManager.loadItems(userId);
+        List<? extends CartItemDetails> cartItemDetails = this.cartItemManager.loadItems(appUser.getId());
         if (CollectionUtils.isEmpty(cartItemDetails)) {
-            cartItem.setUserId(userId);
+            cartItem.setUserId(appUser.getId());
             cartItem.setQuantity(1);
             this.cartItemManager.addItem(cartItem);
             return ;
@@ -83,7 +84,7 @@ public class CartServiceImpl implements CartService, MessageSourceAware {
             }
         }
         if (exist == null) {
-            cartItem.setUserId(userId);
+            cartItem.setUserId(appUser.getId());
             cartItem.setQuantity(1);
             this.cartItemManager.addItem(cartItem);
             return ;
@@ -96,14 +97,13 @@ public class CartServiceImpl implements CartService, MessageSourceAware {
 
     @Override
     public void removeItems(List<Long> items) {
-        // String userId = (String) SecurityHolder.getPrincipal();
-        String userId = "1";
+        AppUser appUser = (AppUser) SecurityHolder.getPrincipal();
         try {
-            List<? extends CartItemDetails> cartItemDetails = this.cartItemManager.loadItems(userId);
+            List<? extends CartItemDetails> cartItemDetails = this.cartItemManager.loadItems(appUser.getId());
             if (CollectionUtils.isEmpty(cartItemDetails)) {
                 return ;
             }
-            boolean allMatch = cartItemDetails.stream().allMatch((item) -> ((CartItem) item).getUserId().equals(userId));
+            boolean allMatch = cartItemDetails.stream().allMatch((item) -> ((CartItem) item).getUserId().equals(appUser.getId()));
             if (allMatch) {
                 this.cartItemManager.removeItems(items);
                 return ;
@@ -118,10 +118,9 @@ public class CartServiceImpl implements CartService, MessageSourceAware {
     @Override
     public void updateQuantity(long id, int quantity) {
         this.insufficient(id);
-        // String userId = (String) SecurityHolder.getPrincipal();
-        String userId = "1";
+        AppUser appUser = (AppUser) SecurityHolder.getPrincipal();
         try {
-            List<? extends CartItemDetails> cartItemDetails = this.cartItemManager.loadItems(userId);
+            List<? extends CartItemDetails> cartItemDetails = this.cartItemManager.loadItems(appUser.getId());
             if (CollectionUtils.isEmpty(cartItemDetails)) {
                 throw new ServiceException(this.messages.getMessage("CommodityManageService.notFound",
                         "could not found commodity, maybe not exist."),

@@ -51,6 +51,8 @@ public class Sku implements Serializable {
 
     private String vipPrice;
 
+    private String indexImage;
+
     public String getCommodityCode() {
         return commodityCode;
     }
@@ -113,5 +115,13 @@ public class Sku implements Serializable {
 
     public void setVipPrice(String vipPrice) {
         this.vipPrice = vipPrice;
+    }
+
+    public String getIndexImage() {
+        return indexImage;
+    }
+
+    public void setIndexImage(String indexImage) {
+        this.indexImage = indexImage;
     }
 }
